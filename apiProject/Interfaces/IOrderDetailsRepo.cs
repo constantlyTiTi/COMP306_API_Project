@@ -8,9 +8,9 @@ namespace apiProject.Interfaces
 {
     public interface IOrderDetailsRepo:IMSSQLRepo<OrderDetails>
     {
-        Task<OrderDetails> GetOrderByOrderedTime(DateTime orderTime, string userName);
-        Task<OrderDetails> UpdateOrder(OrderDetails order);
+        Task<IEnumerable<OrderDetails>> GetOrderByOrderedTime(DateTime startTime, DateTime endTime, string userName);
+        Task UpdateOrder(OrderDetails order);
         Task<IEnumerable<OrderDetails>> GetAllOrdersByUserName(string userName);
-        Task<IEnumerable<OrderDetails>> GetAllOrdersByDateTime(DateTime orderTime);
+        Task<IEnumerable<OrderDetails>> GetAllOrdersByDateTime(DateTime startTime, DateTime endTime);
     }
 }
