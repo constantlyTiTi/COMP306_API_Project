@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace apiProject.Models
 {
-
+    [Table("APIProjectUser")]
     public class User
     {
+        [ServiceStack.DataAnnotations.PrimaryKey]
         [StringLength(50)]
         [Required]
         public string UserName { get; set; }

@@ -19,7 +19,7 @@ namespace apiProject.Repositories
         {
             var task = Task.Factory.StartNew(() =>
             {
-                return (IEnumerable<Item>)_db.Item.Where(i => i.Category == category);
+                return (IEnumerable<Item>)_db.Item.Where(i => i.Category == category).ToList();
             });
             return await task;
         }
@@ -28,7 +28,7 @@ namespace apiProject.Repositories
         {
             var task = Task.Factory.StartNew(() =>
             {
-                return (IEnumerable<Item>)_db.Item.Where(i => i.Category == category && i.UserName == userName);
+                return (IEnumerable<Item>)_db.Item.Where(i => i.Category == category && i.UserName == userName).ToList();
             });
             return await task;
         }
@@ -37,7 +37,7 @@ namespace apiProject.Repositories
         {
             var task = Task.Factory.StartNew(() =>
             {
-                return (IEnumerable<Item>)_db.Item.Where(i => i.LocationPostalCode.Substring(0,3) == PostCode.Substring(0,3));
+                return (IEnumerable<Item>)_db.Item.Where(i => i.LocationPostalCode.Substring(0,3) == PostCode.Substring(0,3)).ToList();
             });
             return await task;
         }
@@ -46,7 +46,7 @@ namespace apiProject.Repositories
         {
             var task = Task.Factory.StartNew(() =>
             {
-                return (IEnumerable<Item>)_db.Item.Where(i => i.Price > lowPrice && i.Price < highPrice);
+                return (IEnumerable<Item>)_db.Item.Where(i => i.Price > lowPrice && i.Price < highPrice).ToList();
             });
             return await task;
         }
@@ -55,7 +55,7 @@ namespace apiProject.Repositories
         {
             var task = Task.Factory.StartNew(() =>
             {
-                return (IEnumerable<Item>)_db.Item.Where(i => i.UploadItemDateTime > startDate && i.UploadItemDateTime < endDate);
+                return (IEnumerable<Item>)_db.Item.Where(i => i.UploadItemDateTime > startDate && i.UploadItemDateTime < endDate).ToList();
             });
             return await task;
         }
@@ -64,7 +64,7 @@ namespace apiProject.Repositories
         {
             var task = Task.Factory.StartNew(() =>
             {
-                return (IEnumerable<Item>)_db.Item.Where(i => i.UserName == userName);
+                return (IEnumerable<Item>)_db.Item.Where(i => i.UserName == userName).ToList();
             });
             return await task;
         }
@@ -73,7 +73,7 @@ namespace apiProject.Repositories
         {
             var task = Task.Factory.StartNew(() =>
             {
-                return (IEnumerable<Item>)_db.Item.Where(i => i.UserName == userName && i.LocationPostalCode == PostCode);
+                return (IEnumerable<Item>)_db.Item.Where(i => i.UserName == userName && i.LocationPostalCode == PostCode).ToList();
             });
             return await task;
         }

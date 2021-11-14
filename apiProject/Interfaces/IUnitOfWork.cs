@@ -11,8 +11,9 @@ namespace apiProject.Interfaces
         IRateRepo Rate { get; set; }
         ISP_Call SP_Call { get; }
         IUserRepo User { get; set; }
-        IOrderRepo Order { get; set; }
+        IOrderItemRepo OrderItem { get; set; }
         IItemFileRepo Item { get; set; }
- 
+        IOrderDetailsRepo OrderDetails { get; set; }
+
     }
 }

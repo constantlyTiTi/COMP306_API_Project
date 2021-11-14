@@ -13,7 +13,8 @@ namespace apiProject.DBContexts
         public MSSQLDbContext(DbContextOptions<MSSQLDbContext> options) : base(options) { }
         public DbSet<Rate> Rate { get; set; }
         public DbSet<User> User { get; set; }
-        public DbSet<Order> Order { get; set; }
+        public DbSet<OrderItem> OrderItem { get; set; }
+        public DbSet<OrderDetails> OrderDetail { get; set; }
         public DbSet<Item> Item { get; set; }
     }
 }

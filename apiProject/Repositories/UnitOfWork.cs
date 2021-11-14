@@ -20,14 +20,16 @@ namespace apiProject.Repositories
             Rate = new RateRepo(_db);
             SP_Call = new SP_Call(_db);
             User = new UserRepo(_db);
-            Order = new OrderRepo(_db);
+            OrderItem = new OrderItemRepo(_db);
             Item = new ItemFileRepo(_dynamoDb);
+            OrderDetails = new OrderDetailsRepo(_db);
         }
 
         public IRateRepo Rate { get; set; }
         public ISP_Call SP_Call { get; set; }
         public IUserRepo User { get; set; }
-        public IOrderRepo Order { get; set; }
+        public IOrderItemRepo OrderItem { get; set; }
+        public IOrderDetailsRepo OrderDetails { get; set; }
         public IItemFileRepo Item { get; set; }
 
         public void Dispose()
