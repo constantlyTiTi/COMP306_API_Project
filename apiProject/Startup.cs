@@ -34,6 +34,10 @@ namespace apiProject
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            //Register autoMapper
+            //Add autoMapper
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             //get data from parameter store
             services.Configure<ProjectPSConfig>(Configuration.GetSection(ProjectPSConfig.SectionName));
             ProjectPSConfig config = Configuration.GetSection(ProjectPSConfig.SectionName).Get<ProjectPSConfig>();
@@ -59,8 +63,6 @@ namespace apiProject
             services.AddScoped<IOrderItemRepo, OrderItemRepo>();
             services.AddScoped<IItemFileRepo, ItemFileRepo>();
             services.AddScoped<IUserRepo, UserRepo>();
-            //Add autoMapper
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
