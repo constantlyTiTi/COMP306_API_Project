@@ -7,6 +7,11 @@ using apiProject.DBContexts;
 using apiProject.Interfaces;
 using apiProject.Models;
 using apiProject.Repositories;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -63,6 +68,40 @@ namespace apiProject
             services.AddScoped<IOrderItemRepo, OrderItemRepo>();
             services.AddScoped<IItemFileRepo, ItemFileRepo>();
             services.AddScoped<IUserRepo, UserRepo>();
+
+            // Add Role services to Identity
+            services.AddDefaultIdentity<User>(
+                options => {
+                    options.SignIn.RequireConfirmedAccount = true;
+                    options.Password.RequireDigit = true;
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = true;
+                    options.Password.RequireLowercase = false;
+                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                    options.Lockout.MaxFailedAccessAttempts = 5;
+
+                })
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<MSSQLDbContext>();
+            //Cookie Authentication middleware redirects the User, if he is not authenticated
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                options.LoginPath = "/Identity/Login";
+                options.LogoutPath = "/";
+                options.AccessDeniedPath = "/Identity/AccessDenied";
+                options.SlidingExpiration = true;
+            });
+            //Require authenticated users
+            services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,7 +121,7 @@ namespace apiProject
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

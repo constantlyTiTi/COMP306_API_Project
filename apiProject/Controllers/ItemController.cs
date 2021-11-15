@@ -10,6 +10,11 @@ using System.Threading.Tasks;
 
 namespace apiProject.Controllers
 {
+
+    using Amazon.DynamoDBv2.DataModel;
+    using AutoMapper;
+    using Microsoft.AspNetCore.Authorization;
+    [Authorize]
     using AutoMapper;
     public class ItemController : Controller
     {
