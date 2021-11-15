@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace apiProject.Controllers
 {
+    using Amazon.DynamoDBv2.DataModel;
+    using AutoMapper;
+    using Microsoft.AspNetCore.Authorization;
+
+    [Authorize]
     public class ItemController : Controller
     {
         private IAmazonS3 _s3Client;
