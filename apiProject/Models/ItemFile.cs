@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace apiProject.Models
 {
-    [Table("API_Project")]
+    [DynamoDBTable("API_Project")]
     public class ItemFile
     {
         [DynamoDBHashKey]
