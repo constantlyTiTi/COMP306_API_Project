@@ -16,24 +16,50 @@ namespace apiProject.Repositories
             _db = db;
         }
 
-        public Task<IEnumerable<OrderDetails>> GetAllOrdersByDateTime(DateTime orderTime)
+        public async Task<IEnumerable<OrderDetails>> GetAllOrdersByDateTime(DateTime startTime, DateTime endTime)
         {
-            throw new NotImplementedException();
+            var task = Task.Factory.StartNew(() =>
+            {
+                return (IEnumerable<OrderDetails>)_db.OrderDetail.Where(o => o.OrderTime >= startTime && o.OrderTime < endTime).ToList();
+            });
+            return await task;
+              
         }
 
-        public Task<IEnumerable<OrderDetails>> GetAllOrdersByUserName(string userName)
+        public async Task<IEnumerable<OrderDetails>> GetAllOrdersByUserName(string userName)
         {
-            throw new NotImplementedException();
+            var task = Task.Factory.StartNew(() =>
+            {
+                return (IEnumerable<OrderDetails>)_db.OrderDetail.Where(o => o.UserName == userName).ToList();
+            });
+            return await task;
         }
 
-        public Task<OrderDetails> GetOrderByOrderedTime(DateTime orderTime, string userName)
+        public async Task<IEnumerable<OrderDetails>> GetOrderByOrderedTime(DateTime startTime, DateTime endTime, string userName)
         {
-            throw new NotImplementedException();
+            var task = Task.Factory.StartNew(() =>
+            {
+                return (IEnumerable<OrderDetails>)_db.OrderDetail
+                .Where(o => o.UserName == userName && o.OrderTime >= startTime && o.OrderTime < endTime).ToList();
+            });
+            return await task;
         }
 
-        public Task<OrderDetails> UpdateOrder(OrderDetails order)
+        public async Task UpdateOrder(OrderDetails order)
         {
-            throw new NotImplementedException();
+            var task = Task.Factory.StartNew(() =>
+            {
+                return _db.OrderDetail.FirstOrDefault(o => o.OrderId == order.OrderId);
+            });
+
+            var findobj = task.GetAwaiter().GetResult();
+            findobj.OrderTime = order.OrderTime;
+            findobj.UserName = order.UserName;
+            findobj.Status = order.Status;
+            findobj.ShippingAddress = order.Status;
+            findobj.TotalCost = order.TotalCost;
+
+            await _db.SaveChangesAsync();
         }
     }
 }

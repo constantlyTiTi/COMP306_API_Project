@@ -12,6 +12,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,6 +42,7 @@ namespace apiProject
             //Register autoMapper
             //Add autoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             //get data from parameter store
             services.Configure<ProjectPSConfig>(Configuration.GetSection(ProjectPSConfig.SectionName));
             ProjectPSConfig config = Configuration.GetSection(ProjectPSConfig.SectionName).Get<ProjectPSConfig>();
@@ -64,6 +68,7 @@ namespace apiProject
             services.AddScoped<IOrderItemRepo, OrderItemRepo>();
             services.AddScoped<IItemFileRepo, ItemFileRepo>();
             services.AddScoped<IUserRepo, UserRepo>();
+
             // Add Role services to Identity
             services.AddDefaultIdentity<User>(
                 options => {
@@ -96,6 +101,7 @@ namespace apiProject
                     .RequireAuthenticatedUser()
                     .Build();
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

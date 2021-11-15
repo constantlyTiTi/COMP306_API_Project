@@ -16,22 +16,22 @@ namespace apiProject.Repositories
             _db = db;
         }
 
-        public Task<IEnumerable<OrderItem>> GetItemsByOrderId(long orderId)
+        public async Task<IEnumerable<OrderItem>> GetItemsByOrderId(long orderId)
         {
             var task = Task.Factory.StartNew(() =>
             {
                 return (IEnumerable<OrderItem>)_db.OrderItem.Where(o => o.OrderId == orderId).ToList();
             });
-            return task;
+            return await task;
         }
 
-        public Task<IEnumerable<OrderItem>> GetOrdersByItem(long itemId)
+        public async Task<IEnumerable<OrderItem>> GetOrdersByItem(long itemId)
         {
             var task = Task.Factory.StartNew(() =>
             {
                 return (IEnumerable<OrderItem>)_db.OrderItem.Where(o => o.ItemId == itemId).ToList();
             });
-            return task;
+            return await task;
         }
     }
 }
