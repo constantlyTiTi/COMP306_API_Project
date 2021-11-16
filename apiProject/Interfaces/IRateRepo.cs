@@ -10,7 +10,7 @@ namespace apiProject.Interfaces
     {
         Task<Rate> GetRateByOrderId(long orderId);
         Task<double> GetAvgRateByItemId(long itemId);
-        void DeleteRateByOrderId(long orderId);
+        Task DeleteRateByOrderId(long orderId);
         Task<Rate> UpdateRateByOrderId(Rate rate);
         Task<IEnumerable<Rate>> GetRatesByItemId(long itemId);
         Task<IEnumerable<Rate>> GetRatesByUserName(string userName);

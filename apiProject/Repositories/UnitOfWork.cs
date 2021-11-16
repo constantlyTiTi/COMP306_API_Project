@@ -1,6 +1,7 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 using apiProject.DBContexts;
 using apiProject.Interfaces;
+using apiProject.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,18 +12,17 @@ namespace apiProject.Repositories
     public class UnitOfWork:IUnitOfWork
     {
         private readonly MSSQLDbContext _db;
-        private readonly DynamoDBContext _dynamoDb;
 
-        public UnitOfWork(MSSQLDbContext db, DynamoDBContext dynamoDb)
+        public UnitOfWork(MSSQLDbContext db)
         {
             _db = db;
-            _dynamoDb = dynamoDb;
             Rate = new RateRepo(_db);
             SP_Call = new SP_Call(_db);
             User = new UserRepo(_db);
             OrderItem = new OrderItemRepo(_db);
-            Item = new ItemFileRepo(_dynamoDb);
             OrderDetails = new OrderDetailsRepo(_db);
+            ItemFile = new ItemFileRepo(_db);
+            Item = new ItemRepo(_db);
         }
 
         public IRateRepo Rate { get; set; }
@@ -30,7 +30,8 @@ namespace apiProject.Repositories
         public IUserRepo User { get; set; }
         public IOrderItemRepo OrderItem { get; set; }
         public IOrderDetailsRepo OrderDetails { get; set; }
-        public IItemFileRepo Item { get; set; }
+        public IItemFileRepo ItemFile { get; set; }
+        public IItemRepo Item { get; set; }
 
         public void Dispose()
         {

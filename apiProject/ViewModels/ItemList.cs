@@ -13,5 +13,6 @@ namespace apiProject.ViewModels
     {
         public IEnumerable<Item> Items { get; set; }
         public IEnumerable<string> Uploaders { get; set; } 
+        public ItemFile ItemFileCover { get; set; }
     }
 }

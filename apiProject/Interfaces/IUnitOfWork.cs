@@ -12,8 +12,8 @@ namespace apiProject.Interfaces
         ISP_Call SP_Call { get; }
         IUserRepo User { get; set; }
         IOrderItemRepo OrderItem { get; set; }
-        IItemFileRepo Item { get; set; }
+        IItemFileRepo ItemFile { get; set; }
         IOrderDetailsRepo OrderDetails { get; set; }
-
+        IItemRepo Item { get; set; }
     }
 }
