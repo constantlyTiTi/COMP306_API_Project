@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace apiProject.Interfaces
 {
-    public interface IItemFileRepo
+    public interface IItemFileRepo: IMSSQLRepo<ItemFile>
     {
         Task UpdateItem(ItemFile item);
-        Task AddItem(ItemFile item);
-        Task Remove(long itemId);
-        Task<ItemFile> GetItemByItemId(long itemId);
+        Task RemoveByItemId(long itemId);
+        Task<IEnumerable<ItemFile>> GetItemByItemId(long itemId);
 
     }
 }

@@ -16,5 +16,6 @@ namespace apiProject.DBContexts
         public DbSet<OrderItem> OrderItem { get; set; }
         public DbSet<OrderDetails> OrderDetail { get; set; }
         public DbSet<Item> Item { get; set; }
+        public DbSet<ItemFile> ItemFile { get; set; }
     }
 }

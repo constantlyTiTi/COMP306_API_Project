@@ -5,42 +5,46 @@ using apiProject.Interfaces;
 using apiProject.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace apiProject.Repositories
 {
-    public class ItemFileRepo: IItemFileRepo
+    public class ItemFileRepo: MSSQLRepo<ItemFile>,IItemFileRepo
 
     {
-        private readonly DynamoDBContext _db;
-        public ItemFileRepo(DynamoDBContext db)
+        private readonly MSSQLDbContext _db;
+        public ItemFileRepo(MSSQLDbContext db):base(db)
         {
             _db = db;
         }
 
-        public async Task AddItem(ItemFile item)
+        public async Task<IEnumerable<ItemFile>> GetItemByItemId(long itemId)
         {
-           await _db.SaveAsync<ItemFile>(item);
-        }
 
-        public async Task<ItemFile> GetItemByItemId(long itemId)
-        {
-            return await _db.LoadAsync<ItemFile>(itemId);
-        }
-
-        public async Task Remove(long itemId)
-        {
-            await _db.DeleteAsync(itemId);
+            var task = Task.Factory.StartNew(() =>
+            {
+                return (IEnumerable<ItemFile>)_db.ItemFile.Where(i => i.ItemId == itemId).ToList();
+ 
+            });
+            return await task;
         }
 
         public async Task UpdateItem(ItemFile item)
         {
-            var findObj = await _db.LoadAsync<ItemFile>(item.ItemId);
-            findObj.ImgFileKeys = item.ImgFileKeys;
-            findObj.ImgDescriptions = item.ImgDescriptions;
-            await _db.SaveAsync<ItemFile>(findObj);
+            var findObj = await _db.ItemFile.FirstOrDefaultAsync(i => i.ItemFileId == item.ItemFileId);
+            findObj.ImgFileKey = item.ImgFileKey;
+            findObj.ImgDescription = item.ImgDescription;
+            await _db.SaveChangesAsync();
+
         }
 
+        async Task IItemFileRepo.RemoveByItemId(long itemId)
+        {
+            var entities = GetItemByItemId(itemId);
+            _db.RemoveRange(entities);
+            await _db.SaveChangesAsync();
+        }
     }
 }

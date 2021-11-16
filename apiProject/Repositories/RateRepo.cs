@@ -16,10 +16,11 @@ namespace apiProject.Repositories
             _db = db;
         }
 
-        public void DeleteRateByOrderId(long orderId)
+        public async Task DeleteRateByOrderId(long orderId)
         {
             var findObj = _db.Rate.FirstOrDefault(r => r.OrderId == orderId);
             _db.Rate.Remove(findObj);
+            await _db.SaveChangesAsync();
         }
 
         public async Task<double> GetAvgRateByItemId(long itemId)

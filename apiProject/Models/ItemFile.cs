@@ -6,15 +6,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace apiProject.Models
 {
-    [DynamoDBTable("API_Project")]
+    [Table("ItemFile")]
     public class ItemFile
     {
-        [DynamoDBHashKey]
+        public long ItemFileId { get; set; }
         public long ItemId { get; set; }
-        public List<string> ImgFileKeys { get; set; }
-        public List<string> ImgDescriptions { get; set; }
-        [Required]
-        public string LocationPostalCode { get; set; }
+        public string ImgFileKey { get; set; }
+        public string ImgDescription { get; set; }
 
     }
 }
