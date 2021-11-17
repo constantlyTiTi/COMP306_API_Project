@@ -134,6 +134,35 @@ paths:
                   error:
                     type: string
   /item:
+    post:
+      description: upload item
+      requestBody:
+        required: true
+        content:
+          application/json:
+              schema:
+                type: object
+                required:
+                  - item
+                properties:
+                  uploader:
+                    type: string
+                  upload_item_date_time:
+                    type: string
+                  item_name:
+                    type: string
+                  category:
+                    type: string
+                  item_cover_path:
+                    type: string
+                  description: 
+                    type: string
+                  price: 
+                    type: number
+                  location_postal_code:
+                    type: string
+                        
+  /items:            
     get:
       description: Returns a list of stuff alike item name
       parameters:
@@ -187,7 +216,7 @@ paths:
                           type: number
                         location_postal_code:
                           type: string
-  /item/{uploaderusername}:
+  /items/{uploaderusername}:
     get:
       description: Returns a list of stuff which is created by target user
       parameters:
@@ -371,6 +400,58 @@ paths:
                 properties:
                   message: 
                     type: string
+  /orders:
+   post:
+     description: create order from shopping cart
+     requestBody:
+         content:
+           application/json:
+             schema:
+               type: object
+               required:
+                 - order
+               properties:
+                 order_detail:
+                   type: object
+                   properties:
+                     status:
+                       type: string
+                     total_cost:
+                       type: number
+                     shipping_address:
+                       type: string
+                     order_time:
+                       type: string
+                     username:
+                       type: string
+                 items:
+                   type: array
+                   items:
+                      type: object
+                      properties:
+                        item_id:
+                          type: number
+                        uploader:
+                          type: string
+                        upload_item_date_time:
+                          type: string
+                        item_name:
+                          type: string
+                        category:
+                          type: string
+                        item_cover_path:
+                          type: string
+                        description: 
+                          type: string
+                        price: 
+                          type: number
+                        location_postal_code:
+                          type: string 
+                        quantity:
+                          type: integer  
+     responses:
+       '200':
+         description: Successful response        
   /orders/{username}:
     get:
       description: display all orders of the target user
@@ -445,6 +526,130 @@ paths:
                                   type: number
                                 location_postal_code:
                                   type: string
+    put:
+      description: modify specific order
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string 
+        - name: orderid
+          in: query
+          required: true
+          schema: 
+            type: number
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              type: object
+              required:
+                - order
+              properties:
+                order_detail:
+                  type: object
+                  properties:
+                    status:
+                      type: string
+                    total_cost:
+                      type: number
+                    shipping_address:
+                      type: string
+                    order_time:
+                      type: string
+                    username:
+                      type: string
+                items:
+                  type: array
+                  items:
+                     type: object
+                     properties:
+                       item_id:
+                         type: number
+                       uploader:
+                         type: string
+                       upload_item_date_time:
+                         type: string
+                       item_name:
+                         type: string
+                       category:
+                         type: string
+                       item_cover_path:
+                         type: string
+                       description: 
+                         type: string
+                       price: 
+                         type: number
+                       location_postal_code:
+                         type: string 
+                       quantity:
+                         type: integer
+      responses:
+        '200':
+          description: successfull response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - order
+                properties:
+                  order_detail:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                      total_cost:
+                        type: number
+                      shipping_address:
+                        type: string
+                      order_time:
+                        type: string
+                      username:
+                        type: string
+                  items:
+                    type: array
+                    items:
+                       type: object
+                       properties:
+                         item_id:
+                           type: number
+                         uploader:
+                           type: string
+                         upload_item_date_time:
+                           type: string
+                         item_name:
+                           type: string
+                         category:
+                           type: string
+                         item_cover_path:
+                           type: string
+                         description: 
+                           type: string
+                         price: 
+                           type: number
+                         location_postal_code:
+                           type: string 
+                         quantity:
+                           type: integer
+    delete:
+      description: cancel order
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string 
+        - name: orderid
+          in: query
+          required: true
+          schema: 
+            type: number
+      responses:
+        '200':
+          description: successfull response
   /shopping_cart/{itemid}:
     post:
       description: add item to shopping cart
@@ -545,55 +750,3 @@ paths:
                           type: string 
                         quantity:
                           type: integer   
-  /orders:
-   post:
-     description: create order from shopping cart
-     requestBody:
-         content:
-           application/json:
-             schema:
-               type: object
-               required:
-                 - order
-               properties:
-                 order_detail:
-                   type: object
-                   properties:
-                     status:
-                       type: string
-                     total_cost:
-                       type: number
-                     shipping_address:
-                       type: string
-                     order_time:
-                       type: string
-                     username:
-                       type: string
-                 items:
-                   type: array
-                   items:
-                      type: object
-                      properties:
-                        item_id:
-                          type: number
-                        uploader:
-                          type: string
-                        upload_item_date_time:
-                          type: string
-                        item_name:
-                          type: string
-                        category:
-                          type: string
-                        item_cover_path:
-                          type: string
-                        description: 
-                          type: string
-                        price: 
-                          type: number
-                        location_postal_code:
-                          type: string 
-                        quantity:
-                          type: integer  
-     responses:
-       '200':
-         description: Successful response      
