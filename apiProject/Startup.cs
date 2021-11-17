@@ -12,9 +12,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +20,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.OpenApi.Models;
+using Amazon.SimpleSystemsManagement;
+using Amazon.SimpleSystemsManagement.Model;
 
 namespace apiProject
 {
@@ -38,12 +38,17 @@ namespace apiProject
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddControllers();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "project_api", Version = "v1" });
+            });
             //Register autoMapper
             //Add autoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             //get data from parameter store
+/*            var result = GetConfiguration().Result;*/
             services.Configure<ProjectPSConfig>(Configuration.GetSection(ProjectPSConfig.SectionName));
             ProjectPSConfig config = Configuration.GetSection(ProjectPSConfig.SectionName).Get<ProjectPSConfig>();
             //set aws options
@@ -70,7 +75,7 @@ namespace apiProject
             services.AddScoped<IUserRepo, UserRepo>();
 
             // Add Role services to Identity
-            services.AddDefaultIdentity<User>(
+            /*services.AddDefaultIdentity<User>(
                 options => {
                     options.SignIn.RequireConfirmedAccount = true;
                     options.Password.RequireDigit = true;
@@ -83,9 +88,9 @@ namespace apiProject
 
                 })
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<MSSQLDbContext>();
+                .AddEntityFrameworkStores<MSSQLDbContext>();*/
             //Cookie Authentication middleware redirects the User, if he is not authenticated
-            services.ConfigureApplicationCookie(options =>
+            /*services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.HttpOnly = true;
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
@@ -100,7 +105,7 @@ namespace apiProject
                 options.FallbackPolicy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .Build();
-            });
+            });*/
 
         }
 
@@ -110,12 +115,8 @@ namespace apiProject
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "project_api v1"));
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -126,10 +127,25 @@ namespace apiProject
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllers();
             });
+        }
+
+        private static async Task<GetParameterResponse> GetConfiguration()
+        {
+            // NOTE: set the region here to match the region used when you created
+            // the parameter
+            var region = Amazon.RegionEndpoint.USEast1;
+            var request = new GetParameterRequest()
+            {
+                Name = @"name:/comp306/lab03/SecretAccessKey"
+            };
+
+            var client = new AmazonSimpleSystemsManagementClient(region);
+
+
+            var response = client.GetParameterAsync(request).GetAwaiter().GetResult();
+            return response;
         }
     }
 }
