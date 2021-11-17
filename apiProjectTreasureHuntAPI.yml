@@ -1,0 +1,536 @@
+openapi: 3.0.0
+info:
+  description: "The project is to allow people to post their household items online and allow others to buy them"
+  version: "1.0.0"
+  title: "Treasure Hunt"
+  contact:
+    email: "tli101@my.centennialcollege.ca"
+paths:
+  /all-items:
+    get:
+      description: Returns a list of stuff              
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                properties:
+                  paginate:
+                    type: object
+                    properties:
+                      total: 
+                        type: number
+                      next_cursor:
+                        type: string
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - item
+                      properties:
+                        itmer_id:
+                          type: number
+                        uploader:
+                          type: string
+                        upload_item_date_time:
+                          type: string
+                        item_name:
+                          type: string
+                        category:
+                          type: string
+                        item_cover_path:
+                          type: string
+                        description: 
+                          type: string
+                        price: 
+                          type: number
+                        location_postal_code:
+                          type: string
+  /login:
+    post:
+      description: user login
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses: 
+        '200':
+          description: successfully login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: number
+                  username:
+                    type: string
+                  password:
+                    type: string
+                  token:
+                    type: string
+        '400':
+          description: Invalid login   
+          content:
+            application/json: 
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /register:
+     post:
+      description: user register
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses: 
+        '200':
+          description: successfully register
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: number
+                  username:
+                    type: string
+                  password:
+                    type: string
+        '400':
+          description: Invalid login   
+          content:
+            application/json: 
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /item:
+    get:
+      description: Returns a list of stuff alike item name
+      parameters:
+        - name: itemname
+          in: query
+          required: true
+          schema:
+            type: string             
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                properties:
+                  paginate:
+                    type: object
+                    properties:
+                      total: 
+                        type: number
+                      next_cursor:
+                        type: string
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - item
+                      properties:
+                        itmer_id:
+                          type: number
+                        uploader:
+                          type: string
+                        upload_item_date_time:
+                          type: string
+                        item_name:
+                          type: string
+                        category:
+                          type: string
+                        item_cover_path:
+                          type: string
+                        description: 
+                          type: string
+                        price: 
+                          type: number
+                        location_postal_code:
+                          type: string
+  /item/{uploaderusername}:
+    get:
+      description: Returns a list of stuff which is created by target user
+      parameters:
+        - name: uploaderusername
+          in: path
+          required: true
+          schema:
+            type: string             
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                properties:
+                  paginate:
+                    type: object
+                    properties:
+                      total: 
+                        type: number
+                      next_cursor:
+                        type: string
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - item
+                      properties:
+                        itmer_id:
+                          type: number
+                        uploader:
+                          type: string
+                        upload_item_date_time:
+                          type: string
+                        item_name:
+                          type: string
+                        category:
+                          type: string
+                        item_cover_path:
+                          type: string
+                        description: 
+                          type: string
+                        price: 
+                          type: number
+                        location_postal_code:
+                          type: string
+  /item/{uploaderusername}/{itemid}:
+    get:
+      description: Returns a item which is uploaded by target user
+      parameters:
+        - name: uploaderusername
+          in: path
+          required: true
+          schema:
+            type: string 
+        - name: itemid
+          in: path
+          required: true
+          schema:
+            type: number             
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - item
+                properties:
+                  itmer_id:
+                    type: number
+                  uploader:
+                    type: string
+                  upload_item_date_time:
+                    type: string
+                  item_name:
+                    type: string
+                  category:
+                    type: string
+                  item_cover_path:
+                    type: string
+                  description: 
+                    type: string
+                  price: 
+                    type: number
+                  location_postal_code:
+                    type: string
+    
+    put:
+      description: update item
+      parameters:
+        - name: uploaderusername
+          in: path
+          required: true
+          schema:
+            type: string 
+        - name: itemid
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                 - item
+              properties:
+                itmer_id:
+                  type: number
+                uploader:
+                  type: string
+                upload_item_date_time:
+                  type: string
+                item_name:
+                  type: string
+                category:
+                  type: string
+                item_cover_path:
+                  type: string
+                description: 
+                  type: string
+                price: 
+                  type: number
+                location_postal_code:
+                  type: string          
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - item
+                properties:
+                  itmer_id:
+                    type: number
+                  uploader:
+                    type: string
+                  upload_item_date_time:
+                    type: string
+                  item_name:
+                    type: string
+                  category:
+                    type: string
+                  item_cover_path:
+                    type: string
+                  description: 
+                    type: string
+                  price: 
+                    type: number
+                  location_postal_code:
+                    type: string
+    delete:
+      description: delete item
+      parameters:
+        - name: uploaderusername
+          in: path
+          required: true
+          schema:
+            type: string 
+        - name: itemid
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: successfull delete
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+  /orders/{username}:
+    get:
+      description: display all orders of the target user
+      parameters: 
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string  
+      responses:
+          '200':
+            description: Successful response
+            content:
+              application/json:
+                schema:
+                  type: object
+                  required:
+                    - orders
+                  properties:
+                    paginate:
+                      type: object
+                      properties:
+                        total: 
+                          type: number
+                        next_cursor:
+                          type: string
+                    orders:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          order_id:
+                            type: number
+                          status:
+                            type: string
+                          total_cost:
+                            type: number
+                          shippting_address:
+                            type: string
+                          order_time:
+                            type: string
+                          username:
+                            type: string
+                          items:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                item_id:
+                                  type: number
+                                uploader:
+                                  type: string
+                                upload_item_date_time:
+                                  type: string
+                                item_name:
+                                  type: string
+                                category:
+                                  type: string
+                                item_cover_path:
+                                  type: string
+                                description: 
+                                  type: string
+                                price: 
+                                  type: number
+                                location_postal_code:
+                                  type: string 
+  /shopping_cart/{itemid}:
+    post:
+      description: add item to shopping cart
+      parameters: 
+        - name: itemid
+          in: path
+          required: true
+          schema:
+            type: number  
+      responses:
+          '200':
+            description: Successful response
+            content:
+              application/json:
+                schema:
+                  type: object
+                  required:
+                    - item_ids
+                  properties:
+                    item_ids:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          item_id:
+                            type: number
+                          quantity:
+                            type: integer
+    delete:
+      description: add item to shopping cart
+      parameters: 
+        - name: itemid
+          in: path
+          required: true
+          schema:
+            type: number  
+      responses:
+          '200':
+            description: Successful response
+    put:
+      description: add item to shopping cart
+      parameters: 
+        - name: itemid
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                 - itemQuantity
+              properties:
+                itmer_id:
+                  type: number
+                quantity:
+                  type: integer  
+      responses:
+          '200':
+            description: Successful response
+  /shopping_cart:
+    get:
+      description: display all items in shopping cart
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        item_id:
+                          type: number
+                        uploader:
+                          type: string
+                        upload_item_date_time:
+                          type: string
+                        item_name:
+                          type: string
+                        category:
+                          type: string
+                        item_cover_path:
+                          type: string
+                        description: 
+                          type: string
+                        price: 
+                          type: number
+                        location_postal_code:
+                          type: string 
+                        quantity:
+                          type: integer       
