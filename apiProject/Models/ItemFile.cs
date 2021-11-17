@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace apiProject.Models
 {
+    //this model is to save item related image file path and each image may have individual description
     [Table("ItemFile")]
     public class ItemFile
     {
