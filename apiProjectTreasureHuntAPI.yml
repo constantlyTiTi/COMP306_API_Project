@@ -139,7 +139,10 @@ paths:
       parameters:
         - name: itemname
           in: query
-          required: true
+          schema:
+            type: string 
+        - name: postal_code
+          in: query
           schema:
             type: string             
       responses:
