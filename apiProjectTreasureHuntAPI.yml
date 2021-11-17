@@ -380,6 +380,14 @@ paths:
           required: true
           schema:
             type: string  
+        - name: start_date
+          in: query
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          schema:
+            type: string   
       responses:
           '200':
             description: Successful response
@@ -436,7 +444,7 @@ paths:
                                 price: 
                                   type: number
                                 location_postal_code:
-                                  type: string 
+                                  type: string
   /shopping_cart/{itemid}:
     post:
       description: add item to shopping cart
