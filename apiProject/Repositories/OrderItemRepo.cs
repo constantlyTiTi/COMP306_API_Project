@@ -33,5 +33,16 @@ namespace apiProject.Repositories
             });
             return await task;
         }
+
+        public async Task UpdateItemQuantity(long orderId, long ItemId, int quantity)
+        {
+            var task = Task.Factory.StartNew(() =>
+            {
+                return _db.OrderItem.FirstOrDefault(o => o.OrderId == orderId && o.ItemId == ItemId);
+            });
+            var findObj = task.GetAwaiter().GetResult();
+            findObj.Quantity = quantity;
+            await _db.SaveChangesAsync();
+        }
     }
 }

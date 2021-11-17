@@ -74,6 +74,12 @@ namespace apiProject
             services.AddScoped<IItemFileRepo, ItemFileRepo>();
             services.AddScoped<IUserRepo, UserRepo>();
 
+            services.AddMvc(config =>
+            {
+                config.FormatterMappings.SetMediaTypeMappingForFormat("xml", "application/xml");
+                config.FormatterMappings.SetMediaTypeMappingForFormat("js", "application/json");
+            });
+
             // Add Role services to Identity
             /*services.AddDefaultIdentity<User>(
                 options => {
