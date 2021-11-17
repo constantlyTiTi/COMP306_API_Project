@@ -11,5 +11,6 @@ namespace apiProject.Interfaces
     {
         public Task<IEnumerable<OrderItem>> GetOrdersByItem(long itemId);
         public Task<IEnumerable<OrderItem>> GetItemsByOrderId(long orderId);
+        public Task UpdateItemQuantity(long orderId, long ItemId, int quantity);
     }
 }
