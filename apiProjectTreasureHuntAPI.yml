@@ -544,4 +544,56 @@ paths:
                         location_postal_code:
                           type: string 
                         quantity:
-                          type: integer       
+                          type: integer   
+  /orders:
+   post:
+     description: create order from shopping cart
+     requestBody:
+         content:
+           application/json:
+             schema:
+               type: object
+               required:
+                 - order
+               properties:
+                 order_detail:
+                   type: object
+                   properties:
+                     status:
+                       type: string
+                     total_cost:
+                       type: number
+                     shipping_address:
+                       type: string
+                     order_time:
+                       type: string
+                     username:
+                       type: string
+                 items:
+                   type: array
+                   items:
+                      type: object
+                      properties:
+                        item_id:
+                          type: number
+                        uploader:
+                          type: string
+                        upload_item_date_time:
+                          type: string
+                        item_name:
+                          type: string
+                        category:
+                          type: string
+                        item_cover_path:
+                          type: string
+                        description: 
+                          type: string
+                        price: 
+                          type: number
+                        location_postal_code:
+                          type: string 
+                        quantity:
+                          type: integer  
+     responses:
+       '200':
+         description: Successful response      
