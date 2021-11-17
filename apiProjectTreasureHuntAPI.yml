@@ -161,6 +161,35 @@ paths:
                     type: number
                   location_postal_code:
                     type: string
+      responses:      
+        '200':
+          description: item is created
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - item
+                properties:
+                  itemid:
+                    type: number
+                  uploader:
+                    type: string
+                  upload_item_date_time:
+                    type: string
+                  item_name:
+                    type: string
+                  category:
+                    type: string
+                  item_cover_path:
+                    type: string
+                  description: 
+                    type: string
+                  price: 
+                    type: number
+                  location_postal_code:
+                    type: string
+
                         
   /items:            
     get:
