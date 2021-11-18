@@ -17,5 +17,25 @@ namespace apiProject.DBContexts
         public DbSet<OrderDetails> OrderDetail { get; set; }
         public DbSet<Item> Item { get; set; }
         public DbSet<ItemFile> ItemFile { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            if(modelBuilder.GetType() == typeof(User))
+            {
+                modelBuilder.Entity<User>()
+                            .HasKey(i => i.UserName);
+            }
+            if (modelBuilder.GetType() == typeof(OrderDetails))
+            {
+                modelBuilder.Entity<OrderDetails>()
+                            .HasKey(i => i.OrderId);
+            }
+            if (modelBuilder.GetType() == typeof(Item))
+            {
+                modelBuilder.Entity<Item>()
+                            .HasKey(i => i.ItemId);
+            }
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

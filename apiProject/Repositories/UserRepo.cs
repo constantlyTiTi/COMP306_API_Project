@@ -47,7 +47,6 @@ namespace apiProject.Repositories
             var findObj = await _db.FindAsync<User>(user.UserName);
             findObj.Password = user.Password;
             findObj.IpAddress = user.IpAddress;
-            findObj.LoginTime = user.LoginTime;
             await _db.SaveChangesAsync();
             return findObj;
         }
