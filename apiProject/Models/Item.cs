@@ -25,6 +25,5 @@ namespace apiProject.Models
         public double Price { get; set; }
         [System.ComponentModel.DataAnnotations.Required]
         public string LocationPostalCode { get; set; }
-        public int quantity { get; set; } = 1;
     }
 }

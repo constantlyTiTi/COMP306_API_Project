@@ -1,4 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Amazon.S3;
+using apiProject.DBContexts;
+using apiProject.DTO;
+using apiProject.Interfaces;
+using apiProject.Models;
+using apiProject.Repositories;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +15,21 @@ using System.Threading.Tasks;
 
 namespace apiProject.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ItemController : ControllerBase
     {
-        // GET: api/<ItemController>
+        private readonly IMapper _mapper;
+        private readonly IAmazonS3 _amazonS3;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public ItemController(IMapper mapper,IAmazonS3 amazonS3, IUnitOfWork unitOfWork)
+        {
+            _amazonS3 = amazonS3;
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
+        }
+
         [HttpGet]
         public IEnumerable<string> Get()
         {
@@ -24,6 +41,34 @@ namespace apiProject.Controllers
         public string Get(int id)
         {
             return "value";
+        }
+
+        [HttpGet("all-item")]
+        public IActionResult Get(int total = 10, string next_cursor = "0")
+        {
+            var items_all =  _unitOfWork.Item.GetAll();
+            List<Item> items = null;
+            if (!items_all.Any())
+            {
+                var model = new ErrorMsg { Error = "no item is found" };
+                return NotFound(model);
+            }
+            int totalItems = items_all.Count();
+            int startIndex = int.Parse(next_cursor) * 10;
+            if(startIndex + total < totalItems)
+            {
+                items = items_all.ToList().GetRange(startIndex, total);
+            }
+            else
+            {
+                items = items_all.ToList().GetRange(startIndex, totalItems - startIndex);
+            }
+
+            Paginate paginate = new Paginate(total, next_cursor);
+            ItemList itemList = _mapper.Map<ItemList>(items);
+            _mapper.Map(paginate, itemList);
+
+            return Ok(itemList);
         }
 
         // POST api/<ItemController>
