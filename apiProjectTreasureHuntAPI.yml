@@ -5,8 +5,9 @@ info:
   title: "Treasure Hunt"
   contact:
     email: "tli101@my.centennialcollege.ca"
+
 paths:
-  /login:
+  /home/login:
     post:
       description: user login
       requestBody:
@@ -48,7 +49,7 @@ paths:
                 properties:
                   error:
                     type: string
-  /register:
+  /home/register:
      post:
       description: user register
       requestBody:
