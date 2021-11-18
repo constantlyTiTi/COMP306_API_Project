@@ -9,9 +9,9 @@ namespace apiProject.Repositories
 {
     public interface IUserRepo
     {
-        Task DeleteUser(string userName);
+/*        Task DeleteUser(string userName);*/
         Task<User> UpdateUser(User user);
-        Task AddUser(User user);
-        Task GetUser(string userName);
+        Task<User> AddUser(User user);
+        Task<User> GetUser(string userName, string password);
     }
 }
