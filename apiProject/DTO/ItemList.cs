@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace apiProject.DTO
@@ -11,8 +12,9 @@ namespace apiProject.DTO
 
     public class ItemList
     {
+        [JsonPropertyName("items")]
         public IEnumerable<Item> Items { get; set; }
-        public IEnumerable<string> Uploaders { get; set; } 
-        public ItemFile ItemFileCover { get; set; }
+        [JsonPropertyName("paginate")]
+        public Paginate Paginate { get; set; }
     }
 }

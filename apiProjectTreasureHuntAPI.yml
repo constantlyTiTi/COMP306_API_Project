@@ -91,7 +91,16 @@ paths:
                     type: string
   /item/all-items:
     get:
-      description: Returns a list of stuff              
+      description: Returns a list of stuff 
+      parameters:
+        - name: items_per_page
+          in: query
+          schema:
+            type: int
+        - name: next_cursor
+          in: query
+          schema:
+            type: string                
       responses:
         '200':
           description: Successful response
