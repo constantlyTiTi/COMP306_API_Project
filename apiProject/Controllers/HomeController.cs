@@ -31,10 +31,7 @@ namespace apiProject.Controllers
             try
             {
                 User user = _unitOfWork.User.GetUser(loginUser.UserName, loginUser.Password).GetAwaiter().GetResult();
-                return Ok(new {
-                    StatusCode = 200,
-                    Message = user
-                });
+                return Ok(user);
             }
             catch (Exception e)
             {

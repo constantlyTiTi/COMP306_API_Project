@@ -20,21 +20,20 @@ namespace apiProject.DBContexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            if(modelBuilder.GetType() == typeof(User))
-            {
                 modelBuilder.Entity<User>()
                             .HasKey(i => i.UserName);
-            }
-            if (modelBuilder.GetType() == typeof(OrderDetails))
-            {
+
                 modelBuilder.Entity<OrderDetails>()
                             .HasKey(i => i.OrderId);
-            }
-            if (modelBuilder.GetType() == typeof(Item))
-            {
+
                 modelBuilder.Entity<Item>()
                             .HasKey(i => i.ItemId);
-            }
+
+                modelBuilder.Entity<ItemFile>()
+                            .HasKey(i => i.ItemFileId);
+  
+                modelBuilder.Entity<OrderItem>()
+                            .HasKey(i => i.OrderItemId);
             base.OnModelCreating(modelBuilder);
         }
     }
