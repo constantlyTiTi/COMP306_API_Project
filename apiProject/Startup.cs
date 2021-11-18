@@ -45,7 +45,7 @@ namespace apiProject
             });
             //Register autoMapper
             //Add autoMapper
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddAutoMapper(typeof(Startup));
 
             //get data from parameter store
 /*            var result = GetConfiguration().Result;*/
@@ -68,11 +68,11 @@ namespace apiProject
             services.AddDbContext<MSSQLDbContext>(opt => opt.UseSqlServer(connectionString));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IRateRepo, RateRepo>();
+/*            services.AddScoped<IRateRepo, RateRepo>();
             services.AddScoped<IOrderDetailsRepo, OrderDetailsRepo>();
             services.AddScoped<IOrderItemRepo, OrderItemRepo>();
             services.AddScoped<IItemFileRepo, ItemFileRepo>();
-            services.AddScoped<IUserRepo, UserRepo>();
+            services.AddScoped<IUserRepo, UserRepo>();*/
 
             services.AddMvc(config =>
             {

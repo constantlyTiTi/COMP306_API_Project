@@ -1,4 +1,4 @@
-﻿using apiProject.ViewModels;
+﻿using apiProject.DTO;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -24,6 +24,10 @@ namespace apiProject.Models
             //ItemDetails
             CreateMap<IEnumerable<ItemFile>, ItemDetails>().ForMember(dto => dto.ItemFiles, opt => opt.MapFrom(src => src));
             CreateMap<Item, ItemDetails>().ForMember(dto => dto.Item, opt => opt.MapFrom(src => src));
+            //ShoppingCart
+            CreateMap<IEnumerable<ShoppingCartItem>, ShoppingCart>().ForMember(dto => dto.ShoppingCartItems, opt => opt.MapFrom(src => src));
+            CreateMap<IEnumerable<ShoppingCartItem>, ShoppingCart>().ForMember(dto => dto.TotalCost, opt => opt.MapFrom(src => src.Sum(i=>i.Item.Price)));
+            
         }
     }
 }

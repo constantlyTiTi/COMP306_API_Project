@@ -19,8 +19,8 @@ namespace apiProject.Models
         public string Password { get; set; }
         public string IpAddress { get; set; }
         
-        [DataType(DataType.Date)]
+/*        [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime LoginTime { get; set; }
+        public DateTime LoginTime { get; set; }*/
     }
 }
