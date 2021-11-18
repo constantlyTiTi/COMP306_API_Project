@@ -17,9 +17,10 @@ namespace apiProject.Repositories
             _db = db;
         }
 
-        public async Task<User> AddUser(User user)
+        public User AddUser(User user)
         {
-            await _db.User.AddAsync(user);
+            _db.User.Add(user);
+            _db.SaveChanges();
             return user;
         }
 
@@ -47,7 +48,7 @@ namespace apiProject.Repositories
             var findObj = await _db.FindAsync<User>(user.UserName);
             findObj.Password = user.Password;
             findObj.IpAddress = user.IpAddress;
-            await _db.SaveChangesAsync();
+            _db.SaveChanges();
             return findObj;
         }
     }

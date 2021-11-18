@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -12,20 +13,9 @@ namespace apiProject.Models
     public class User
     {
         [ServiceStack.DataAnnotations.PrimaryKey]
-        [StringLength(50)]
-        [Required]
-        [JsonPropertyName("username")]
         public string UserName { get; set; }
-        [StringLength(50)]
-        [Required]
-        [JsonPropertyName("password")]
         public string Password { get; set; }
-        [JsonPropertyName("ip_address")]
-        public string IpAddress { get; set; }
-
-        [NotMapped]
-        [JsonPropertyName("token")]
-        public string Token { get; set; }
+        public byte[] IpAddress { get; set; } = null;
 
         /*        [DataType(DataType.Date)]
                 [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

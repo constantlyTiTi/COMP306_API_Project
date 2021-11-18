@@ -12,7 +12,7 @@ namespace apiProject.Controllers
 {
     [AllowAnonymous]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class HomeController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -26,18 +26,36 @@ namespace apiProject.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult login(UserLogin loginUser)
+        public IActionResult login(UserInfor loginUser)
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
                 User user = _unitOfWork.User.GetUser(loginUser.UserName, loginUser.Password).GetAwaiter().GetResult();
-                return Ok(user);
+                loginUser = _mapper.Map<UserInfor>(user);
+
+                return Ok(loginUser);
             }
             catch (Exception e)
             {
                 var model = new ErrorMsg { Error = e.Message };
                 return NotFound(model);
             }
+        }
+
+        [HttpPost("Register")]
+        public IActionResult Register(UserInfor resgiterUser)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            User user = _mapper.Map<User>(resgiterUser);
+            _unitOfWork.User.AddUser(user);
+            return Ok(user);
         }
 
     }
