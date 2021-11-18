@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace apiProject.Interfaces
 {
-    interface IUnitOfWork:IDisposable
+    public interface IUnitOfWork:IDisposable
     {
         IRateRepo Rate { get; set; }
         ISP_Call SP_Call { get; }

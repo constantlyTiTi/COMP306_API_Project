@@ -17,24 +17,39 @@ namespace apiProject.Repositories
             _db = db;
         }
 
-        public Task AddUser(User user)
+        public async Task<User> AddUser(User user)
         {
-            throw new NotImplementedException();
+            await _db.User.AddAsync(user);
+            return user;
         }
 
-        public Task DeleteUser(string userName)
+/*        public async Task<User> DeleteUser(string userName)
         {
-            throw new NotImplementedException();
+             
+        }*/
+
+        public async Task<User> GetUser(string userName, string password)
+        {
+            var findObj = await _db.FindAsync<User>(userName);
+            if(findObj == null)
+            {
+                throw new Exception("User name cannot be found");
+            }
+            if(findObj.Password != password)
+            {
+                throw new Exception("Password does not match our record");
+            }
+            return findObj;
         }
 
-        public Task GetUser(string userName)
+        public async Task<User> UpdateUser(User user)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<User> UpdateUser(User user)
-        {
-            throw new NotImplementedException();
+            var findObj = await _db.FindAsync<User>(user.UserName);
+            findObj.Password = user.Password;
+            findObj.IpAddress = user.IpAddress;
+            findObj.LoginTime = user.LoginTime;
+            await _db.SaveChangesAsync();
+            return findObj;
         }
     }
 }
