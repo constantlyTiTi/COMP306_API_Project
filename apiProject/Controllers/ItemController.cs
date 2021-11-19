@@ -34,10 +34,11 @@ namespace apiProject.Controllers
         [HttpGet("all-item")]
         public IActionResult Get(int items_per_page = 10, string next_cursor = "0")
         {
-            var items_all =  _unitOfWork.Item.GetAll();
+            IEnumerable<Item> items_all =  _unitOfWork.Item.GetAll();
+            IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
 
             Paginate paginate = new Paginate(items_per_page, next_cursor);
-            ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(items_all, items_per_page, next_cursor));
+            ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(itemDtos, items_per_page, next_cursor));
             _mapper.Map(paginate, itemList);
 
             return Ok(itemList);
@@ -65,7 +66,7 @@ namespace apiProject.Controllers
                 string fileKey = item_form.ItemId + "-" + i+ "." + item_form.ItemImages.ElementAt(i - 1).FileName.Split(".").Last();
                 using (MemoryStream stream = new MemoryStream(fileBytes))
                 {
-                    _unitOfWork.S3Services.SaveImgs(fileKey, stream);
+                    _unitOfWork.S3Services.SaveImg(fileKey, stream);
                 }
                 ItemFile itemFile = new ItemFile(item_form.ItemId, @"https://comp306-lab03.s3.amazonaws.com/img/"+fileKey);
                 _unitOfWork.ItemFile.Add(itemFile);
@@ -81,9 +82,10 @@ namespace apiProject.Controllers
             if(!string.IsNullOrWhiteSpace(item_name) && !string.IsNullOrWhiteSpace(postal_code))
             {
                 var items_all = _unitOfWork.Item.GetItemByItemNamePostalCode(item_name,postal_code).Result;
+                IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
 
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
-                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(items_all, items_per_page, next_cursor));
+                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(itemDtos, items_per_page, next_cursor));
                 _mapper.Map(paginate, itemList);
 
                 return Ok(itemList);
@@ -92,9 +94,9 @@ namespace apiProject.Controllers
             if (!string.IsNullOrWhiteSpace(item_name))
             {
                 var items_all = _unitOfWork.Item.GetItemByItemName(item_name).Result;
-
+                IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
-                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(items_all, items_per_page, next_cursor));
+                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(itemDtos, items_per_page, next_cursor));
                 _mapper.Map(paginate, itemList);
 
                 return Ok(itemList);
@@ -103,9 +105,9 @@ namespace apiProject.Controllers
             if (!string.IsNullOrWhiteSpace(category))
             {
                 var items_all = _unitOfWork.Item.GetItemByCategory(category).Result;
-
+                IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
-                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(items_all, items_per_page, next_cursor));
+                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(itemDtos, items_per_page, next_cursor));
                 _mapper.Map(paginate, itemList);
 
                 return Ok(itemList);
@@ -114,9 +116,9 @@ namespace apiProject.Controllers
             if (!string.IsNullOrWhiteSpace(postal_code))
             {
                 var items_all = _unitOfWork.Item.GetItemByLocation(postal_code).Result;
-
+                IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
-                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(items_all, items_per_page, next_cursor));
+                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(itemDtos, items_per_page, next_cursor));
                 _mapper.Map(paginate, itemList);
 
                 return Ok(itemList);
@@ -125,9 +127,9 @@ namespace apiProject.Controllers
                 if (upload_date_time != null)
             {
                 var items_all = _unitOfWork.Item.GetItemByUploadedDateTime(upload_date_time.Value, upload_date_time.Value.AddDays(1)).Result;
-
+                IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
-                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(items_all, items_per_page, next_cursor));
+                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(itemDtos, items_per_page, next_cursor));
                 _mapper.Map(paginate, itemList);
 
                 return Ok(itemList);
@@ -141,26 +143,21 @@ namespace apiProject.Controllers
         public IActionResult FilterItemsByUploader(string uploaderusername, int items_per_page = 10, string next_cursor = "0")
         {
             var items_all = _unitOfWork.Item.GetItemByUserName(uploaderusername).Result;
-
+            IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
             Paginate paginate = new Paginate(items_per_page, next_cursor);
-            ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(items_all, items_per_page, next_cursor));
+            ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(itemDtos, items_per_page, next_cursor));
             _mapper.Map(paginate, itemList);
 
             return Ok(itemList);
         }
 
-        [HttpGet("/{uploaderusername}/{itemid}")]
-        public IActionResult FilterItemsByUploaderAndItemId(string uploaderusername, long itemid)
+        [HttpGet("/{itemid}")]
+        public IActionResult FilterItemsByUploaderAndItemId( long itemid)
         {
             Item item = _unitOfWork.Item.Get(itemid);
             if(item == null)
             {
                 return NotFound();
-            }
-            if(item.UserName != uploaderusername)
-            {
-                var model = new ErrorMsg { Error = "The item is not uploaded by you" };
-                return BadRequest(model);
             }
             var itemFiles = _unitOfWork.ItemFile.GetItemByItemId(itemid).Result;
             ItemDTO itemDTO = _mapper.Map<ItemDTO>(itemFiles);
@@ -169,9 +166,97 @@ namespace apiProject.Controllers
             return Ok(itemDTO);
         }
 
-        private List<Item> GetItemsPerPage(IEnumerable<Item> items_all, int items_per_page, string next_cursor)
+        [HttpPut("/{uploaderusername}/{itemid}")]
+        public IActionResult UpdateItem(string uploaderusername, long itemid, ItemDTO itemDTO)
         {
-            List<Item> items = null;
+            Item item = _unitOfWork.Item.Get(itemid);
+
+            if (item.UserName != uploaderusername)
+            {
+                var model = new ErrorMsg { Error = "The item is not uploaded by you" };
+                return BadRequest(model);
+            }
+
+            item = _mapper.Map<Item>(itemDTO);
+            if(itemDTO.ItemId == 0)
+            {
+                item.ItemId = itemid;
+            }
+
+            _unitOfWork.Item.UpdateItem(item);
+
+            int newFileStartIndex = 0;
+
+            if (_unitOfWork.ItemFile.GetItemByItemId(itemid).Result.Count() > 0)
+            {
+                newFileStartIndex = int.Parse(_unitOfWork.ItemFile.GetItemByItemId(itemid)
+                .Result.Last().ImgFileKey.Split(".").First().Split("-").Last());
+            }
+            
+            int realIndex = 0;
+            foreach(var img in itemDTO.ItemImages)
+            {
+                newFileStartIndex++;
+                byte[] fileBytes = new Byte[itemDTO.ItemImages.ElementAt(realIndex).Length];
+                itemDTO.ItemImages.ElementAt(realIndex).OpenReadStream().Read(fileBytes, 0, Int32.Parse(itemDTO.ItemImages.ElementAt(realIndex).Length.ToString()));
+                string fileKey = itemDTO.ItemId + "-" + newFileStartIndex + "." + itemDTO.ItemImages.ElementAt(realIndex).FileName.Split(".").Last();
+                using (MemoryStream stream = new MemoryStream(fileBytes))
+                {
+                    _unitOfWork.S3Services.SaveImg(fileKey, stream);
+                }
+                ItemFile itemFile = new ItemFile(itemDTO.ItemId, ResourceUrl.ImgBucket.ToUrl() + fileKey);
+                _unitOfWork.ItemFile.Add(itemFile);
+                _unitOfWork.Save();
+                realIndex++;
+            }
+
+
+
+            return Ok(itemDTO);
+        }
+
+        [HttpDelete("/{uploaderusername}/{itemid}")]
+        public IActionResult DeleteItem(string uploaderusername, long itemid)
+        {
+            Item item = _unitOfWork.Item.Get(itemid);
+
+            if (item.UserName != uploaderusername)
+            {
+                var model = new ErrorMsg { Error = "The item is not uploaded by you" };
+                return BadRequest(model);
+            }
+
+            _unitOfWork.Item.Remove(itemid);
+            _unitOfWork.Save();
+
+            var itemFilesById = _unitOfWork.ItemFile.GetItemByItemId(itemid).Result;
+
+            if (itemFilesById.Count() > 0)
+            {
+                var itemFiles = itemFilesById.Select(i => i.ImgFileKey);
+                try
+                {
+                    _unitOfWork.S3Services.DeleteImgs(itemFiles);
+                }
+                catch (Exception e)
+                {
+                    var model = new ErrorMsg { Error = "Something wrong with the image folder deletion" };
+                    return BadRequest(model);
+                }
+                _unitOfWork.ItemFile.RemoveByItemId(itemid);
+            }
+
+            return Ok();
+        }
+
+
+
+
+
+
+        private List<ItemDTO> GetItemsPerPage(IEnumerable<ItemDTO> items_all, int items_per_page, string next_cursor)
+        {
+            List<ItemDTO> items = null;
             int totalItems = items_all.Count();
             int startIndex = int.Parse(next_cursor) * 10;
             if (startIndex + items_per_page < totalItems)
@@ -184,5 +269,6 @@ namespace apiProject.Controllers
             }
             return items;
         }
+
     }
 }

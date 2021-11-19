@@ -135,6 +135,8 @@ paths:
                           type: string
                         category:
                           type: string
+                        cover_Image_path:
+                          type: string                              
                         description: 
                           type: string
                         price: 
@@ -197,6 +199,8 @@ paths:
                     type: number
                   location_postal_code:
                     type: string
+                  cover_Image_path:
+                    type: string                        
                   item_imgs:
                     type: array
                     items:
@@ -260,6 +264,8 @@ paths:
                           type: string
                         upload_item_date_time:
                           type: string
+                        cover_Image_path:
+                          type: string                              
                         item_name:
                           type: string
                         category:
@@ -317,6 +323,8 @@ paths:
                           type: string
                         upload_item_date_time:
                           type: string
+                        cover_Image_path:
+                          type: string                        
                         item_name:
                           type: string
                         category:
@@ -365,8 +373,18 @@ paths:
                     type: string
                   price: 
                     type: number
+                  cover_Image_path:
+                    type: string
                   location_postal_code:
                     type: string
+                  item_imgs:
+                    type: array
+                    items:
+                      type: string
+                  item_imgs_paths:
+                    type: array
+                    items:
+                      type: string                  
     
     put:
       description: update item
@@ -404,7 +422,15 @@ paths:
                 price: 
                   type: number
                 location_postal_code:
-                  type: string          
+                  type: string
+                item_imgs:
+                  type: array
+                  items:
+                    type: string
+                item_imgs_paths:
+                  type: array
+                  items:
+                    type: string
       responses:
         '200':
           description: Successful response
@@ -431,6 +457,15 @@ paths:
                     type: number
                   location_postal_code:
                     type: string
+                item_imgs:
+                  type: array
+                  items:
+                    type: string
+                item_imgs_paths:
+                  type: array
+                  items:
+                    type: string                    
+                  
     delete:
       description: delete item
       parameters:

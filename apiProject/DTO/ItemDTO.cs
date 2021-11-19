@@ -21,6 +21,7 @@ namespace apiProject.DTO
         [Required]
         public double Price { get; set; }
 
+        [JsonPropertyName("cover_Image_path")]
         public string CoverImagePath { get; set; }
 
         [Required]
