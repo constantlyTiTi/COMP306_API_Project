@@ -8,6 +8,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -69,6 +70,37 @@ namespace apiProject.Controllers
             _mapper.Map(paginate, itemList);
 
             return Ok(itemList);
+        }
+
+        [HttpPost("post-item")]
+        public IActionResult PostNewItem(ItemDTO item_form)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            //save item to db
+            item_form.UploadItemDateTime = DateTime.Now;
+            Item item = _mapper.Map<Item>(item_form);
+
+            _unitOfWork.Item.Add(item);
+            _unitOfWork.Save();
+
+            //save itemFile To db
+            for (int i = 1; i< item_form.ItemImages.Count; i++)
+            {
+                byte[] fileBytes = new Byte[item_form.ItemImages.ElementAt(i-1).Length];
+                item_form.ItemImages.ElementAt(i - 1).OpenReadStream().Read(fileBytes, 0, Int32.Parse(item_form.ItemImages.ElementAt(i - 1).Length.ToString()));
+                string fileKey = item_form.ItemId + "-" + i+ "." + item_form.ItemImages.ElementAt(i - 1).FileName.Split(".").Last();
+                using (MemoryStream stream = new MemoryStream(fileBytes))
+                {
+                    _unitOfWork.S3Services.SaveImgs(fileKey, stream);
+                }
+                ItemFile itemFile = new ItemFile(item_form.ItemId, fileKey);
+                _unitOfWork.ItemFile.Add(itemFile);
+                _unitOfWork.Save();
+            }
+            return Ok(item_form);
         }
 
         // POST api/<ItemController>

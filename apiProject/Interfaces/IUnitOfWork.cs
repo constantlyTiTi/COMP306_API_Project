@@ -15,5 +15,7 @@ namespace apiProject.Interfaces
         IItemFileRepo ItemFile { get; set; }
         IOrderDetailsRepo OrderDetails { get; set; }
         IItemRepo Item { get; set; }
+        IS3Services S3Services { get; set; }
+        void Save();
     }
 }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace apiProject.Models
@@ -25,16 +26,29 @@ namespace apiProject.Models
             CreateMap<IEnumerable<ItemFile>, ItemDetails>().ForMember(dto => dto.ItemFiles, opt => opt.MapFrom(src => src));
             CreateMap<Item, ItemDetails>().ForMember(dto => dto.Item, opt => opt.MapFrom(src => src));
             //ShoppingCart
-            CreateMap<IEnumerable<ShoppingCartItem>, ShoppingCart>().ForMember(dto => dto.ShoppingCartItems, opt => opt.MapFrom(src => src));
-            CreateMap<IEnumerable<ShoppingCartItem>, ShoppingCart>().ForMember(dto => dto.TotalCost, opt => opt.MapFrom(src => src.Sum(i=>i.Item.Price)));
+            CreateMap<IEnumerable<ShoppingCartItem>, ShoppingCart>()
+                .ForMember(dto => dto.ShoppingCartItems, opt => opt.MapFrom(src => src))
+                .ForMember(dto => dto.TotalCost, opt => opt.MapFrom(src => src.Sum(i=>i.Item.Price)));
             //UserInfor
-            CreateMap<User, UserInfor>().ForMember(dto => dto.UserName, opt => opt.MapFrom(u => u.UserName));
-            CreateMap<User, UserInfor>().ForMember(dto => dto.Password, opt => opt.MapFrom(u => u.Password));
-            CreateMap<User, UserInfor>().ForMember(dto => dto.IpAddress, opt => opt.MapFrom(u => Convert.ToBase64String(u.IpAddress)));
+            CreateMap<User, UserInfor>()
+                .ForMember(dto => dto.UserName, opt => opt.MapFrom(u => u.UserName))
+                .ForMember(dto => dto.Password, opt => opt.MapFrom(u => u.Password))
+                .ForMember(dto => dto.IpAddress, opt => opt.MapFrom(u => Encoding.ASCII.GetString(u.IpAddress)));
             //User
-            CreateMap<UserInfor, User> ().ForMember(dto => dto.UserName, opt => opt.MapFrom(u => u.UserName));
-            CreateMap<UserInfor, User>().ForMember(dto => dto.Password, opt => opt.MapFrom(u => u.Password));
-            CreateMap<UserInfor, User>().ForMember(dto => dto.IpAddress, opt => opt.MapFrom(u => u.IpAddress));
+            CreateMap<UserInfor, User> ()
+                .ForMember(dto => dto.UserName, opt => opt.MapFrom(u => u.UserName))
+                .ForMember(dto => dto.Password, opt => opt.MapFrom(u => u.Password))
+                .ForMember(dto => dto.IpAddress, opt => opt.MapFrom(u => Encoding.ASCII.GetBytes(u.IpAddress)));
+            //ItemDTO to Item
+            CreateMap<ItemDTO, Item>()
+                .ForMember(dto => dto.ItemId, opt => opt.Ignore())
+                .ForMember(dto => dto.ItemName, opt => opt.MapFrom(i => i.ItemName))
+                .ForMember(dto => dto.LocationPostalCode, opt => opt.MapFrom(i => i.LocationPostalCode))
+                .ForMember(dto => dto.Price, opt => opt.MapFrom(i => i.Price))
+                .ForMember(dto => dto.UploadItemDateTime, opt => opt.MapFrom(i => i.UploadItemDateTime))
+                .ForMember(dto => dto.UserName, opt => opt.MapFrom(i => i.UserName))
+                .ForMember(dto => dto.Description, opt => opt.MapFrom(i => i.Description))
+                .ForMember(dto => dto.Category, opt => opt.MapFrom(i => i.Category));
         }
     }
 }

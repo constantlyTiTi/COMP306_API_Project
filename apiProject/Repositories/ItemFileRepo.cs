@@ -35,7 +35,6 @@ namespace apiProject.Repositories
         {
             var findObj = await _db.ItemFile.FirstOrDefaultAsync(i => i.ItemFileId == item.ItemFileId);
             findObj.ImgFileKey = item.ImgFileKey;
-            findObj.ImgDescription = item.ImgDescription;
             await _db.SaveChangesAsync();
 
         }
