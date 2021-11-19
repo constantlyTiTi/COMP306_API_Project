@@ -15,6 +15,8 @@ namespace apiProject.Interfaces
         Task<IEnumerable<Item>> GetItemByPrice(double lowPrice, double highPrice);
         Task<IEnumerable<Item>> GetItemByCategory(string category);
         Task<IEnumerable<Item>> GetItemByCategoryAndUserName(string category, string userName);
+        Task<IEnumerable<Item>> GetItemByItemName(string itemName);
+        Task<IEnumerable<Item>> GetItemByItemNamePostalCode(string itemName, string postCode);
         Task UpdateItem(Item item);
     }
 }

@@ -24,6 +24,24 @@ namespace apiProject.Repositories
             return await task;
         }
 
+        public async Task<IEnumerable<Item>> GetItemByItemName(string itemName)
+        {
+            var task = Task.Factory.StartNew(() =>
+            {
+                return (IEnumerable<Item>)_db.Item.Where(i => i.Category.Contains(itemName)).ToList();
+            });
+            return await task;
+        }
+
+        public async Task<IEnumerable<Item>> GetItemByItemNamePostalCode(string itemName, string postCode)
+        {
+            var task = Task.Factory.StartNew(() =>
+            {
+                return (IEnumerable<Item>)_db.Item.Where(i => i.Category.Contains(itemName) && i.LocationPostalCode == postCode).ToList();
+            });
+            return await task;
+        }
+
         public async Task<IEnumerable<Item>> GetItemByCategoryAndUserName(string category, string userName)
         {
             var task = Task.Factory.StartNew(() =>
