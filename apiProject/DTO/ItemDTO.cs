@@ -21,11 +21,16 @@ namespace apiProject.DTO
         [Required]
         public double Price { get; set; }
 
+        public string CoverImagePath { get; set; }
+
         [Required]
         [JsonPropertyName("location_postal_code")]
         public string LocationPostalCode { get; set; }
         [JsonPropertyName("item_imgs")]
         public ICollection<IFormFile> ItemImages { get; set; }
+
+        [JsonPropertyName("item_imgs_paths")]
+        public IEnumerable<string> ItemImagePaths { get; set; }
     }
 
 }

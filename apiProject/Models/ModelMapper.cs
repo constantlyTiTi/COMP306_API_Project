@@ -49,6 +49,18 @@ namespace apiProject.Models
                 .ForMember(dto => dto.UserName, opt => opt.MapFrom(i => i.UserName))
                 .ForMember(dto => dto.Description, opt => opt.MapFrom(i => i.Description))
                 .ForMember(dto => dto.Category, opt => opt.MapFrom(i => i.Category));
+            CreateMap<Item, ItemDTO > ()
+                .ForMember(dto => dto.ItemId, opt => opt.MapFrom(i => i.ItemId))
+                .ForMember(dto => dto.ItemName, opt => opt.MapFrom(i => i.ItemName))
+                .ForMember(dto => dto.LocationPostalCode, opt => opt.MapFrom(i => i.LocationPostalCode))
+                .ForMember(dto => dto.Price, opt => opt.MapFrom(i => i.Price))
+                .ForMember(dto => dto.UploadItemDateTime, opt => opt.MapFrom(i => i.UploadItemDateTime))
+                .ForMember(dto => dto.UserName, opt => opt.MapFrom(i => i.UserName))
+                .ForMember(dto => dto.Description, opt => opt.MapFrom(i => i.Description))
+                .ForMember(dto => dto.Category, opt => opt.MapFrom(i => i.Category));
+            CreateMap<IEnumerable<ItemFile>, ItemDTO>()
+                .ForMember(dto => dto.ItemImagePaths, opt => opt.MapFrom(i => i.Select(f => f.ImgFileKey)))
+                .ForMember(dto => dto.CoverImagePath, opt => opt.MapFrom(i => i.Select(f => f.ImgFileKey).FirstOrDefault()));
         }
     }
 }
