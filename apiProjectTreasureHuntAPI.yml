@@ -278,7 +278,15 @@ paths:
           in: path
           required: true
           schema:
-            type: string             
+            type: string 
+        - name: items_per_page
+          in: query
+          schema:
+            type: integer
+        - name: next_cursor
+          in: query
+          schema:
+            type: string                         
       responses:
         '200':
           description: Successful response
