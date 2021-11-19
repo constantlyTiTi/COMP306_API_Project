@@ -31,19 +31,6 @@ namespace apiProject.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<ItemController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
         [HttpGet("all-item")]
         public IActionResult Get(int items_per_page = 10, string next_cursor = "0")
         {
@@ -86,6 +73,7 @@ namespace apiProject.Controllers
             }
             return Ok(item_form);
         }
+        
         [HttpGet("/items")]
         public IActionResult FilterItems(string item_name = "", string postal_code = "", 
             DateTime? upload_date_time = null, string category = "", int items_per_page = 10, string next_cursor = "0")
@@ -148,6 +136,19 @@ namespace apiProject.Controllers
             var model = new ErrorMsg { Error = "invalid filter condition" };
             return BadRequest(model);
         }
+
+        [HttpGet("/items/{uploaderusername}")]
+        public IActionResult FilterItemsByUploader(string uploaderusername, int items_per_page = 10, string next_cursor = "0")
+        {
+            var items_all = _unitOfWork.Item.GetItemByUserName(uploaderusername).Result;
+
+            Paginate paginate = new Paginate(items_per_page, next_cursor);
+            ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(items_all, items_per_page, next_cursor));
+            _mapper.Map(paginate, itemList);
+
+            return Ok(itemList);
+        }
+
 
         private List<Item> GetItemsPerPage(IEnumerable<Item> items_all, int items_per_page, string next_cursor)
         {
