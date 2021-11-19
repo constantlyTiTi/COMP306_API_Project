@@ -8,7 +8,8 @@ namespace apiProject.Interfaces
 {
     public interface IS3Services
     {
-        void SaveImgs(string fileKey, Stream fileStream);
-        void DeleteImgs(string fileKey);
+        void SaveImg(string fileKey, Stream fileStream);
+        void DeleteImg(string fileKey);
+        Task DeleteImgs(IEnumerable<string> keys);
     }
 }

@@ -9,7 +9,7 @@ namespace apiProject.Interfaces
     public interface IItemFileRepo: IMSSQLRepo<ItemFile>
     {
         Task UpdateItem(ItemFile item);
-        Task RemoveByItemId(long itemId);
+        void RemoveByItemId(long itemId);
         Task<IEnumerable<ItemFile>> GetItemByItemId(long itemId);
 
     }

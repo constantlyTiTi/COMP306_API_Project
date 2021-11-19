@@ -13,7 +13,7 @@ namespace apiProject.DTO
     public class ItemList
     {
         [JsonPropertyName("items")]
-        public IEnumerable<Item> Items { get; set; }
+        public IEnumerable<ItemDTO> Items { get; set; }
         [JsonPropertyName("paginate")]
         public Paginate Paginate { get; set; }
     }

@@ -39,11 +39,11 @@ namespace apiProject.Repositories
 
         }
 
-        async Task IItemFileRepo.RemoveByItemId(long itemId)
+        void IItemFileRepo.RemoveByItemId(long itemId)
         {
             var entities = GetItemByItemId(itemId);
             _db.RemoveRange(entities);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace apiProject.Models
             CreateMap<IEnumerable<Item>, OrderRate>().ForMember(dto => dto.Items, opt => opt.MapFrom(src => src));
             CreateMap<IEnumerable<ItemFile>, OrderRate>().ForMember(dto => dto.ItemCovers, opt => opt.MapFrom(src => src));
             //ItemList
-            CreateMap<IEnumerable<Item>, ItemList>().ForMember(dto => dto.Items, opt => opt.MapFrom(src => src));
+            CreateMap<IEnumerable<ItemDTO>, ItemList>().ForMember(dto => dto.Items, opt => opt.MapFrom(src => src));
             CreateMap<Paginate, ItemList>().ForMember(dto => dto.Paginate, opt => opt.MapFrom(src => src));
             //ItemDetails
             CreateMap<IEnumerable<ItemFile>, ItemDetails>().ForMember(dto => dto.ItemFiles, opt => opt.MapFrom(src => src));
@@ -60,7 +60,7 @@ namespace apiProject.Models
                 .ForMember(dto => dto.Category, opt => opt.MapFrom(i => i.Category));
             CreateMap<IEnumerable<ItemFile>, ItemDTO>()
                 .ForMember(dto => dto.ItemImagePaths, opt => opt.MapFrom(i => i.Select(f => f.ImgFileKey)))
-                .ForMember(dto => dto.CoverImagePath, opt => opt.MapFrom(i => i.Select(f => f.ImgFileKey).FirstOrDefault()));
+                .ForMember(dto => dto.CoverImagePath, opt => opt.MapFrom(i => i.Select(f => ResourceUrl.ImgBucket.ToUrl() + f.ImgFileKey).FirstOrDefault()));
         }
     }
 }
