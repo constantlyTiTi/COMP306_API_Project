@@ -1,28 +1,31 @@
-﻿using ServiceStack.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
-namespace apiProject.Models
+namespace apiProject.DTO
 {
-    [Table("Item")]
-    public class Item
+    public class ItemDTO
     {
-        [PrimaryKey]
         public long ItemId { get; set; }
-        [ServiceStack.DataAnnotations.ForeignKey(typeof(User))]
+        [JsonPropertyName("uploader")]
         public string UserName { get; set; }
+        [JsonPropertyName("upload_item_date_time")]
         public DateTime UploadItemDateTime { get; set; }
-        [System.ComponentModel.DataAnnotations.Required]
+        [Required]
+        [JsonPropertyName("item_name")]
         public string ItemName { get; set; }
         public string Category { get; set; }
         public string Description { get; set; }
-        [System.ComponentModel.DataAnnotations.Required]
+        [Required]
         public double Price { get; set; }
-        [System.ComponentModel.DataAnnotations.Required]
+
+        [Required]
+        [JsonPropertyName("location_postal_code")]
         public string LocationPostalCode { get; set; }
+        [JsonPropertyName("item_imgs")]
+        public ICollection<IFormFile> ItemImages { get; set; }
     }
+
 }

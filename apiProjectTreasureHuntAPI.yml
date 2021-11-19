@@ -96,7 +96,7 @@ paths:
         - name: items_per_page
           in: query
           schema:
-            type: int
+            type: integer
         - name: next_cursor
           in: query
           schema:
@@ -135,42 +135,17 @@ paths:
                           type: string
                         category:
                           type: string
-                        item_cover_path:
-                          type: string
                         description: 
                           type: string
                         price: 
                           type: number
                         location_postal_code:
                           type: string
-  /item:
+  /Item/post-item:
     post:
       description: upload item
       requestBody:
-        required: true
-        content:
-          application/json:
-              schema:
-                type: object
-                required:
-                  - item
-                properties:
-                  uploader:
-                    type: string
-                  upload_item_date_time:
-                    type: string
-                  item_name:
-                    type: string
-                  category:
-                    type: string
-                  item_cover_path:
-                    type: string
-                  description: 
-                    type: string
-                  price: 
-                    type: number
-                  location_postal_code:
-                    type: string
+        - $ref: '#/components/requestBody/item_form'
       responses:      
         '200':
           description: item is created
@@ -191,14 +166,16 @@ paths:
                     type: string
                   category:
                     type: string
-                  item_cover_path:
-                    type: string
                   description: 
                     type: string
                   price: 
                     type: number
                   location_postal_code:
-                    type: string                      
+                    type: string
+                  item_imgs:
+                    type: array
+                    items:
+                      type: string                      
   /item/items:            
     get:
       description: Returns a list of stuff alike item name
@@ -244,8 +221,6 @@ paths:
                         item_name:
                           type: string
                         category:
-                          type: string
-                        item_cover_path:
                           type: string
                         description: 
                           type: string
@@ -296,8 +271,6 @@ paths:
                           type: string
                         category:
                           type: string
-                        item_cover_path:
-                          type: string
                         description: 
                           type: string
                         price: 
@@ -338,8 +311,6 @@ paths:
                     type: string
                   category:
                     type: string
-                  item_cover_path:
-                    type: string
                   description: 
                     type: string
                   price: 
@@ -378,8 +349,6 @@ paths:
                   type: string
                 category:
                   type: string
-                item_cover_path:
-                  type: string
                 description: 
                   type: string
                 price: 
@@ -405,8 +374,6 @@ paths:
                   item_name:
                     type: string
                   category:
-                    type: string
-                  item_cover_path:
                     type: string
                   description: 
                     type: string
@@ -475,8 +442,6 @@ paths:
                         item_name:
                           type: string
                         category:
-                          type: string
-                        item_cover_path:
                           type: string
                         description: 
                           type: string
@@ -555,8 +520,6 @@ paths:
                                   type: string
                                 category:
                                   type: string
-                                item_cover_path:
-                                  type: string
                                 description: 
                                   type: string
                                 price: 
@@ -613,8 +576,6 @@ paths:
                          type: string
                        category:
                          type: string
-                       item_cover_path:
-                         type: string
                        description: 
                          type: string
                        price: 
@@ -660,8 +621,6 @@ paths:
                          item_name:
                            type: string
                          category:
-                           type: string
-                         item_cover_path:
                            type: string
                          description: 
                            type: string
@@ -777,8 +736,6 @@ paths:
                           type: string
                         category:
                           type: string
-                        item_cover_path:
-                          type: string
                         description: 
                           type: string
                         price: 
@@ -786,4 +743,33 @@ paths:
                         location_postal_code:
                           type: string 
                         quantity:
-                          type: integer   
+                          type: integer  
+  components:
+    requestBody:
+      item_form:
+        required: true
+        content:
+          application/json:
+              schema:
+                type: object
+                required:
+                  - item_form
+                properties:
+                  uploader:
+                    type: string
+                  upload_item_date_time:
+                    type: string
+                  item_name:
+                    type: string
+                  category:
+                    type: string
+                  description: 
+                    type: string
+                  price: 
+                    type: number
+                  location_postal_code:
+                    type: string
+                  item_imgs:
+                    type: array
+                    items:
+                      type: string 

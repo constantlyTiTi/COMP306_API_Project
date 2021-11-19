@@ -13,7 +13,11 @@ namespace apiProject.Models
         public long ItemFileId { get; set; }
         public long ItemId { get; set; }
         public string ImgFileKey { get; set; }
-        public string ImgDescription { get; set; }
 
+        public ItemFile(long itemId, string imgFileKey)
+        {
+            ItemId = itemId;
+            ImgFileKey = imgFileKey;
+        }
     }
 }

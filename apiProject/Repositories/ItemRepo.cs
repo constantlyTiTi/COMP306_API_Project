@@ -77,5 +77,14 @@ namespace apiProject.Repositories
             });
             return await task;
         }
+
+        public async Task UpdateItem(Item item)
+        {
+            var findObj = await _db.Item.FindAsync(item.ItemId);
+            findObj.ItemName = item.ItemName;
+            findObj.LocationPostalCode = item.LocationPostalCode;
+            findObj.Price = item.Price;
+            _db.SaveChanges();
+        }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
+using Amazon.S3;
+using apiProject.DAL;
 using apiProject.DBContexts;
 using apiProject.Interfaces;
 using apiProject.Models;
@@ -12,8 +14,8 @@ namespace apiProject.Repositories
     public class UnitOfWork:IUnitOfWork
     {
         private readonly MSSQLDbContext _db;
-
-        public UnitOfWork(MSSQLDbContext db)
+        private readonly IAmazonS3 _s3;
+        public UnitOfWork(MSSQLDbContext db, IAmazonS3 s3)
         {
             _db = db;
             Rate = new RateRepo(_db);
@@ -23,6 +25,8 @@ namespace apiProject.Repositories
             OrderDetails = new OrderDetailsRepo(_db);
             ItemFile = new ItemFileRepo(_db);
             Item = new ItemRepo(_db);
+            S3Services = new S3Sevices(s3);
+
         }
 
         public IRateRepo Rate { get; set; }
@@ -32,6 +36,7 @@ namespace apiProject.Repositories
         public IOrderDetailsRepo OrderDetails { get; set; }
         public IItemFileRepo ItemFile { get; set; }
         public IItemRepo Item { get; set; }
+        public IS3Services S3Services { get; set; }
 
         public void Dispose()
         {
@@ -43,9 +48,9 @@ namespace apiProject.Repositories
             await _db.DisposeAsync();
         }
 
-        public async Task Save()
+        public void Save()
         {
-            await _db.SaveChangesAsync();
+            _db.SaveChanges();
         }
 
     }

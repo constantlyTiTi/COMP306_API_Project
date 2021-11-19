@@ -68,11 +68,6 @@ namespace apiProject
             services.AddDbContext<MSSQLDbContext>(opt => opt.UseSqlServer(connectionString));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-/*            services.AddScoped<IRateRepo, RateRepo>();
-            services.AddScoped<IOrderDetailsRepo, OrderDetailsRepo>();
-            services.AddScoped<IOrderItemRepo, OrderItemRepo>();
-            services.AddScoped<IItemFileRepo, ItemFileRepo>();
-            services.AddScoped<IUserRepo, UserRepo>();*/
 
             services.AddMvc(config =>
             {
