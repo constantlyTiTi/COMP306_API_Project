@@ -145,7 +145,32 @@ paths:
     post:
       description: upload item
       requestBody:
-        - $ref: '#/components/requestBody/item_form'
+        required: true
+        content:
+          application/json:
+              schema:
+                type: object
+                required:
+                  - item_form
+                properties:
+                  uploader:
+                    type: string
+                  upload_item_date_time:
+                    type: string
+                  item_name:
+                    type: string
+                  category:
+                    type: string
+                  description: 
+                    type: string
+                  price: 
+                    type: number
+                  location_postal_code:
+                    type: string
+                  item_imgs:
+                    type: array
+                    items:
+                      type: string
       responses:      
         '200':
           description: item is created
@@ -178,16 +203,33 @@ paths:
                       type: string                      
   /item/items:            
     get:
-      description: Returns a list of stuff alike item name
+      description: 'Returns a list of stuff alike query parameters, dateTime will be the same date, category will be the same category, each parameter can be filtered alone, 
+      can filter by both item_name and postal_code'
       parameters:
-        - name: itemname
+        - name: item_name
           in: query
           schema:
             type: string 
         - name: postal_code
           in: query
           schema:
-            type: string             
+            type: string    
+        - name: date_time
+          in: query
+          schema:
+            type: string 
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: items_per_page
+          in: query
+          schema:
+            type: integer
+        - name: next_cursor
+          in: query
+          schema:
+            type: string                         
       responses:
         '200':
           description: Successful response
@@ -744,32 +786,4 @@ paths:
                           type: string 
                         quantity:
                           type: integer  
-  components:
-    requestBody:
-      item_form:
-        required: true
-        content:
-          application/json:
-              schema:
-                type: object
-                required:
-                  - item_form
-                properties:
-                  uploader:
-                    type: string
-                  upload_item_date_time:
-                    type: string
-                  item_name:
-                    type: string
-                  category:
-                    type: string
-                  description: 
-                    type: string
-                  price: 
-                    type: number
-                  location_postal_code:
-                    type: string
-                  item_imgs:
-                    type: array
-                    items:
-                      type: string 
+                           

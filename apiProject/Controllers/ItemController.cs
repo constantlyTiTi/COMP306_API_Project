@@ -45,28 +45,12 @@ namespace apiProject.Controllers
         }
 
         [HttpGet("all-item")]
-        public IActionResult Get(int total = 10, string next_cursor = "0")
+        public IActionResult Get(int items_per_page = 10, string next_cursor = "0")
         {
             var items_all =  _unitOfWork.Item.GetAll();
-            List<Item> items = null;
-            if (!items_all.Any())
-            {
-                var model = new ErrorMsg { Error = "no item is found" };
-                return NotFound(model);
-            }
-            int totalItems = items_all.Count();
-            int startIndex = int.Parse(next_cursor) * 10;
-            if(startIndex + total < totalItems)
-            {
-                items = items_all.ToList().GetRange(startIndex, total);
-            }
-            else
-            {
-                items = items_all.ToList().GetRange(startIndex, totalItems - startIndex);
-            }
 
-            Paginate paginate = new Paginate(total, next_cursor);
-            ItemList itemList = _mapper.Map<ItemList>(items);
+            Paginate paginate = new Paginate(items_per_page, next_cursor);
+            ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(items_all, items_per_page, next_cursor));
             _mapper.Map(paginate, itemList);
 
             return Ok(itemList);
@@ -102,23 +86,83 @@ namespace apiProject.Controllers
             }
             return Ok(item_form);
         }
-
-        // POST api/<ItemController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpGet("/items")]
+        public IActionResult FilterItems(string item_name = "", string postal_code = "", 
+            DateTime? upload_date_time = null, string category = "", int items_per_page = 10, string next_cursor = "0")
         {
+            if(!string.IsNullOrWhiteSpace(item_name) && !string.IsNullOrWhiteSpace(postal_code))
+            {
+                var items_all = _unitOfWork.Item.GetItemByItemNamePostalCode(item_name,postal_code).Result;
+
+                Paginate paginate = new Paginate(items_per_page, next_cursor);
+                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(items_all, items_per_page, next_cursor));
+                _mapper.Map(paginate, itemList);
+
+                return Ok(itemList);
+            }
+
+            if (!string.IsNullOrWhiteSpace(item_name))
+            {
+                var items_all = _unitOfWork.Item.GetItemByItemName(item_name).Result;
+
+                Paginate paginate = new Paginate(items_per_page, next_cursor);
+                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(items_all, items_per_page, next_cursor));
+                _mapper.Map(paginate, itemList);
+
+                return Ok(itemList);
+            }
+
+            if (!string.IsNullOrWhiteSpace(category))
+            {
+                var items_all = _unitOfWork.Item.GetItemByCategory(category).Result;
+
+                Paginate paginate = new Paginate(items_per_page, next_cursor);
+                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(items_all, items_per_page, next_cursor));
+                _mapper.Map(paginate, itemList);
+
+                return Ok(itemList);
+            }
+
+            if (!string.IsNullOrWhiteSpace(postal_code))
+            {
+                var items_all = _unitOfWork.Item.GetItemByLocation(postal_code).Result;
+
+                Paginate paginate = new Paginate(items_per_page, next_cursor);
+                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(items_all, items_per_page, next_cursor));
+                _mapper.Map(paginate, itemList);
+
+                return Ok(itemList);
+            }
+
+                if (upload_date_time != null)
+            {
+                var items_all = _unitOfWork.Item.GetItemByUploadedDateTime(upload_date_time.Value, upload_date_time.Value.AddDays(1)).Result;
+
+                Paginate paginate = new Paginate(items_per_page, next_cursor);
+                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(items_all, items_per_page, next_cursor));
+                _mapper.Map(paginate, itemList);
+
+                return Ok(itemList);
+            }
+
+            var model = new ErrorMsg { Error = "invalid filter condition" };
+            return BadRequest(model);
         }
 
-        // PUT api/<ItemController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        private List<Item> GetItemsPerPage(IEnumerable<Item> items_all, int items_per_page, string next_cursor)
         {
-        }
-
-        // DELETE api/<ItemController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            List<Item> items = null;
+            int totalItems = items_all.Count();
+            int startIndex = int.Parse(next_cursor) * 10;
+            if (startIndex + items_per_page < totalItems)
+            {
+                items = items_all.ToList().GetRange(startIndex, items_per_page);
+            }
+            else
+            {
+                items = items_all.ToList().GetRange(startIndex, totalItems - startIndex);
+            }
+            return items;
         }
     }
 }
