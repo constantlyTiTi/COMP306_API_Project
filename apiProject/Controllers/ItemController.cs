@@ -67,7 +67,7 @@ namespace apiProject.Controllers
                 {
                     _unitOfWork.S3Services.SaveImgs(fileKey, stream);
                 }
-                ItemFile itemFile = new ItemFile(item_form.ItemId, fileKey);
+                ItemFile itemFile = new ItemFile(item_form.ItemId, @"https://comp306-lab03.s3.amazonaws.com/img/"+fileKey);
                 _unitOfWork.ItemFile.Add(itemFile);
                 _unitOfWork.Save();
             }
@@ -149,6 +149,25 @@ namespace apiProject.Controllers
             return Ok(itemList);
         }
 
+        [HttpGet("/{uploaderusername}/{itemid}")]
+        public IActionResult FilterItemsByUploaderAndItemId(string uploaderusername, long itemid)
+        {
+            Item item = _unitOfWork.Item.Get(itemid);
+            if(item == null)
+            {
+                return NotFound();
+            }
+            if(item.UserName != uploaderusername)
+            {
+                var model = new ErrorMsg { Error = "The item is not uploaded by you" };
+                return BadRequest(model);
+            }
+            var itemFiles = _unitOfWork.ItemFile.GetItemByItemId(itemid).Result;
+            ItemDTO itemDTO = _mapper.Map<ItemDTO>(itemFiles);
+            _mapper.Map(item, itemDTO);
+
+            return Ok(itemDTO);
+        }
 
         private List<Item> GetItemsPerPage(IEnumerable<Item> items_all, int items_per_page, string next_cursor)
         {

@@ -12,6 +12,8 @@ namespace apiProject.Models
     {
         public long ItemFileId { get; set; }
         public long ItemId { get; set; }
+
+        [Column("FilePath")]
         public string ImgFileKey { get; set; }
 
         public ItemFile(long itemId, string imgFileKey)
