@@ -1,21 +1,15 @@
-﻿using apiProject.DBContexts;
-using apiProject.DTO;
+﻿using apiProject.DTO;
 using apiProject.DTO.Responses;
 using apiProject.Interfaces;
 using apiProject.Models;
+using apiProject.TokenAuth;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace apiProject.Controllers
@@ -30,15 +24,17 @@ namespace apiProject.Controllers
         private readonly ProjectPSConfig _psConfig;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ITokenManager _tokenManger;
          
         public HomeController(IUnitOfWork unitOfWork, SignInManager<IdentityUser> signInManager, 
-            IMapper mapper, IOptions<ProjectPSConfig> options, UserManager<IdentityUser> userManager)
+            IMapper mapper, IOptions<ProjectPSConfig> options, UserManager<IdentityUser> userManager, ITokenManager tokenManger)
         {
             _unitOfWork = unitOfWork;
             _signInManager = signInManager;
             _mapper = mapper;
             _psConfig = options.Value;
             _userManager = userManager;
+            _tokenManger = tokenManger;
         }
 
         [HttpPost("login")]
@@ -76,9 +72,9 @@ namespace apiProject.Controllers
                 });
             }
 
-            var jwtToken = GenerateJwtToken(existingUser);
+            var jwtToken = _tokenManger.GenerateJwtToken(existingUser, _psConfig);
 
-            User user = _unitOfWork.User.GetUser(loginUser.UserName, loginUser.Password).GetAwaiter().GetResult();
+            User user = _unitOfWork.User.GetUser(loginUser.UserName).GetAwaiter().GetResult();
             loginUser = _mapper.Map<UserInfor>(user);
             loginUser.Token = jwtToken;
             return Ok(loginUser);
@@ -114,7 +110,7 @@ namespace apiProject.Controllers
             {
                 User user = _mapper.Map<User>(newUser);
                 _unitOfWork.User.AddUser(user);
-                var jwtToken = GenerateJwtToken(newUser);
+                var jwtToken = _tokenManger.GenerateJwtToken(existingUser, _psConfig);
 
                 resgiterUser.Token = jwtToken;
 
@@ -134,7 +130,7 @@ namespace apiProject.Controllers
 
         }
 
-        private string GenerateJwtToken(IdentityUser user)
+        /*private string GenerateJwtToken(IdentityUser user)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_psConfig.JwtSecretToken);
@@ -157,7 +153,8 @@ namespace apiProject.Controllers
 
             return jwtToken;
 
-        }
+        }*/
+
 
     }
 

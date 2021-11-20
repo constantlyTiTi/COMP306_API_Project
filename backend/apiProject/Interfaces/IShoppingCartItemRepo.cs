@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace apiProject.Interfaces
 {
-    public interface IShoppingCartItemRepo: IMSSQLRepo<ShoppingCartItemRepo>
+    public interface IShoppingCartItemRepo: IMSSQLRepo<ShoppingCartItem>
     {
         void UpdateItemQuantity(long itemId, int quantity, string userName);
         void DeleteItem(long itemId, string userName);

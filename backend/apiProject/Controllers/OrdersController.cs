@@ -3,6 +3,7 @@ using apiProject.Interfaces;
 using apiProject.Models;
 using apiProject.Models.Enums;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,6 +17,7 @@ namespace apiProject.Controllers
 {
     [Route("order")]
     [ApiController]
+    [Authorize]
     public class OrdersController : ControllerBase
     {
         /*private readonly UserManager<User> _userManager;*/

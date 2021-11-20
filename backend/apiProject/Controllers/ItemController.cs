@@ -258,11 +258,6 @@ namespace apiProject.Controllers
             return Ok();
         }
 
-
-
-
-
-
         private List<ItemDTO> GetItemsPerPage(IEnumerable<ItemDTO> items_all, int items_per_page, string next_cursor)
         {
             List<ItemDTO> items = null;

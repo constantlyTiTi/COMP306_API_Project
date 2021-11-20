@@ -28,6 +28,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using apiProject.TokenAuth;
 
 namespace apiProject
 {
@@ -109,6 +110,7 @@ namespace apiProject
                 ).AddEntityFrameworkStores<MSSQLDbContext>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ITokenManager, TokenManager>();
 
             services.AddMvc(config =>
             {
