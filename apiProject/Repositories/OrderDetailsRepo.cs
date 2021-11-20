@@ -16,12 +16,63 @@ namespace apiProject.Repositories
             _db = db;
         }
 
-        public async Task<IEnumerable<OrderDetails>> GetAllOrdersByDateTime(DateTime startTime, DateTime endTime)
+        public async Task<IEnumerable<OrderDetails>> GetAllOrdersByDateTime(DateTime? startTime, DateTime? endTime, string userName = "")
         {
-            var task = Task.Factory.StartNew(() =>
+            Task<IEnumerable<OrderDetails>> task = Task.Factory.StartNew(()=> { return new List<OrderDetails>().AsEnumerable(); });
+
+            if(startTime == null && endTime == null && !string.IsNullOrWhiteSpace(userName))
             {
-                return (IEnumerable<OrderDetails>)_db.OrderDetail.Where(o => o.OrderTime >= startTime && o.OrderTime < endTime).ToList();
-            });
+                task = Task.Factory.StartNew(() =>
+                {
+                    return (IEnumerable<OrderDetails>)_db.OrderDetail.Where(o => o.UserName == userName).ToList();
+                });
+            }
+
+            if (startTime != null && endTime != null && string.IsNullOrWhiteSpace(userName))
+            {
+                task = Task.Factory.StartNew(() =>
+                {
+                    return (IEnumerable<OrderDetails>)_db.OrderDetail.Where(o => o.OrderTime >= startTime.Value && o.OrderTime < endTime.Value).ToList();
+                });
+            }
+            if (startTime != null && endTime != null && !string.IsNullOrWhiteSpace(userName))
+            {
+                task = Task.Factory.StartNew(() =>
+                {
+                    return (IEnumerable<OrderDetails>)_db.OrderDetail.Where(o => o.OrderTime >= startTime.Value && o.OrderTime < endTime.Value && o.UserName == userName).ToList();
+                });
+            }
+
+            if (startTime != null && string.IsNullOrWhiteSpace(userName))
+            {
+                task = Task.Factory.StartNew(() =>
+                {
+                    return (IEnumerable<OrderDetails>)_db.OrderDetail.Where(o => o.OrderTime >= startTime.Value).ToList();
+                });
+            }
+            if (startTime != null && !string.IsNullOrWhiteSpace(userName))
+            {
+                task = Task.Factory.StartNew(() =>
+                {
+                    return (IEnumerable<OrderDetails>)_db.OrderDetail.Where(o => o.OrderTime >= startTime.Value && o.UserName == userName).ToList();
+                });
+            }
+            if (endTime != null && string.IsNullOrWhiteSpace(userName))
+            {
+                task = Task.Factory.StartNew(() =>
+                {
+                    return (IEnumerable<OrderDetails>)_db.OrderDetail.Where(o => o.OrderTime < endTime.Value).ToList();
+                });
+            }
+
+            if (endTime != null && !string.IsNullOrWhiteSpace(userName))
+            {
+                task = Task.Factory.StartNew(() =>
+                {
+                    return (IEnumerable<OrderDetails>)_db.OrderDetail.Where(o => o.OrderTime < endTime.Value && o.UserName == userName).ToList();
+                });
+            }
+
             return await task;
               
         }

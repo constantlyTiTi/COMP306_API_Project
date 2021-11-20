@@ -1,4 +1,5 @@
 ﻿using apiProject.DTO;
+using apiProject.Models.Enums;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -13,12 +14,15 @@ namespace apiProject.Models
     {
         public ModelMapper()
         {
-            //orderRate
-            CreateMap<IEnumerable<OrderItem>, OrderRate>().ForMember(dto => dto.OrderItems, opt => opt.MapFrom(src => src));
-            CreateMap<OrderDetails, OrderRate>().ForMember(dto => dto.OrderDetails, opt => opt.MapFrom(src => src));
-            CreateMap<Rate, OrderRate>().ForMember(dto => dto.Rate, opt => opt.MapFrom(src => src));
-            CreateMap<IEnumerable<Item>, OrderRate>().ForMember(dto => dto.Items, opt => opt.MapFrom(src => src));
-            CreateMap<IEnumerable<ItemFile>, OrderRate>().ForMember(dto => dto.ItemCovers, opt => opt.MapFrom(src => src));
+            //OrderDetails
+            CreateMap<ShoppingCartDTO, OrderDetails>()
+                .ForMember(dto => dto.OrderTime, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dto => dto.TotalCost, opt => opt.MapFrom(src => src.ShoppingCartItems.Select(s => s.Price * s.Quantity).Sum()))
+                .ForMember(dto =>dto.UserName, opt => opt.MapFrom(src=>src.UserName))
+                .ForMember(dto=>dto.Status, opt=>opt.MapFrom(src=> OrderStatus.Preparing.ToString()));
+            //OrderList
+            CreateMap<IEnumerable<OrderDetails>, OrderList>().ForMember(dto => dto.Orders, opt => opt.MapFrom(src => src));
+            CreateMap<Paginate, OrderList>().ForMember(dto => dto.Paginate, opt => opt.MapFrom(src => src));
             //ItemList
             CreateMap<IEnumerable<ItemDTO>, ItemList>().ForMember(dto => dto.Items, opt => opt.MapFrom(src => src));
             CreateMap<Paginate, ItemList>().ForMember(dto => dto.Paginate, opt => opt.MapFrom(src => src));
@@ -26,9 +30,9 @@ namespace apiProject.Models
             CreateMap<IEnumerable<ItemFile>, ItemDetails>().ForMember(dto => dto.ItemFiles, opt => opt.MapFrom(src => src));
             CreateMap<Item, ItemDetails>().ForMember(dto => dto.Item, opt => opt.MapFrom(src => src));
             //ShoppingCart
-            CreateMap<IEnumerable<ShoppingCartItem>, ShoppingCart>()
+            CreateMap<IEnumerable<ShoppingCartItem>, ShoppingCartDTO>()
                 .ForMember(dto => dto.ShoppingCartItems, opt => opt.MapFrom(src => src))
-                .ForMember(dto => dto.TotalCost, opt => opt.MapFrom(src => src.Sum(i=>i.Item.Price)));
+                .ForMember(dto => dto.TotalCost, opt => opt.MapFrom(src => src.Sum(i=>i.Price)));
             //UserInfor
             CreateMap<User, UserInfor>()
                 .ForMember(dto => dto.UserName, opt => opt.MapFrom(u => u.UserName))

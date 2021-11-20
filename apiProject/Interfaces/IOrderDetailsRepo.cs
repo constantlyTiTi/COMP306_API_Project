@@ -11,6 +11,6 @@ namespace apiProject.Interfaces
         Task<IEnumerable<OrderDetails>> GetOrderByOrderedTime(DateTime startTime, DateTime endTime, string userName);
         Task UpdateOrder(OrderDetails order);
         Task<IEnumerable<OrderDetails>> GetAllOrdersByUserName(string userName);
-        Task<IEnumerable<OrderDetails>> GetAllOrdersByDateTime(DateTime startTime, DateTime endTime);
+        Task<IEnumerable<OrderDetails>> GetAllOrdersByDateTime(DateTime? startTime, DateTime? endTime, string userName = "");
     }
 }

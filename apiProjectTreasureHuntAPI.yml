@@ -489,7 +489,7 @@ paths:
                 properties:
                   message: 
                     type: string
-  /order:
+  /order/post-order:
    post:
      description: create order from shopping cart
      requestBody:

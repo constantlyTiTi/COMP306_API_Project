@@ -26,6 +26,7 @@ namespace apiProject.Repositories
             ItemFile = new ItemFileRepo(_db);
             Item = new ItemRepo(_db);
             S3Services = new S3Sevices(s3);
+            ShoppingCartItems = new ShoppingCartItemRepo(_db);
 
         }
 
@@ -37,6 +38,7 @@ namespace apiProject.Repositories
         public IItemFileRepo ItemFile { get; set; }
         public IItemRepo Item { get; set; }
         public IS3Services S3Services { get; set; }
+        public IShoppingCartItemRepo ShoppingCartItems { get; set; }
 
         public void Dispose()
         {

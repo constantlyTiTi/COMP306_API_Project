@@ -1,4 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using apiProject.DTO;
+using apiProject.Interfaces;
+using apiProject.Models;
+using apiProject.Models.Enums;
+using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,40 +14,53 @@ using System.Threading.Tasks;
 
 namespace apiProject.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("order")]
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        // GET: api/<OrdersController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public OrdersController(IUnitOfWork unitOfWork, SignInManager<IdentityUser> signInManager, IMapper mapper)
         {
-            return new string[] { "value1", "value2" };
+            _unitOfWork = unitOfWork;
+            _signInManager = signInManager;
+            _mapper = mapper;
+        }
+        [HttpPost("place-order")]
+        public async Task<IActionResult> PlaceOrder(ShoppingCartDTO shoppingCart)
+        {
+            await _unitOfWork.ShoppingCartItems.RemoveAll(shoppingCart.UserName);
+            OrderDetails Order = _mapper.Map<OrderDetails>(shoppingCart);
+            _unitOfWork.OrderDetails.Add(Order);
+            OrderDetails addedOrder = _unitOfWork.OrderDetails.GetAllOrdersByUserName(Order.UserName).Result.Last();
+            return Ok(addedOrder);
         }
 
-        // GET api/<OrdersController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{username}")]
+        public IActionResult GetOrders(string username, DateTime? start_date = null, DateTime? end_date = null, 
+            int items_per_page = 10, string next_cursor = "0")
         {
-            return "value";
+            Paginate paginate = new Paginate(items_per_page, next_cursor);
+            OrderList orderList = _mapper.Map<OrderList>(paginate);
+            IEnumerable<OrderDetails> orders = _unitOfWork.OrderDetails.GetAllOrdersByDateTime(start_date, end_date, username).Result;
+            _mapper.Map(orders, orderList);
+            return Ok(orderList);
         }
 
-        // POST api/<OrdersController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpDelete("{username}")]
+        public IActionResult DeleteOrder(string username, long order_id)
         {
+            if(_unitOfWork.OrderDetails.Get(order_id).UserName != username)
+            {
+                var model = new ErrorMsg { Error = "You are not allow to modify this order" };
+                return BadRequest(model);
+            }
+            _unitOfWork.OrderDetails.Remove(order_id);
+            return Ok();
         }
 
-        // PUT api/<OrdersController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<OrdersController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

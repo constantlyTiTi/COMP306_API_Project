@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace apiProject.Controllers
 {
-    [Route("[controller]")]
+    [Route("item")]
     [ApiController]
     public class ItemController : ControllerBase
     {
@@ -75,7 +75,7 @@ namespace apiProject.Controllers
             return Ok(item_form);
         }
         
-        [HttpGet("/items")]
+        [HttpGet("items")]
         public IActionResult FilterItems(string item_name = "", string postal_code = "", 
             DateTime? upload_date_time = null, string category = "", int items_per_page = 10, string next_cursor = "0")
         {
@@ -139,7 +139,7 @@ namespace apiProject.Controllers
             return BadRequest(model);
         }
 
-        [HttpGet("/items/{uploaderusername}")]
+        [HttpGet("items/{uploaderusername}")]
         public IActionResult FilterItemsByUploader(string uploaderusername, int items_per_page = 10, string next_cursor = "0")
         {
             var items_all = _unitOfWork.Item.GetItemByUserName(uploaderusername).Result;
@@ -151,7 +151,7 @@ namespace apiProject.Controllers
             return Ok(itemList);
         }
 
-        [HttpGet("/{itemid}")]
+        [HttpGet("{itemid}")]
         public IActionResult FilterItemsByUploaderAndItemId( long itemid)
         {
             Item item = _unitOfWork.Item.Get(itemid);
@@ -166,7 +166,7 @@ namespace apiProject.Controllers
             return Ok(itemDTO);
         }
 
-        [HttpPut("/{uploaderusername}/{itemid}")]
+        [HttpPut("{uploaderusername}/{itemid}")]
         public IActionResult UpdateItem(string uploaderusername, long itemid, ItemDTO itemDTO)
         {
             Item item = _unitOfWork.Item.Get(itemid);
@@ -215,7 +215,7 @@ namespace apiProject.Controllers
             return Ok(itemDTO);
         }
 
-        [HttpDelete("/{uploaderusername}/{itemid}")]
+        [HttpDelete("{uploaderusername}/{itemid}")]
         public IActionResult DeleteItem(string uploaderusername, long itemid)
         {
             Item item = _unitOfWork.Item.Get(itemid);
