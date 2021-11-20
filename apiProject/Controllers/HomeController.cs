@@ -4,25 +4,29 @@ using apiProject.Interfaces;
 using apiProject.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 
 namespace apiProject.Controllers
 {
     [AllowAnonymous]
     [ApiController]
-    [Route("[controller]")]
+    [Route("home")]
     public class HomeController : ControllerBase
     {
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IMapper _mapper;
-        private readonly MSSQLDbContext _db;
         private readonly IUnitOfWork _unitOfWork;
-        public HomeController(IMapper mapper, MSSQLDbContext db, IUnitOfWork unitOfWork)
+         
+        public HomeController(IUnitOfWork unitOfWork, SignInManager<IdentityUser> signInManager, IMapper mapper)
         {
-            _mapper = mapper;
-            _db = db;
             _unitOfWork = unitOfWork;
+            _signInManager = signInManager;
+            _mapper = mapper;
         }
 
         [HttpPost("login")]
@@ -34,21 +38,33 @@ namespace apiProject.Controllers
                 {
                     return BadRequest(ModelState);
                 }
+
                 User user = _unitOfWork.User.GetUser(loginUser.UserName, loginUser.Password).GetAwaiter().GetResult();
                 loginUser = _mapper.Map<UserInfor>(user);
-
                 return Ok(loginUser);
+/*                var result = await _signInManager.PasswordSignInAsync(loginUser.UserName, loginUser.Password, true, true);
+                if (result.Succeeded)
+                {
+                    return Ok(loginUser);
+                }*/
+/*                else
+                {
+                    var model = new ErrorMsg { Error = "Cannot find the user" };
+                    return NotFound(model);
+                }*/
+
             }
             catch (Exception e)
             {
                 var model = new ErrorMsg { Error = e.Message };
-                return NotFound(model);
+                return BadRequest(model);
             }
         }
 
         [HttpPost("Register")]
         public IActionResult Register(UserInfor resgiterUser)
         {
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

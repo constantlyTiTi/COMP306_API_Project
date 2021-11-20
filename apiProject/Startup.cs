@@ -23,6 +23,8 @@ using System.Threading.Tasks;
 using Microsoft.OpenApi.Models;
 using Amazon.SimpleSystemsManagement;
 using Amazon.SimpleSystemsManagement.Model;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace apiProject
 {
@@ -75,29 +77,50 @@ namespace apiProject
                 config.FormatterMappings.SetMediaTypeMappingForFormat("js", "application/json");
             });
 
+            //registers authentication services and handlers for cookie and JWT bearer authentication schemes
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options => Configuration.Bind("JwtSettings", options))
+                    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options => Configuration.Bind("CookieSettings", options));
+
+            //register the Identity related services. To do that we use the AddIdentity extension method
+            services.AddIdentity<IdentityUser, IdentityRole>(
+                options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                }
+                ).AddEntityFrameworkStores<MSSQLDbContext>();
+
             // Add Role services to Identity
-            /*services.AddDefaultIdentity<User>(
-                options => {
-                    options.SignIn.RequireConfirmedAccount = true;
+            services.Configure<IdentityOptions>(
+                options =>
+                {
+                    // Password settings.
                     options.Password.RequireDigit = true;
-                    options.Password.RequiredLength = 6;
-                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireLowercase = true;
+                    options.Password.RequireNonAlphanumeric = true;
                     options.Password.RequireUppercase = true;
-                    options.Password.RequireLowercase = false;
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequiredUniqueChars = 1;
+
+                    // Lockout settings.
                     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                     options.Lockout.MaxFailedAccessAttempts = 5;
+                    options.Lockout.AllowedForNewUsers = true;
 
-                })
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<MSSQLDbContext>();*/
+                    // User settings.
+                    options.User.AllowedUserNameCharacters =
+                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                    options.User.RequireUniqueEmail = false;
+
+                });
             //Cookie Authentication middleware redirects the User, if he is not authenticated
-            /*services.ConfigureApplicationCookie(options =>
+             services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.HttpOnly = true;
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-                options.LoginPath = "/Identity/Login";
+                options.LoginPath = "/home/login";
                 options.LogoutPath = "/";
-                options.AccessDeniedPath = "/Identity/AccessDenied";
+/*                options.AccessDeniedPath = "/Identity/AccessDenied";*/
                 options.SlidingExpiration = true;
             });
             //Require authenticated users
@@ -106,7 +129,7 @@ namespace apiProject
                 options.FallbackPolicy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .Build();
-            });*/
+            });
 
         }
 
