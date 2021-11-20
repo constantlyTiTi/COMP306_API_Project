@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace apiProject.Repositories
 {
-    public class ShoppingCartItemRepo : MSSQLRepo<ShoppingCartItemRepo>, IShoppingCartItemRepo
+    public class ShoppingCartItemRepo : MSSQLRepo<ShoppingCartItem>, IShoppingCartItemRepo
     {
         private readonly MSSQLDbContext _db;
         public ShoppingCartItemRepo(MSSQLDbContext db):base(db)

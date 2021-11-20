@@ -29,16 +29,12 @@ namespace apiProject.Repositories
              
         }*/
 
-        public async Task<User> GetUser(string userName, string password)
+        public async Task<User> GetUser(string userName)
         {
             var findObj = await _db.FindAsync<User>(userName);
             if(findObj == null)
             {
                 throw new Exception("User name cannot be found");
-            }
-            if(findObj.Password != password)
-            {
-                throw new Exception("Password does not match our record");
             }
             return findObj;
         }

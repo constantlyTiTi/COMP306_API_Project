@@ -13,5 +13,6 @@ namespace apiProject.Models
         public string AccessKeyID { get; set; }
         public string SecretAccessKey { get; set; }
         public string ConnectionString { get; set; }
+        public string JwtSecretToken { get; set; }
     }
 }
