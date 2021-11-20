@@ -18,7 +18,7 @@ namespace apiProject.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
+        /*private readonly UserManager<User> _userManager;*/
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;

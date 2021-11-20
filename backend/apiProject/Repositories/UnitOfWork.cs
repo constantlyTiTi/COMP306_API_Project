@@ -14,7 +14,6 @@ namespace apiProject.Repositories
     public class UnitOfWork:IUnitOfWork
     {
         private readonly MSSQLDbContext _db;
-        private readonly IAmazonS3 _s3;
         public UnitOfWork(MSSQLDbContext db, IAmazonS3 s3)
         {
             _db = db;

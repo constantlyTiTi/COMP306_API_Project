@@ -46,7 +46,9 @@ namespace apiProject.Controllers
             return Ok(itemList);
         }
 
+        [Authorize]
         [HttpPost("post-item")]
+        [RequestSizeLimit(40000000)]
         public IActionResult PostNewItem(ItemDTO item_form)
         {
             if (!ModelState.IsValid)
@@ -76,7 +78,8 @@ namespace apiProject.Controllers
             }
             return Ok(item_form);
         }
-        
+
+        [AllowAnonymous]
         [HttpGet("items")]
         public IActionResult FilterItems(string item_name = "", string postal_code = "", 
             DateTime? upload_date_time = null, string category = "", int items_per_page = 10, string next_cursor = "0")
@@ -141,6 +144,7 @@ namespace apiProject.Controllers
             return BadRequest(model);
         }
 
+        [Authorize]
         [HttpGet("items/{uploaderusername}")]
         public IActionResult FilterItemsByUploader(string uploaderusername, int items_per_page = 10, string next_cursor = "0")
         {
@@ -153,8 +157,9 @@ namespace apiProject.Controllers
             return Ok(itemList);
         }
 
+        [AllowAnonymous]
         [HttpGet("{itemid}")]
-        public IActionResult FilterItemsByUploaderAndItemId( long itemid)
+        public IActionResult FilterItemsByItemId( long itemid)
         {
             Item item = _unitOfWork.Item.Get(itemid);
             if(item == null)
@@ -168,6 +173,7 @@ namespace apiProject.Controllers
             return Ok(itemDTO);
         }
 
+        [Authorize]
         [HttpPut("{uploaderusername}/{itemid}")]
         public IActionResult UpdateItem(string uploaderusername, long itemid, ItemDTO itemDTO)
         {
@@ -217,6 +223,7 @@ namespace apiProject.Controllers
             return Ok(itemDTO);
         }
 
+        [Authorize]
         [HttpDelete("{uploaderusername}/{itemid}")]
         public IActionResult DeleteItem(string uploaderusername, long itemid)
         {

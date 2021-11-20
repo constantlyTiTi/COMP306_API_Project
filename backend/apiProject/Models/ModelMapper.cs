@@ -1,6 +1,7 @@
 ﻿using apiProject.DTO;
 using apiProject.Models.Enums;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -39,10 +40,9 @@ namespace apiProject.Models
                 .ForMember(dto => dto.Password, opt => opt.MapFrom(u => u.Password))
                 .ForMember(dto => dto.IpAddress, opt => opt.MapFrom(u => Encoding.ASCII.GetString(u.IpAddress)));
             //User
-            CreateMap<UserInfor, User> ()
+            CreateMap<IdentityUser, User> ()
                 .ForMember(dto => dto.UserName, opt => opt.MapFrom(u => u.UserName))
-                .ForMember(dto => dto.Password, opt => opt.MapFrom(u => u.Password))
-                .ForMember(dto => dto.IpAddress, opt => opt.MapFrom(u => Encoding.ASCII.GetBytes(u.IpAddress)));
+                .ForMember(dto => dto.Password, opt => opt.MapFrom(u => u.PasswordHash));
             //ItemDTO to Item
             CreateMap<ItemDTO, Item>()
                 .ForMember(dto => dto.ItemId, opt => opt.Ignore())
