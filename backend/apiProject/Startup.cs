@@ -25,6 +25,7 @@ using Amazon.SimpleSystemsManagement;
 using Amazon.SimpleSystemsManagement.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace apiProject
 {
@@ -131,6 +132,7 @@ namespace apiProject
                     .Build();
             });
 
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -144,7 +146,10 @@ namespace apiProject
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+/*            app.Run(async context =>
+            {
+                context.Features.Get<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = 1048576000;
+            });*/
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -153,6 +158,7 @@ namespace apiProject
             {
                 endpoints.MapControllers();
             });
+
         }
 
         private static async Task<GetParameterResponse> GetConfiguration()

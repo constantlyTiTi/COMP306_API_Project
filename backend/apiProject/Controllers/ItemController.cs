@@ -5,6 +5,7 @@ using apiProject.Interfaces;
 using apiProject.Models;
 using apiProject.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,7 @@ namespace apiProject.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [AllowAnonymous]
         [HttpGet("all-item")]
         public IActionResult Get(int items_per_page = 10, string next_cursor = "0")
         {
