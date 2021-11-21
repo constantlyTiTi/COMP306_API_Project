@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace apiProject.Controllers
 {
-    [Route("shopping_cart")]
+    [Route("api/shopping_cart")]
     [ApiController]
     public class ShoppingCartController : ControllerBase
     {
@@ -75,7 +75,7 @@ namespace apiProject.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("/shopping_cart")]
+        [HttpGet("all-items")]
         public IActionResult GetShoppingCartItems()
         {
             List<ShoppingCartItem> cartItems = new List<ShoppingCartItem>();
@@ -102,7 +102,7 @@ namespace apiProject.Controllers
         }
 
         [Authorize]
-        [HttpPost("/place_order")]
+        [HttpPost("place-order")]
         public IActionResult PlaceOrder([FromBody] ShoppingCartDTO cartDTO)
         {
             List<ShoppingCartItem> cartItems = _unitOfWork.ShoppingCartItems.GetItems(cartDTO.UserName).ToList();

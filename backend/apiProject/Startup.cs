@@ -175,7 +175,7 @@ namespace apiProject
         {
             //config proxy
             app.UseForwardedHeaders();
-
+            /*app.MapWhen(ctx=>ctx.Request.Path.StartsWithSegments("/home"), builder => builder.RunProxy())*/
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

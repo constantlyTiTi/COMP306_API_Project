@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace apiProject.Controllers
 {
-    [Route("item")]
+    [Route("api/item")]
     [ApiController]
     public class ItemController : ControllerBase
     {

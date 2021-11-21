@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace apiProject.Controllers
 {
-    [Route("order")]
+    [Route("api/order")]
     [ApiController]
     [Authorize]
     public class OrdersController : ControllerBase

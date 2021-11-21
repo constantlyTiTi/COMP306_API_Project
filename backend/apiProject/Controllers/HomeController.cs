@@ -16,7 +16,7 @@ namespace apiProject.Controllers
 {
     [AllowAnonymous]
     [ApiController]
-    [Route("home")]
+    [Route("api/home")]
     public class HomeController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
