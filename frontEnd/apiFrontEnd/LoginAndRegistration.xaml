@@ -9,11 +9,11 @@
     <Grid>
         <StackPanel Orientation="Vertical">
             <DockPanel Height="45" LastChildFill="False">
-                <Button Name ="HomeNav" Content="Home" Width="91" FontSize="20" Margin="10,0,0,0" Background="White"/>
+                <Button Name ="HomeNav" Content="Home" Width="91" FontSize="20" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="White"/>
                 <Label Name="LoginRegLabel" Content="Welcome to Login and Registration window" Width="445" Margin="29,0,0,0" FontSize="20"/>
             </DockPanel>
             <DockPanel Height="380" LastChildFill="False">
-                <StackPanel Name="LoginPanel" Width="386"  Margin="13,10,0,0">
+                <StackPanel Name="LoginPanel" Width="386"  Margin="13,10,0,0" OpacityMask="Black">
                     <DockPanel LastChildFill="False" Height="45">
                         <Label Name="UserNameLable_Login" Content="User Name" Width="150" FontSize="18"/>
                         <TextBox Name="UserNameTextBox_Login" Text="TextBox" TextWrapping="Wrap" Width="220" FontSize="18"/>
