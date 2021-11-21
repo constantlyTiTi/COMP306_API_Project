@@ -7,6 +7,23 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <StackPanel Margin="0,0,0,0">
+            <DockPanel  LastChildFill="False" Height="55" Margin="0,5,0,0">
+                <Label Name ="HomeNav" Content="Home" Width="91" Height="56" FontSize="20" Margin="10,0,0,0"/>
+                <Label Name ="ItemNav" Content="Item Management" Width="180" Height="56" FontSize="20"/>
+                <Label Name ="OrderNav" Content="Orders" Width="84" Height="56" FontSize="20"/>
+                <Label Name ="CartNav" Content="Shopping Cart" Width="147" FontSize="20"/>
+                <Label Name ="AuthNav" Content="Login" Width="196" FontSize="20"/>
+                <Label Name ="LogoutNav" Content="Logout" Width="131" FontSize="20"/>
+            </DockPanel>
+            <DockPanel LastChildFill="False" Height="372" Width="796" Margin="0,5,0,0">
+                <DockPanel Name="LeftFilterPanel" LastChildFill="False" Width="148" Margin="10,0,0,0"/>
+                <DockPanel Name ="RightItemListPanel"  LastChildFill="False" Width="622"/>
+            </DockPanel>
+        </StackPanel>
+
+
+
 
     </Grid>
 </Window>
