@@ -23,5 +23,12 @@ namespace apiFrontEnd
         {
             InitializeComponent();
         }
+
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            string username = UserNameTextBox_Login.Text;
+            string password = PasswordTextBox_Login.Text;
+            
+        }
     }
 }

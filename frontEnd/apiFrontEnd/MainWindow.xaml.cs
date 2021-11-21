@@ -24,5 +24,12 @@ namespace apiFrontEnd
         {
             InitializeComponent();
         }
+
+        private void AuthNav_Click(object sender, RoutedEventArgs e)
+        {
+            LoginAndRegistration lrw = new LoginAndRegistration();
+            lrw.Show();
+            this.Close();
+        }
     }
 }
