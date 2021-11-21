@@ -9,7 +9,7 @@
     <Grid>
         <StackPanel Orientation="Vertical">
             <DockPanel Height="45" LastChildFill="False">
-                <Label Name ="HomeNav" Content="Home" Width="91" FontSize="20" Margin="10,0,0,0"/>
+                <Button Name ="HomeNav" Content="Home" Width="91" FontSize="20" Margin="10,0,0,0" Background="White"/>
                 <Label Name="LoginRegLabel" Content="Welcome to Login and Registration window" Width="445" Margin="29,0,0,0" FontSize="20"/>
             </DockPanel>
             <DockPanel Height="380" LastChildFill="False">
@@ -22,7 +22,7 @@
                         <Label Name="PasswordLable_Login" Content="Password" Width="150" FontSize="18"/>
                         <TextBox Name="PasswordTextBox_Login" Text="TextBox" TextWrapping="Wrap" Width="220" FontSize="18"/>
                     </DockPanel>
-                    <Button Name="LoginButton"  Content="Login" Height="51" Margin="20,20,20,0"/>
+                    <Button Name="LoginButton"  Content="Login" Height="51" Margin="20,20,20,0" FontSize="18"/>
                 </StackPanel>
                 <StackPanel Name="RegisterPanel" Width="386" Margin="5,10,0,0">
                     <DockPanel LastChildFill="False" Height="45">
@@ -33,7 +33,7 @@
                         <Label Name="PasswordLable_Register" Content="Password" Width="150" FontSize="18"/>
                         <TextBox Name="PasswordTextBox_Register" Text="TextBox" TextWrapping="Wrap" Width="220" FontSize="18"/>
                     </DockPanel>
-                    <Button Name="RegisterButton"  Content="Register" Height="51" Margin="20,20,20,0"/>
+                    <Button Name="RegisterButton"  Content="Register" Height="51" Margin="20,20,20,0" FontSize="18"/>
                 </StackPanel>
             </DockPanel>
         </StackPanel>
