@@ -31,12 +31,15 @@ namespace apiFrontEnd
         public LoginAndRegistration()
         {
             InitializeComponent();
+            UserNameTextBox_Login.Text = string.Empty;
+            UserNameTextBox_Register.Text = string.Empty;
+
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             string username = UserNameTextBox_Login.Text;
-            string password = PasswordTextBox_Login.Text;
+            string password = PasswordTextBox_Login.Password;
 
             if(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
@@ -72,7 +75,7 @@ namespace apiFrontEnd
         private async void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
             string username = UserNameTextBox_Register.Text;
-            string password = PasswordTextBox_Register.Text;
+            string password = PasswordTextBox_Register.Password;
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
@@ -103,6 +106,13 @@ namespace apiFrontEnd
                     ErrorMsgLable_Register.Content = error;
                 }
             }
+        }
+
+        private void HomeNav_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow mw = new MainWindow();
+            mw.Show();
+            this.Close();
         }
 
     }
