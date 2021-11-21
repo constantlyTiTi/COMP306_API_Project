@@ -7,6 +7,25 @@
         mc:Ignorable="d"
         Title="ItemManagementWindow" Height="450" Width="800">
     <Grid>
-        
+        <Button x:Name="ViewBtn" Content="View Posted Items" 
+                HorizontalAlignment="Left" 
+                Margin="70,45,0,0" 
+                VerticalAlignment="Top" 
+                Width="190"
+                Height="40"
+                Click="Button1_Click"
+                FontSize="16" 
+                FontWeight="Bold"/>
+
+        <Button Name="PostBtn"
+                Content="Post New Item" 
+                Click="Button1_Click"
+                HorizontalAlignment="Left" 
+                Margin="400,45,0,0" 
+                VerticalAlignment="Top"
+                Width="190" 
+                Height="40" 
+                FontWeight="Bold" 
+                FontSize="16"/>
     </Grid>
 </Window>

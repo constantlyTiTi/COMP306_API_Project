@@ -7,6 +7,17 @@
         mc:Ignorable="d"
         Title="PostItemView" Height="450" Width="800">
     <Grid>
-        
+        <ListView Margin="10" Name="lvItems">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name" Width="120" DisplayMemberBinding="{Binding Name}" />
+                    <GridViewColumn Header="Image" Width="120" DisplayMemberBinding="{Binding Image}" />
+                    <GridViewColumn Header="Description" Width="140" DisplayMemberBinding="{Binding Description}" />
+                    <GridViewColumn Header="Edit" Width="100" DisplayMemberBinding="{Binding Edit}" />
+                    <GridViewColumn Header="Delete" Width="100" DisplayMemberBinding="{Binding Delete}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+
     </Grid>
 </Window>

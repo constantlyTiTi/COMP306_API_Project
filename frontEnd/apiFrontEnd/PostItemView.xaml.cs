@@ -22,6 +22,18 @@ namespace apiFrontEnd
         public PostItemView()
         {
             InitializeComponent();
+            List<Items> items = new List<Items>();
+            items.Add(new Items() { Name = " ", Image = " ", Description = " " });
+            items.Add(new Items() { Name = " ", Image = " ", Description = " " });
+            items.Add(new Items() { Name = " ", Image = " ", Description = " " });
+            lvItems.ItemsSource = items;
+        }
+        public class Items
+        {
+            public string Name { get; set; }
+            public string Image { get; set; }
+            public string Description { get; set; }
+
         }
     }
 }
