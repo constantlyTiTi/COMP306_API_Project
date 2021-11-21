@@ -13,7 +13,7 @@
                 <Button Name ="ItemNav" Content="Item Management" Width="180"  FontSize="20" Background="White" BorderBrush="White"/>
                 <Button Name ="OrderNav" Content="Orders" Width="84" FontSize="20" Background="White" BorderBrush="White"/>
                 <Button Name ="CartNav" Content="Shopping Cart" Width="147" FontSize="20" Background="White" BorderBrush="White"/>
-                <Button Name ="AuthNav" Content="Login/Register" Width="193" FontSize="20" Background="White" BorderBrush="White"/>
+                <Button Name ="AuthNav" Content="Login/Register" Width="193" FontSize="20" Background="White" BorderBrush="White" Click="AuthNav_Click"/>
                 <Button Name ="LogoutNav" Content="Logout" Width="75" FontSize="20" Margin="0,0,10,0" Background="White" BorderBrush="White"/>
             </DockPanel>
             <DockPanel LastChildFill="False" Height="35" Width="796" Margin="0,5,0,0">
@@ -26,8 +26,8 @@
 
             </DockPanel>
             <DockPanel LastChildFill="False" Height="317" Width="796" Margin="0,5,0,0">
-                <DockPanel Name ="RightItemListPanel"  LastChildFill="False" Width="794">
-                    <ListView Name ="RightItemListView"  Width="798" Height="327"/>
+                <DockPanel Name ="ItemListPanel"  LastChildFill="False" Width="794">
+                    <ListView Name ="ItemListView"  Width="798" Height="327"/>
                 </DockPanel>
             </DockPanel>
         </StackPanel>
