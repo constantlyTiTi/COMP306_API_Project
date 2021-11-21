@@ -29,6 +29,7 @@ using Microsoft.AspNetCore.Http.Features;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using apiProject.TokenAuth;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace apiProject
 {
@@ -118,10 +119,6 @@ namespace apiProject
                 config.FormatterMappings.SetMediaTypeMappingForFormat("js", "application/json");
             });
 
-            //Generate Jwt Token
-
-            
-
             // Add Role services to Identity
             services.Configure<IdentityOptions>(
                 options =>
@@ -163,11 +160,22 @@ namespace apiProject
                     .Build();
             });
 
+            //config proxy
+            services.AddControllersWithViews();
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //config proxy
+            app.UseForwardedHeaders();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
