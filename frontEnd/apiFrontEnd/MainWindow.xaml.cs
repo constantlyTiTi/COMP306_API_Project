@@ -20,9 +20,18 @@ namespace apiFrontEnd
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly string _userName;
+        private readonly string _token;
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        public MainWindow(string userName, string token)
+        {
+            InitializeComponent();
+            _userName = userName;
+            _token = token;
         }
 
         private void AuthNav_Click(object sender, RoutedEventArgs e)

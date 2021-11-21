@@ -23,7 +23,7 @@
                         <TextBox Name="PasswordTextBox_Login" Text="TextBox" TextWrapping="Wrap" Width="220" FontSize="18"/>
                     </DockPanel>
                     <Button Name="LoginButton"  Content="Login" Height="51" Margin="20,20,20,0" FontSize="18" Click="LoginButton_Click"/>
-                    <Label Name="ErrorMsgLable_Login" Content="" Width="342" FontSize="18" Height="159" Margin="0,15,0,0"/>
+                    <Label Name="ErrorMsgLable_Login" Content="" Width="342" FontSize="12" Height="159" Margin="0,15,0,0" Foreground="#FFF70909"/>
                 </StackPanel>
                 <StackPanel Name="RegisterPanel" Width="386" Margin="5,10,0,0">
                     <DockPanel LastChildFill="False" Height="45">
@@ -34,8 +34,8 @@
                         <Label Name="PasswordLable_Register" Content="Password" Width="150" FontSize="18"/>
                         <TextBox Name="PasswordTextBox_Register" Text="TextBox" TextWrapping="Wrap" Width="220" FontSize="18"/>
                     </DockPanel>
-                    <Button Name="RegisterButton"  Content="Register" Height="51" Margin="20,20,20,0" FontSize="18"/>
-                    <Label Name="ErrorMsgLable_Register" Content="" Width="342" FontSize="18" Height="159" Margin="0,15,0,0"/>
+                    <Button Name="RegisterButton"  Content="Register" Height="51" Margin="20,20,20,0" FontSize="18" Click="RegisterButton_Click"/>
+                    <Label Name="ErrorMsgLable_Register" Content="" Width="342" FontSize="12" Height="159" Margin="0,15,0,0" Foreground="#FFF70909"/>
                 </StackPanel>
             </DockPanel>
         </StackPanel>

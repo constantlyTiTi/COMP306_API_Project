@@ -8,6 +8,6 @@ namespace apiFrontEnd.StaticValues
 {
     public class BackEndConnection
     {
-        public static readonly string BaseUrl = "https://localhost:44378";
+        public static readonly string BaseUrl = @"https://localhost:44378/api/";
     }
 }
