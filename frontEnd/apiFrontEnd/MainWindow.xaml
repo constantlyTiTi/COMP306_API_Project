@@ -9,9 +9,9 @@
     <Grid>
         <StackPanel Margin="0,0,0,0">
             <DockPanel  LastChildFill="False" Height="45" Margin="0,5,0,0">
-                <Label Name ="HomeNav" Content="Home" Width="91" Height="56" FontSize="20" Margin="10,0,0,0"/>
-                <Label Name ="ItemNav" Content="Item Management" Width="180" Height="56" FontSize="20"/>
-                <Label Name ="OrderNav" Content="Orders" Width="84" Height="56" FontSize="20"/>
+                <Label Name ="HomeNav" Content="Home" Width="91" FontSize="20" Margin="10,0,0,0"/>
+                <Label Name ="ItemNav" Content="Item Management" Width="180"  FontSize="20"/>
+                <Label Name ="OrderNav" Content="Orders" Width="84" FontSize="20"/>
                 <Label Name ="CartNav" Content="Shopping Cart" Width="147" FontSize="20"/>
                 <Label Name ="AuthNav" Content="Login" Width="193" FontSize="20"/>
                 <Label Name ="LogoutNav" Content="Logout" Width="75" FontSize="20" Margin="0,0,10,0"/>
