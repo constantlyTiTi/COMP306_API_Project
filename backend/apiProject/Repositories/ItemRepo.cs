@@ -37,7 +37,7 @@ namespace apiProject.Repositories
         {
             var task = Task.Factory.StartNew(() =>
             {
-                return (IEnumerable<Item>)_db.Item.Where(i => i.Category.Contains(itemName) && i.LocationPostalCode == postCode).ToList();
+                return (IEnumerable<Item>)_db.Item.Where(i => i.Category.Contains(itemName) && i.LocationPostalCode.Substring(0, 3) == postCode.Substring(0, 3)).ToList();
             });
             return await task;
         }
