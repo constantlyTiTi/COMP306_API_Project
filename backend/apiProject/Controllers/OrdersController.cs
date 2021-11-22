@@ -56,10 +56,11 @@ namespace apiProject.Controllers
         [HttpGet("{order_id}")]
         public IActionResult GetOrderItems(long order_id)
         {
-
-            IEnumerable<long> orderItem_itemIds = _unitOfWork.OrderItem.GetItemsByOrderId(order_id).Result.Select(i => i.ItemId);
+            IEnumerable<OrderItem> orderItems = _unitOfWork.OrderItem.GetItemsByOrderId(order_id).Result;
+            IEnumerable<long> orderItem_itemIds = orderItems.Select(i => i.ItemId);
             IEnumerable<Item> items = (IEnumerable<Item>)_unitOfWork.Item.GetAllByIds(orderItem_itemIds).Result;
             IEnumerable<ItemDTO> itemDTOs = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items);
+            _mapper.Map<IEnumerable<OrderItem>, IEnumerable<ItemDTO>>(orderItems, itemDTOs);
             OrderDetailDTO orderDetailDTO = _mapper.Map<OrderDetailDTO>(itemDTOs);
             orderDetailDTO.OrderId = order_id;
 

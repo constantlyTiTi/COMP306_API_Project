@@ -41,6 +41,10 @@ namespace apiProject.Models
                 .ForMember(dto => dto.Quantity, opt => opt.MapFrom(src => src.Quantity));
             CreateMap<OrderDetails, OrderItem>()
                 .ForMember(dto => dto.OrderId, opt => opt.MapFrom(src => src.OrderId));
+
+            CreateMap<OrderItem, ItemDTO>()
+                .ForMember(dto => dto.Quantity, opt => opt.MapFrom(src => src.Quantity));
+
             //ItemList
             CreateMap<IEnumerable<ItemDTO>, ItemList>().ForMember(dto => dto.Items, opt => opt.MapFrom(src => src));
             CreateMap<Paginate, ItemList>().ForMember(dto => dto.Paginate, opt => opt.MapFrom(src => src));
