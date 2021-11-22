@@ -8,7 +8,7 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <StackPanel Margin="0,0,0,0">
-            <DockPanel  LastChildFill="False" Height="45" Margin="0,5,0,0">
+            <DockPanel  LastChildFill="False" Height="35" Margin="0,5,0,0">
                 <Button Name ="HomeNav" Content="Home" Width="91" FontSize="20" Margin="10,0,0,0" Background="White" BorderBrush="White" Click="HomeNav_Click"/>
                 <Button Name ="ItemNav" Content="Item Management" Width="180"  FontSize="20" Background="White" BorderBrush="White" Click="ItemNav_Click"/>
                 <Button Name ="OrderNav" Content="Orders" Width="84" FontSize="20" Background="White" BorderBrush="White"/>
@@ -16,17 +16,17 @@
                 <Button Name ="AuthNav" Content="Login/Register" Width="193" FontSize="20" Background="White" BorderBrush="White" Click="AuthNav_Click"/>
                 <Button Name ="LogoutNav" Content="Logout" Width="75" FontSize="20" Margin="0,0,10,0" Background="White" BorderBrush="White" Click="LogoutNav_Click"/>
             </DockPanel>
-            <DockPanel LastChildFill="False" Height="35" Width="796" Margin="0,5,0,0">
-                <DatePicker Name="EndDatePicker" Width="110" Margin="10,0,0,0"/>
+            <DockPanel LastChildFill="False" Height="30" Width="796" Margin="0,5,0,0">
+                <DatePicker Name="EndDatePicker" Width="110" Margin="10,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <Button Name="SearchByDate" Content="Search By Date" Width="124" FontSize="14" Background="White" BorderBrush="White" Click="SearchByDate_Click"/>
                 <Button Name="SearchByItemName" Content="Search By Item Name" Width="163" FontSize="14" Background="White" BorderBrush="White"/>
                 <Button  Name="SearchByPostalCode" Content="Search By PostalCode" Width="175" FontSize="14" Background="White" BorderBrush="White"/>
             </DockPanel>
             <StackPanel Height="341" Width="796" Margin="0,5,0,0">
-                <DockPanel LastChildFill="False" Height="40">
-                    <Button Name ="PrePage" Content="&lt;" Width="91" FontSize="20" Margin="10,0,0,0" Background="White" BorderBrush="White" Click="HomeNav_Click"/>
-                    <TextBox Name ="PageInfo_TextBox" Width="53" />
-                    <Button Name ="NextPage" Content=">" Width="91" FontSize="20" Margin="10,0,0,0" Background="White" BorderBrush="White" Click="HomeNav_Click"/>
+                <DockPanel LastChildFill="False" Height="25">
+                    <Button Name ="PrePage" Content="&lt;" Width="91" FontSize="16" Margin="10,0,0,0" Background="White" BorderBrush="White" Click="HomeNav_Click"/>
+                    <TextBox Name ="PageInfo_TextBox" Width="53" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Button Name ="NextPage" Content=">" Width="91" FontSize="16" Margin="10,0,0,0" Background="White" BorderBrush="White" Click="HomeNav_Click"/>
                 </DockPanel>
                 <DockPanel Name ="ItemListPanel"  LastChildFill="False">
                     <ListView Name ="ItemListView" Width="796" Height="300" Loaded="ItemListView_Loaded"/>
