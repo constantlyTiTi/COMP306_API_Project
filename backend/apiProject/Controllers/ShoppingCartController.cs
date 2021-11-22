@@ -49,6 +49,10 @@ namespace apiProject.Controllers
             }
 
             ShoppingCartDTO cartDTO = _mapper.Map<ShoppingCartDTO>(cartItems);
+            IEnumerable<Item> items = _unitOfWork.Item.GetAllByIds(cartItems.Select(i => i.ItemId)).Result;
+            IEnumerable<ItemDTO> itemDTOs = _mapper.Map<IEnumerable<ItemDTO>>(items);
+            _mapper.Map(cartItems, itemDTOs);
+            _mapper.Map(itemDTOs, cartDTO);
 
             return Ok(cartDTO);
         }
@@ -70,6 +74,10 @@ namespace apiProject.Controllers
             }
 
             ShoppingCartDTO cartDTO = _mapper.Map<ShoppingCartDTO>(cartItems);
+            IEnumerable<Item> items = _unitOfWork.Item.GetAllByIds(cartItems.Select(i => i.ItemId)).Result;
+            IEnumerable<ItemDTO> itemDTOs = _mapper.Map<IEnumerable<ItemDTO>>(items);
+            _mapper.Map(cartItems, itemDTOs);
+            _mapper.Map(itemDTOs, cartDTO);
 
             return Ok(cartDTO);
         }
@@ -86,6 +94,10 @@ namespace apiProject.Controllers
                 cartItems = _unitOfWork.ShoppingCartItems.GetItems(User.Identity.Name).ToList();
 
                 _mapper.Map(cartItems, cartDTO);
+                IEnumerable<Item> items = _unitOfWork.Item.GetAllByIds(cartItems.Select(i => i.ItemId)).Result;
+                IEnumerable<ItemDTO> itemDTOs = _mapper.Map<IEnumerable<ItemDTO>>(items);
+                _mapper.Map(cartItems, itemDTOs);
+                _mapper.Map(itemDTOs, cartDTO);
                 return Ok(cartDTO);
 
             }

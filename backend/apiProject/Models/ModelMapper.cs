@@ -53,8 +53,11 @@ namespace apiProject.Models
             CreateMap<Item, ItemDetails>().ForMember(dto => dto.Item, opt => opt.MapFrom(src => src));
             //ShoppingCart
             CreateMap<IEnumerable<ShoppingCartItem>, ShoppingCartDTO>()
-                .ForMember(dto => dto.ShoppingCartItems, opt => opt.MapFrom(src => src))
                 .ForMember(dto => dto.TotalCost, opt => opt.MapFrom(src => src.Sum(i=>i.Price)));
+            CreateMap<IEnumerable<ItemDTO>, ShoppingCartDTO>()
+                .ForMember(dto => dto.ShoppingCartItems, opt => opt.MapFrom(src => src));
+            CreateMap<ShoppingCartItem, ItemDTO>()
+                .ForMember(dto => dto.Quantity, opt => opt.MapFrom(src => src.Quantity));
             //UserInfor
             CreateMap<User, UserInfor>()
                 .ForMember(dto => dto.UserName, opt => opt.MapFrom(u => u.UserName))

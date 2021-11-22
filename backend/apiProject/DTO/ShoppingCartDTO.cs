@@ -10,7 +10,8 @@ namespace apiProject.DTO
     public class ShoppingCartDTO
     {
         [JsonPropertyName("shopping_cart_items")]
-        public IEnumerable<ShoppingCartItem> ShoppingCartItems { get; set; }
+/*        public IEnumerable<ShoppingCartItem> ShoppingCartItems { get; set; }*/
+        public IEnumerable<ItemDTO> ShoppingCartItems { get; set; }
         [JsonPropertyName("total_cost")]
         public double TotalCost { get; set; }
         [JsonPropertyName("shipping_address")]
