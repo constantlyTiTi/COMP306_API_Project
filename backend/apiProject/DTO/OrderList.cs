@@ -10,7 +10,7 @@ namespace apiProject.DTO
     public class OrderList
     {
         [JsonPropertyName("orders")]
-        public IEnumerable<OrderDetails> Orders { get; set; }
+        public IEnumerable<OrderDetailDTO> Orders { get; set; }
 
         [JsonPropertyName("paginate")]
         public Paginate Paginate { get; set; }

@@ -48,8 +48,23 @@ namespace apiProject.Controllers
             Paginate paginate = new Paginate(items_per_page, next_cursor);
             OrderList orderList = _mapper.Map<OrderList>(paginate);
             IEnumerable<OrderDetails> orders = _unitOfWork.OrderDetails.GetAllOrdersByDateTime(start_date, end_date, username).Result;
-            _mapper.Map(orders, orderList);
+            IEnumerable<OrderDetailDTO> orderDto = _mapper.Map< IEnumerable < OrderDetails> ,IEnumerable <OrderDetailDTO>>(orders);
+            _mapper.Map(orderDto, orderList);
             return Ok(orderList);
+        }
+
+        [HttpGet("{order_id}")]
+        public IActionResult GetOrderItems(long order_id)
+        {
+
+            IEnumerable<long> orderItem_itemIds = _unitOfWork.OrderItem.GetItemsByOrderId(order_id).Result.Select(i => i.ItemId);
+            IEnumerable<Item> items = (IEnumerable<Item>)_unitOfWork.Item.GetAllByIds(orderItem_itemIds).Result;
+            IEnumerable<ItemDTO> itemDTOs = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items);
+            OrderDetailDTO orderDetailDTO = _mapper.Map<OrderDetailDTO>(itemDTOs);
+            orderDetailDTO.OrderId = order_id;
+
+            return Ok(orderDetailDTO);
+
         }
 
         [HttpDelete("{username}")]

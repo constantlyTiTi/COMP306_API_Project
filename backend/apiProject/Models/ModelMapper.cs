@@ -22,8 +22,18 @@ namespace apiProject.Models
                 .ForMember(dto =>dto.UserName, opt => opt.MapFrom(src=>src.UserName))
                 .ForMember(dto=>dto.Status, opt=>opt.MapFrom(src=> OrderStatus.Preparing.ToString()))
                 .ForMember(dto => dto.ShippingAddress, opt => opt.MapFrom(src => src.ShippingAddress));
+            CreateMap<OrderDetails, OrderDetailDTO>()
+                .ForMember(dto => dto.OrderId, opt => opt.MapFrom(src => src.OrderId))
+                .ForMember(dto => dto.OrderTime, opt => opt.MapFrom(src => src.OrderTime))
+                .ForMember(dto => dto.ShippingAddress, opt => opt.MapFrom(src => src.ShippingAddress))
+                .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dto => dto.TotalCost, opt => opt.MapFrom(src => src.TotalCost))
+                .ForMember(dto => dto.UserName, opt => opt.MapFrom(src => src.UserName));
+            CreateMap<IEnumerable<ItemDTO>, OrderDetailDTO>()
+                .ForMember(dto => dto.items, opt => opt.MapFrom(src => src));
+
             //OrderList
-            CreateMap<IEnumerable<OrderDetails>, OrderList>().ForMember(dto => dto.Orders, opt => opt.MapFrom(src => src));
+            CreateMap<IEnumerable<OrderDetailDTO>, OrderList>().ForMember(dto => dto.Orders, opt => opt.MapFrom(src => src));
             CreateMap<Paginate, OrderList>().ForMember(dto => dto.Paginate, opt => opt.MapFrom(src => src));
             //OrderItem
             CreateMap<ShoppingCartItem, OrderItem>()
