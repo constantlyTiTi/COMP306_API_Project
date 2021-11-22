@@ -14,5 +14,8 @@ namespace apiFrontEnd.StaticValues
         public static readonly string loginUrl = @"home/login";
         public static readonly string registerUrl = @"home/Register";
         public static readonly string logoutUrl = @"home/logout";
+
+        public static readonly string mainWindow_allItem = "item/all-item";
+        public static readonly string mainWindow_items = "item/items";
     }
 }

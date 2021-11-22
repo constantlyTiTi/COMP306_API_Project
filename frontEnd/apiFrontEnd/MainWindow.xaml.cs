@@ -1,4 +1,7 @@
-﻿using apiFrontEnd.StaticValues;
+﻿using apiFrontEnd.Models;
+using apiFrontEnd.StaticValues;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,12 +88,78 @@ namespace apiFrontEnd
             iw.Close();
         }
 
-        private void SearchByDate_Click(object sender, RoutedEventArgs e)
+        private async void SearchByDate_Click(object sender, RoutedEventArgs e)
         {
-            DateTime? startDate = StartDatePicker.SelectedDate.Value;
-            DateTime? endDate = EndDatePicker.SelectedDate.Value;
+            DateTime? date = EndDatePicker.SelectedDate.Value;
+            var request = new HttpRequestMessage(HttpMethod.Get, BackEndConnection.BaseUrl + BackEndConnection.mainWindow_items);
+            request.Headers.Add("Content-Type", "application/json");
+            request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "upload_date_time", date.Value.ToString("yyyy-MM-dd") }
+            });
             HttpClient client = new HttpClient();
-            StringContent content = new StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+            var response = await client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                ItemListViewModel itemlist = JsonConvert.DeserializeObject<ItemListViewModel>(response.Content.ReadAsStringAsync().Result);
+                PageInfo_TextBox.Text = itemlist.Paginate.NextCursor;
+                for(int i = 0; i<itemlist.Items.Count();i++)
+                {
+                    DockPanel dop = new DockPanel();
+                    dop.Height = 30;
+                    DockPanel dop_left = new DockPanel();
+                    dop_left.Width = 30;
+                    StackPanel stackPanel_middle = new StackPanel();
+                    stackPanel_middle.Width = 300;
+
+
+                    Button header = new Button();
+                    header.Content = itemlist.Items.ElementAt(i).ItemName;
+                    header.Width = 300;
+                    header.Height = 15;
+                    header.Click += (o, e) => itemListViewEH(o, e, itemlist.Items.ElementAt(i).ItemId);
+
+                    Label desc = new Label();
+                    desc.Content = itemlist.Items.ElementAt(i).Description.Substring(0,50);
+                    header.Width = 300;
+                    header.Height = 15;
+
+
+
+
+                    Image img = new Image();
+                    var filePath = itemlist.Items.ElementAt(i).CoverImagePath;
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(filePath, UriKind.Absolute);
+                    bitmap.EndInit();
+                    img.Source = bitmap;
+
+                    ListViewItem viewItem = new ListViewItem();
+                    if (i % 2 == 0)
+                    {
+                        viewItem.Background = new SolidColorBrush(Colors.LightCoral);
+                    }
+                    viewItem.Background = new SolidColorBrush(Colors.FloralWhite);
+                    
+
+                    ItemListView.Items.Add(viewItem);
+                }
+
+            }
         }
+
+        private void ItemListView_Loaded(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void itemListViewEH(object sender, RoutedEventArgs e, long itemId)
+        {
+            ItemDetailsWindow iw = new ItemDetailsWindow(itemId);
+            iw.Show();
+            this.Close();
+        }
+
     }
 }
