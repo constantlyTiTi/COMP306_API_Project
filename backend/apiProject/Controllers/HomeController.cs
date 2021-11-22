@@ -1,4 +1,5 @@
-﻿using apiProject.DTO;
+﻿using Amazon.SimpleSystemsManagement.Model;
+using apiProject.DTO;
 using apiProject.DTO.Responses;
 using apiProject.Interfaces;
 using apiProject.Models;
@@ -128,6 +129,13 @@ namespace apiProject.Controllers
                 });
             }
 
+        }
+        [Authorize]
+        [HttpGet("logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return Ok();
         }
 
         /*private string GenerateJwtToken(IdentityUser user)
