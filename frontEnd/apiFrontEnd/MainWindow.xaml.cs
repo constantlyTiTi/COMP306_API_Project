@@ -120,6 +120,16 @@ namespace apiFrontEnd
             }
         }
 
+        private void OrderNav_Click(object sender, RoutedEventArgs e)
+        {
+            Orders ow = new Orders(_userName, _token);
+            ow.Show();
+            this.Close();
+        }
+
+
+        // methods
+
         private void ItemDetailReview(object sender, RoutedEventArgs e, long itemId)
         {
             ItemDetailsWindow iw = new ItemDetailsWindow(itemId);

@@ -31,7 +31,7 @@ namespace apiFrontEnd
         private async void Generate(long itemId)
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.mainWindow_itemDetail);
+            var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.mainWindow_itemDetail + itemId.ToString());
             if (response.IsSuccessStatusCode)
             {
                 Item itemDetail = JsonConvert.DeserializeObject<Item>(response.Content.ReadAsStringAsync().Result);

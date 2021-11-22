@@ -17,6 +17,8 @@ namespace apiFrontEnd.StaticValues
 
         public static readonly string mainWindow_allItem = "item/all-item";
         public static readonly string mainWindow_items = "item/items";
-        public static readonly string mainWindow_itemDetail = "item/itemid";
+        public static readonly string mainWindow_itemDetail = "item/";
+
+        public static readonly string OrderWindow_Order = "order/";
     }
 }
