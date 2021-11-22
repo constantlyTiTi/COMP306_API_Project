@@ -1,6 +1,10 @@
-﻿using System;
+﻿using apiFrontEnd.Models;
+using apiFrontEnd.StaticValues;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,14 +23,38 @@ namespace apiFrontEnd
     /// </summary>
     public partial class ItemDetailsWindow : Window
     {
-        public ItemDetailsWindow()
+        public ItemDetailsWindow(long itemId)
         {
             InitializeComponent();
         }
 
-        public ItemDetailsWindow(long itemId)
+        private async void Generate(long itemId)
         {
-            InitializeComponent();
+            HttpClient client = new HttpClient();
+            var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.mainWindow_itemDetail);
+            if (response.IsSuccessStatusCode)
+            {
+                Item itemDetail = JsonConvert.DeserializeObject<Item>(response.Content.ReadAsStringAsync().Result);
+                ItemDesLabel.Content = itemDetail.Description;
+                ItemNameLabel.Content = itemDetail.ItemName;
+                foreach(var imgPath in itemDetail.ItemImagePaths)
+                {
+                    Image img = new Image();
+                    var filePath = imgPath;
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(filePath, UriKind.Absolute);
+                    bitmap.EndInit();
+                    img.Source = bitmap;
+                    img.Stretch = Stretch.Fill;
+                    img.Width = 50;
+                    img.Height = 50;
+                    img.Margin = new Thickness(0, 2, 0, 0);
+
+                    DetailPanel.Children.Add(img);
+                }
+
+            }
         }
     }
 }

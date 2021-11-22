@@ -42,6 +42,8 @@ namespace apiFrontEnd
             InitializeComponent();
             _userName = userName;
             _token = token;
+            AuthNav.Content = "Hello, " + _userName;
+            AuthNav.IsEnabled = false;
         }
 
         private void AuthNav_Click(object sender, RoutedEventArgs e)
@@ -62,6 +64,8 @@ namespace apiFrontEnd
             {
                 ItemNav.Visibility = Visibility.Visible;
                 OrderNav.Visibility = Visibility.Visible;
+                AuthNav.Content = "Hello, " + _userName;
+                AuthNav.IsEnabled = false;
             }
         }
 
@@ -100,64 +104,107 @@ namespace apiFrontEnd
             var response = await client.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
-                ItemListViewModel itemlist = JsonConvert.DeserializeObject<ItemListViewModel>(response.Content.ReadAsStringAsync().Result);
-                PageInfo_TextBox.Text = itemlist.Paginate.NextCursor;
-                for(int i = 0; i<itemlist.Items.Count();i++)
-                {
-                    DockPanel dop = new DockPanel();
-                    dop.Height = 30;
-                    DockPanel dop_left = new DockPanel();
-                    dop_left.Width = 30;
-                    StackPanel stackPanel_middle = new StackPanel();
-                    stackPanel_middle.Width = 300;
-
-
-                    Button header = new Button();
-                    header.Content = itemlist.Items.ElementAt(i).ItemName;
-                    header.Width = 300;
-                    header.Height = 15;
-                    header.Click += (o, e) => itemListViewEH(o, e, itemlist.Items.ElementAt(i).ItemId);
-
-                    Label desc = new Label();
-                    desc.Content = itemlist.Items.ElementAt(i).Description.Substring(0,50);
-                    header.Width = 300;
-                    header.Height = 15;
-
-
-
-
-                    Image img = new Image();
-                    var filePath = itemlist.Items.ElementAt(i).CoverImagePath;
-                    BitmapImage bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.UriSource = new Uri(filePath, UriKind.Absolute);
-                    bitmap.EndInit();
-                    img.Source = bitmap;
-
-                    ListViewItem viewItem = new ListViewItem();
-                    if (i % 2 == 0)
-                    {
-                        viewItem.Background = new SolidColorBrush(Colors.LightCoral);
-                    }
-                    viewItem.Background = new SolidColorBrush(Colors.FloralWhite);
-                    
-
-                    ItemListView.Items.Add(viewItem);
-                }
+                GenerateListViewItem(response);
 
             }
         }
 
-        private void ItemListView_Loaded(object sender, RoutedEventArgs e)
+        private async void ItemListView_Loaded(object sender, RoutedEventArgs e)
         {
-            
+            HttpClient client = new HttpClient();
+            var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.mainWindow_allItem);
+            if (response.IsSuccessStatusCode)
+            {
+                GenerateListViewItem(response);
+
+            }
         }
 
-        private void itemListViewEH(object sender, RoutedEventArgs e, long itemId)
+        private void ItemDetailReview(object sender, RoutedEventArgs e, long itemId)
         {
             ItemDetailsWindow iw = new ItemDetailsWindow(itemId);
             iw.Show();
             this.Close();
+        }
+
+        private void GenerateListViewItem(HttpResponseMessage response)
+        {
+            ItemListViewModel itemlist = JsonConvert.DeserializeObject<ItemListViewModel>(response.Content.ReadAsStringAsync().Result);
+            PageInfo_TextBox.Text = itemlist.Paginate.NextCursor;
+            for (int i = 0; i < itemlist.Items.Count(); i++)
+            {
+                DockPanel dop = new DockPanel();
+                dop.Height = 30;
+
+                StackPanel stackPanel_left = new StackPanel();
+                stackPanel_left.Width = 30;
+                stackPanel_left.VerticalAlignment = VerticalAlignment.Center;
+                stackPanel_left.HorizontalAlignment = HorizontalAlignment.Center;
+
+                StackPanel stackPanel_middle = new StackPanel();
+                stackPanel_middle.Width = 300;
+                stackPanel_middle.VerticalAlignment = VerticalAlignment.Center;
+                stackPanel_middle.HorizontalAlignment = HorizontalAlignment.Center;
+
+                // for item managmenet
+/*                StackPanel stackPanel_right = new StackPanel();
+                stackPanel_right.Width = 300;
+                stackPanel_right.VerticalAlignment = VerticalAlignment.Center;
+                stackPanel_right.HorizontalAlignment = HorizontalAlignment.Center;*/
+
+                //middle stackPanel
+                Button header = new Button();
+                header.Content = itemlist.Items.ElementAt(i).ItemName;
+                header.Width = 300;
+                header.Height = 15;
+                header.Click += (o, e) => ItemDetailReview(o, e, itemlist.Items.ElementAt(i).ItemId);
+                header.FontSize = 18;
+
+                Label desc = new Label();
+                desc.Content = itemlist.Items.ElementAt(i).Description.Substring(0, 50);
+                desc.Width = 300;
+                desc.Height = 15;
+                desc.FontSize = 18;
+
+/*                //right stackpanel only in item management
+                Button delete = new Button();
+                delete.Content = "Delete";
+                delete.FontSize = 18;
+                delete.Width = 80;
+                delete.Height = 40;*/
+
+                //left stackpanel
+                Image img = new Image();
+                var filePath = itemlist.Items.ElementAt(i).CoverImagePath;
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(filePath, UriKind.Absolute);
+                bitmap.EndInit();
+                img.Source = bitmap;
+                img.Stretch = Stretch.Fill;
+                img.Width = 30;
+                img.Height = 30;
+
+                //combine
+                stackPanel_left.Children.Add(img);
+                stackPanel_middle.Children.Add(header);
+                stackPanel_middle.Children.Add(desc);
+                /*stackPanel_right.Children.Add(delete);*/
+                dop.Children.Add(stackPanel_left);
+                dop.Children.Add(stackPanel_middle);
+                /*dop.Children.Add(stackPanel_right);*/
+
+                ListViewItem viewItem = new ListViewItem();
+                if (i % 2 == 0)
+                {
+                    viewItem.Background = new SolidColorBrush(Colors.LightCoral);
+                }
+                viewItem.Background = new SolidColorBrush(Colors.FloralWhite);
+
+                viewItem.Content = dop;
+
+                ItemListView.Items.Add(viewItem);
+            }
         }
 
     }
