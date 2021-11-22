@@ -90,12 +90,11 @@ namespace apiFrontEnd
 
         private async void SearchByDate_Click(object sender, RoutedEventArgs e)
         {
-            DateTime? date = EndDatePicker.SelectedDate.Value;
+            DateTime? date = EndDatePicker.SelectedDate;
             var request = new HttpRequestMessage(HttpMethod.Get, BackEndConnection.BaseUrl + BackEndConnection.mainWindow_items);
-            request.Headers.Add("Content-Type", "application/json");
             request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
-                { "upload_date_time", date.Value.ToString("yyyy-MM-dd") }
+                { "upload_date_time", date == null ? string.Empty: date.Value.ToString("yyyy-MM-dd") }
             });
             HttpClient client = new HttpClient();
             var response = await client.SendAsync(request);
