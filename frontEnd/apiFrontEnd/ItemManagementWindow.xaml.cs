@@ -19,9 +19,17 @@ namespace apiFrontEnd
     /// </summary>
     public partial class ItemManagementWindow : Window
     {
+        private readonly string _userName;
+        private readonly string _token;
         public ItemManagementWindow()
         {
             InitializeComponent();
+        }
+        public ItemManagementWindow(string token, string userName)
+        {
+            InitializeComponent();
+            _token = token;
+            _userName = userName;
         }
     }
 }
