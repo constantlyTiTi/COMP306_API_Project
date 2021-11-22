@@ -24,8 +24,6 @@ namespace apiFrontEnd
     /// </summary>
     public partial class LoginAndRegistration : Window
     {
-        private readonly string _loginUrl = @"home/login";
-        private readonly string _registerUrl = @"home/Register";
         private string _token;
         private string _userName;
         public LoginAndRegistration()
@@ -52,7 +50,7 @@ namespace apiFrontEnd
             StringContent content = new StringContent(JsonConvert.SerializeObject(user), System.Text.Encoding.UTF8, "application/json");
             using (HttpClient client = new HttpClient())
             {
-                var response = await client.PostAsync(BackEndConnection.BaseUrl + _loginUrl, content);
+                var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.loginUrl, content);
                 if (response.IsSuccessStatusCode)
                 {
                     UserAuth userReturn = JsonConvert.DeserializeObject<UserAuth>(response.Content.ReadAsStringAsync().Result);
@@ -88,7 +86,7 @@ namespace apiFrontEnd
             StringContent content = new StringContent(JsonConvert.SerializeObject(user), System.Text.Encoding.UTF8, "application/json");
             using (HttpClient client = new HttpClient())
             {
-                var response = await client.PostAsync(BackEndConnection.BaseUrl + _registerUrl, content);
+                var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.registerUrl, content);
                 if (response.IsSuccessStatusCode)
                 {
                     UserAuth userReturn = JsonConvert.DeserializeObject<UserAuth>(response.Content.ReadAsStringAsync().Result);

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using apiFrontEnd.StaticValues;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,6 +27,11 @@ namespace apiFrontEnd
         public MainWindow()
         {
             InitializeComponent();
+            ItemNav.Visibility = Visibility.Hidden;
+            OrderNav.Visibility = Visibility.Hidden;
+            LogoutNav.Visibility = Visibility.Hidden;
+            _token = string.Empty;
+            _userName = string.Empty;
         }
 
         public MainWindow(string userName, string token)
@@ -39,6 +46,51 @@ namespace apiFrontEnd
             LoginAndRegistration lrw = new LoginAndRegistration();
             lrw.Show();
             this.Close();
+        }
+
+        private void HomeNav_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(_token))
+            {
+                ItemNav.Visibility = Visibility.Hidden;
+                OrderNav.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                ItemNav.Visibility = Visibility.Visible;
+                OrderNav.Visibility = Visibility.Visible;
+            }
+        }
+
+        private async void LogoutNav_Click(object sender, RoutedEventArgs e)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                StringContent content = new StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                client.DefaultRequestHeaders.Add(BackEndConnection.Authentication, _token);
+                var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.logoutUrl, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    MainWindow mw = new MainWindow();
+                    mw.Show();
+                    this.Close();
+                }
+            }   
+        }
+
+        private void ItemNav_Click(object sender, RoutedEventArgs e)
+        {
+            ItemManagementWindow iw = new ItemManagementWindow(_token, _userName);
+            iw.Show();
+            iw.Close();
+        }
+
+        private void SearchByDate_Click(object sender, RoutedEventArgs e)
+        {
+            DateTime? startDate = StartDatePicker.SelectedDate.Value;
+            DateTime? endDate = EndDatePicker.SelectedDate.Value;
+            HttpClient client = new HttpClient();
+            StringContent content = new StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
         }
     }
 }
