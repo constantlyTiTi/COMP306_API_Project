@@ -37,6 +37,14 @@ namespace apiProject.Controllers
             {
                 var cartInfor = HttpContext.Session.GetString("Cart");
                 cartItems = (List<ShoppingCartItem>)JsonConvert.DeserializeObject(cartInfor);
+                if(cartItems.Any(i=>i.ItemId == cartItem.ItemId))
+                {
+                    return BadRequest(new ErrorMsg
+                    {
+                        Error = "This item has already exist in the shopping cart, " +
+                        "if you want to by more, please go to shopping cart and edit the quantity"
+                    });
+                }
             }
 
             cartItems.Add(cartItem);
