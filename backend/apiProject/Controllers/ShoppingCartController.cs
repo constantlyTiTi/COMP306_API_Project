@@ -131,5 +131,30 @@ namespace apiProject.Controllers
             return Ok(_mapper.Map(cartItems, cartDTO));
 
         }
+
+        [AllowAnonymous]
+        [HttpPut("update-cart")]
+        public IActionResult UpdateCart([FromBody] ShoppingCartItem shoppingCartItem)
+        {
+            var cartInfor = HttpContext.Session.GetString("Cart");
+            List<ShoppingCartItem> cartItems = (List<ShoppingCartItem>)JsonConvert.DeserializeObject(cartInfor);
+            int index = cartItems.FindIndex(i => i.ItemId == shoppingCartItem.ItemId);          
+            cartItems[index] = shoppingCartItem;
+            HttpContext.Session.SetString("Cart", JsonConvert.SerializeObject(cartItems));
+
+            bool isAuthenticated = User.Identity.IsAuthenticated;
+            if (isAuthenticated)
+            {
+                _unitOfWork.ShoppingCartItems.UpdateItemQuantity(shoppingCartItem.ItemId,shoppingCartItem.Quantity, User.Identity.Name)
+            }
+
+            ShoppingCartDTO cartDTO = _mapper.Map<ShoppingCartDTO>(cartItems);
+            IEnumerable<Item> items = _unitOfWork.Item.GetAllByIds(cartItems.Select(i => i.ItemId)).Result;
+            IEnumerable<ItemDTO> itemDTOs = _mapper.Map<IEnumerable<ItemDTO>>(items);
+            _mapper.Map(cartItems, itemDTOs);
+            _mapper.Map(itemDTOs, cartDTO);
+
+            return Ok(cartDTO);
+        }
     }
 }
