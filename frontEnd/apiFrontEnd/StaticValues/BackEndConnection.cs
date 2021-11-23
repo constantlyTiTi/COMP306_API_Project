@@ -25,5 +25,6 @@ namespace apiFrontEnd.StaticValues
         public static readonly string ShoppingCartWindow_allItem = @"shopping_cart/all-items";
         public static readonly string ShoppingCartWindow_Item = @"shopping_cart/";
         public static readonly string ShoppingCartWindow_Item_update = @"shopping_cart/update-cart";
+        public static readonly string ShoppingCartWindow_PlaceOrder = @"shopping_cart/place-order";
     }
 }
