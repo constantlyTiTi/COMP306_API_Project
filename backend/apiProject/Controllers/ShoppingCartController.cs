@@ -145,7 +145,8 @@ namespace apiProject.Controllers
             bool isAuthenticated = User.Identity.IsAuthenticated;
             if (isAuthenticated)
             {
-                _unitOfWork.ShoppingCartItems.UpdateItemQuantity(shoppingCartItem.ItemId,shoppingCartItem.Quantity, User.Identity.Name)
+                _unitOfWork.ShoppingCartItems
+                    .UpdateItemQuantity(shoppingCartItem.ItemId, shoppingCartItem.Quantity, User.Identity.Name);
             }
 
             ShoppingCartDTO cartDTO = _mapper.Map<ShoppingCartDTO>(cartItems);
