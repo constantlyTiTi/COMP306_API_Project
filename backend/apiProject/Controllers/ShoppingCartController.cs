@@ -146,7 +146,7 @@ namespace apiProject.Controllers
             if (isAuthenticated)
             {
                 _unitOfWork.ShoppingCartItems
-                    .UpdateItemQuantity(shoppingCartItem.ItemId, shoppingCartItem.Quantity, User.Identity.Name);
+                    .UpdateItemQuantity(shoppingCartItem.ItemId, shoppingCartItem.Quantity, shoppingCartItem.UserName);
             }
 
             ShoppingCartDTO cartDTO = _mapper.Map<ShoppingCartDTO>(cartItems);
