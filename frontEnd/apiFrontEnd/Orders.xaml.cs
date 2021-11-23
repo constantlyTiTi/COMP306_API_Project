@@ -36,11 +36,15 @@ namespace apiFrontEnd
         private async void OrderListView_Loaded(object sender, RoutedEventArgs e)
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, BackEndConnection.BaseUrl + 
-                BackEndConnection.OrderWindow_Order + _userName);
+                BackEndConnection.OrderWindow_Order_userName + _userName);
             HttpClient client = new HttpClient();
             request.Headers.Add(BackEndConnection.Authentication, "Bearer " + _token);
             var response = await client.SendAsync(request);
-            GenerateListViewItem(response);
+            if (response.IsSuccessStatusCode)
+            {
+                GenerateListViewItem(response);
+            }
+            
         }
 
 
@@ -141,7 +145,7 @@ namespace apiFrontEnd
 
             if (ourter.Children.Count == 1)
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, BackEndConnection.BaseUrl + BackEndConnection.OrderWindow_Order + orderId.ToString());
+                var request = new HttpRequestMessage(HttpMethod.Get, BackEndConnection.BaseUrl + BackEndConnection.OrderWindow_Order_orderId + orderId.ToString());
                 request.Headers.Add(BackEndConnection.Authentication, "Bearer " + _token);
                 HttpClient client = new HttpClient();
                 var response = await client.SendAsync(request);
@@ -209,7 +213,7 @@ namespace apiFrontEnd
         {
             HttpClient client = new HttpClient();
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, BackEndConnection.BaseUrl + 
-                BackEndConnection.OrderWindow_Order + _userName);
+                BackEndConnection.OrderWindow_Order_userName + _userName);
             request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 { "order_id", orderId.ToString()}
@@ -218,5 +222,11 @@ namespace apiFrontEnd
             await client.SendAsync(request);
         }
 
+        private void HomeNav_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow mw = new MainWindow(_userName, _token);
+            mw.Show();
+            this.Close();
+        }
     }
 }

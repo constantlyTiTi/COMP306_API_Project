@@ -23,9 +23,13 @@ namespace apiFrontEnd
     /// </summary>
     public partial class ItemDetailsWindow : Window
     {
-        public ItemDetailsWindow(long itemId)
+        private readonly string _userName;
+        private readonly string _token;
+        public ItemDetailsWindow(long itemId, string userName, string token)
         {
             InitializeComponent();
+            _userName = userName;
+            _token = token;
         }
 
         private async void Generate(long itemId)
