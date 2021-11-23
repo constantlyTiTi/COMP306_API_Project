@@ -173,6 +173,16 @@ namespace apiProject.Controllers
             {
                 var items_all = _unitOfWork.Item.GetItemByUploadedDateTime(upload_date_time.Value, upload_date_time.Value.AddDays(1)).Result;
                 IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
+
+                IEnumerable<long> items_all_ids = items_all.Select(i => i.ItemId);
+                IEnumerable<ItemFile> itemFiles_all = _unitOfWork.ItemFile.GetAllItemByIds(items_all_ids).Result;
+
+                foreach (var dto in itemDtos)
+                {
+                    IEnumerable<ItemFile> itemFiles = itemFiles_all.Where(i => i.ItemId == dto.ItemId);
+                    _mapper.Map(itemFiles, dto);
+                }
+
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
                 List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
                 if (itemsOfPage == null)

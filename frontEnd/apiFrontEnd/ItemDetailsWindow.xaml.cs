@@ -47,8 +47,8 @@ namespace apiFrontEnd
                 ItemNameLabel.Content = itemDetail.item_name;
 
                 Button addToCart = new Button();
-                addToCart.Height = 30;
-                addToCart.Width = 100;
+                addToCart.Height = 40;
+                addToCart.Width = 200;
                 addToCart.Content = "Add to Shopping Cart";
                 addToCart.FontSize = 16;
                 addToCart.Background = Brushes.LightYellow;
@@ -90,8 +90,10 @@ namespace apiFrontEnd
         private async void AddItemToShoppingCart(ShoppingCartItem item)
         {
             HttpClient client = new HttpClient();
-            StringContent content = new StringContent(JsonConvert.SerializeObject(item));
-            var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item + item.item_id.ToString(), content);
+            StringContent content = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json");
+            
+            var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item + item.item_id.ToString()
+                , content);
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("The item has been added to shopping cart");
