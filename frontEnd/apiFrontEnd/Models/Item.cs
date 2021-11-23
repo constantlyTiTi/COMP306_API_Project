@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
-namespace apiProject.DTO
+namespace apiFrontEnd.Models
 {
-    public class ItemDTO
+    public class Item
     {
         public long ItemId { get; set; }
         [JsonPropertyName("uploader")]
@@ -16,7 +19,9 @@ namespace apiProject.DTO
         [Required]
         [JsonPropertyName("item_name")]
         public string ItemName { get; set; }
+        [Required]
         public string Category { get; set; }
+        [Required]
         public string Description { get; set; }
         [Required]
         public double Price { get; set; }
@@ -28,11 +33,10 @@ namespace apiProject.DTO
         [JsonPropertyName("location_postal_code")]
         public string LocationPostalCode { get; set; }
         [JsonPropertyName("item_imgs")]
-        public ICollection<IFormFile> ItemImages { get; set; }
+        public ICollection<FileStream> ItemImages { get; set; }
 
         [JsonPropertyName("item_imgs_paths")]
         public IEnumerable<string> ItemImagePaths { get; set; }
-        public int Quantity { get; set; }
+        public string Quantity { get; set; }
     }
-
 }

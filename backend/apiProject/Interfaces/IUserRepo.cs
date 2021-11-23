@@ -12,6 +12,6 @@ namespace apiProject.Repositories
 /*        Task DeleteUser(string userName);*/
         Task<User> UpdateUser(User user);
         User AddUser(User user);
-        Task<User> GetUser(string userName, string password);
+        Task<User> GetUser(string userName);
     }
 }

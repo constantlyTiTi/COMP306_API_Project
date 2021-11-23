@@ -25,6 +25,11 @@ namespace apiProject
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+/*                    webBuilder.ConfigureKestrel(serverOptions =>
+                    {
+                        serverOptions.Limits.MaxRequestBodySize = 100 * 1024 * 1024;
+                        serverOptions.Limits.MAx
+                    });*/
                 })
             .ConfigureAppConfiguration((hostingContext,builder) =>
             {

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace apiProject.Models
 {
-    [Table("APIProjectUser")]
+    [Table("APIUserIdentity")]
     public class User
     {
         [ServiceStack.DataAnnotations.PrimaryKey]

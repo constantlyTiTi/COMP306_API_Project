@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace apiProject.Controllers
 {
-    [Route("item")]
+    [Route("api/item")]
     [ApiController]
     public class ItemController : ControllerBase
     {
@@ -40,13 +40,20 @@ namespace apiProject.Controllers
             IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
 
             Paginate paginate = new Paginate(items_per_page, next_cursor);
-            ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(itemDtos, items_per_page, next_cursor));
+            List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
+            if (itemsOfPage == null)
+            {
+                return NotFound();
+            }
+            ItemList itemList = _mapper.Map<ItemList>(itemsOfPage);
             _mapper.Map(paginate, itemList);
 
             return Ok(itemList);
         }
 
+        [Authorize]
         [HttpPost("post-item")]
+        [RequestSizeLimit(40000000)]
         public IActionResult PostNewItem(ItemDTO item_form)
         {
             if (!ModelState.IsValid)
@@ -76,7 +83,8 @@ namespace apiProject.Controllers
             }
             return Ok(item_form);
         }
-        
+
+        [AllowAnonymous]
         [HttpGet("items")]
         public IActionResult FilterItems(string item_name = "", string postal_code = "", 
             DateTime? upload_date_time = null, string category = "", int items_per_page = 10, string next_cursor = "0")
@@ -87,7 +95,12 @@ namespace apiProject.Controllers
                 IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
 
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
-                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(itemDtos, items_per_page, next_cursor));
+                List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
+                if (itemsOfPage == null)
+                {
+                    return NotFound();
+                }
+                ItemList itemList = _mapper.Map<ItemList>(itemsOfPage);
                 _mapper.Map(paginate, itemList);
 
                 return Ok(itemList);
@@ -98,7 +111,12 @@ namespace apiProject.Controllers
                 var items_all = _unitOfWork.Item.GetItemByItemName(item_name).Result;
                 IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
-                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(itemDtos, items_per_page, next_cursor));
+                List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
+                if (itemsOfPage == null)
+                {
+                    return NotFound();
+                }
+                ItemList itemList = _mapper.Map<ItemList>(itemsOfPage);
                 _mapper.Map(paginate, itemList);
 
                 return Ok(itemList);
@@ -109,7 +127,12 @@ namespace apiProject.Controllers
                 var items_all = _unitOfWork.Item.GetItemByCategory(category).Result;
                 IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
-                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(itemDtos, items_per_page, next_cursor));
+                List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
+                if (itemsOfPage == null)
+                {
+                    return NotFound();
+                }
+                ItemList itemList = _mapper.Map<ItemList>(itemsOfPage);
                 _mapper.Map(paginate, itemList);
 
                 return Ok(itemList);
@@ -120,7 +143,12 @@ namespace apiProject.Controllers
                 var items_all = _unitOfWork.Item.GetItemByLocation(postal_code).Result;
                 IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
-                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(itemDtos, items_per_page, next_cursor));
+                List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
+                if (itemsOfPage == null)
+                {
+                    return NotFound();
+                }
+                ItemList itemList = _mapper.Map<ItemList>(itemsOfPage);
                 _mapper.Map(paginate, itemList);
 
                 return Ok(itemList);
@@ -131,7 +159,12 @@ namespace apiProject.Controllers
                 var items_all = _unitOfWork.Item.GetItemByUploadedDateTime(upload_date_time.Value, upload_date_time.Value.AddDays(1)).Result;
                 IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
-                ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(itemDtos, items_per_page, next_cursor));
+                List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
+                if (itemsOfPage == null)
+                {
+                    return NotFound();
+                }
+                ItemList itemList = _mapper.Map<ItemList>(itemsOfPage);
                 _mapper.Map(paginate, itemList);
 
                 return Ok(itemList);
@@ -141,20 +174,27 @@ namespace apiProject.Controllers
             return BadRequest(model);
         }
 
+        [Authorize]
         [HttpGet("items/{uploaderusername}")]
         public IActionResult FilterItemsByUploader(string uploaderusername, int items_per_page = 10, string next_cursor = "0")
         {
             var items_all = _unitOfWork.Item.GetItemByUserName(uploaderusername).Result;
             IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
             Paginate paginate = new Paginate(items_per_page, next_cursor);
-            ItemList itemList = _mapper.Map<ItemList>(GetItemsPerPage(itemDtos, items_per_page, next_cursor));
+            List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
+            if(itemsOfPage == null)
+            {
+                return NotFound();
+            }
+            ItemList itemList = _mapper.Map<ItemList>(itemsOfPage);
             _mapper.Map(paginate, itemList);
 
             return Ok(itemList);
         }
 
+        [AllowAnonymous]
         [HttpGet("{itemid}")]
-        public IActionResult FilterItemsByUploaderAndItemId( long itemid)
+        public IActionResult FilterItemsByItemId( long itemid)
         {
             Item item = _unitOfWork.Item.Get(itemid);
             if(item == null)
@@ -168,6 +208,7 @@ namespace apiProject.Controllers
             return Ok(itemDTO);
         }
 
+        [Authorize]
         [HttpPut("{uploaderusername}/{itemid}")]
         public IActionResult UpdateItem(string uploaderusername, long itemid, ItemDTO itemDTO)
         {
@@ -217,6 +258,7 @@ namespace apiProject.Controllers
             return Ok(itemDTO);
         }
 
+        [Authorize]
         [HttpDelete("{uploaderusername}/{itemid}")]
         public IActionResult DeleteItem(string uploaderusername, long itemid)
         {
@@ -250,11 +292,6 @@ namespace apiProject.Controllers
 
             return Ok();
         }
-
-
-
-
-
 
         private List<ItemDTO> GetItemsPerPage(IEnumerable<ItemDTO> items_all, int items_per_page, string next_cursor)
         {

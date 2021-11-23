@@ -1,6 +1,7 @@
 ﻿using apiProject.DTO;
 using apiProject.Models.Enums;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -19,10 +20,31 @@ namespace apiProject.Models
                 .ForMember(dto => dto.OrderTime, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dto => dto.TotalCost, opt => opt.MapFrom(src => src.ShoppingCartItems.Select(s => s.Price * s.Quantity).Sum()))
                 .ForMember(dto =>dto.UserName, opt => opt.MapFrom(src=>src.UserName))
-                .ForMember(dto=>dto.Status, opt=>opt.MapFrom(src=> OrderStatus.Preparing.ToString()));
+                .ForMember(dto=>dto.Status, opt=>opt.MapFrom(src=> OrderStatus.Preparing.ToString()))
+                .ForMember(dto => dto.ShippingAddress, opt => opt.MapFrom(src => src.ShippingAddress));
+            CreateMap<OrderDetails, OrderDetailDTO>()
+                .ForMember(dto => dto.OrderId, opt => opt.MapFrom(src => src.OrderId))
+                .ForMember(dto => dto.OrderTime, opt => opt.MapFrom(src => src.OrderTime))
+                .ForMember(dto => dto.ShippingAddress, opt => opt.MapFrom(src => src.ShippingAddress))
+                .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dto => dto.TotalCost, opt => opt.MapFrom(src => src.TotalCost))
+                .ForMember(dto => dto.UserName, opt => opt.MapFrom(src => src.UserName));
+            CreateMap<IEnumerable<ItemDTO>, OrderDetailDTO>()
+                .ForMember(dto => dto.items, opt => opt.MapFrom(src => src));
+
             //OrderList
-            CreateMap<IEnumerable<OrderDetails>, OrderList>().ForMember(dto => dto.Orders, opt => opt.MapFrom(src => src));
+            CreateMap<IEnumerable<OrderDetailDTO>, OrderList>().ForMember(dto => dto.Orders, opt => opt.MapFrom(src => src));
             CreateMap<Paginate, OrderList>().ForMember(dto => dto.Paginate, opt => opt.MapFrom(src => src));
+            //OrderItem
+            CreateMap<ShoppingCartItem, OrderItem>()
+                .ForMember(dto => dto.ItemId, opt => opt.MapFrom(src => src.ItemId))
+                .ForMember(dto => dto.Quantity, opt => opt.MapFrom(src => src.Quantity));
+            CreateMap<OrderDetails, OrderItem>()
+                .ForMember(dto => dto.OrderId, opt => opt.MapFrom(src => src.OrderId));
+
+            CreateMap<OrderItem, ItemDTO>()
+                .ForMember(dto => dto.Quantity, opt => opt.MapFrom(src => src.Quantity));
+
             //ItemList
             CreateMap<IEnumerable<ItemDTO>, ItemList>().ForMember(dto => dto.Items, opt => opt.MapFrom(src => src));
             CreateMap<Paginate, ItemList>().ForMember(dto => dto.Paginate, opt => opt.MapFrom(src => src));
@@ -31,18 +53,20 @@ namespace apiProject.Models
             CreateMap<Item, ItemDetails>().ForMember(dto => dto.Item, opt => opt.MapFrom(src => src));
             //ShoppingCart
             CreateMap<IEnumerable<ShoppingCartItem>, ShoppingCartDTO>()
-                .ForMember(dto => dto.ShoppingCartItems, opt => opt.MapFrom(src => src))
                 .ForMember(dto => dto.TotalCost, opt => opt.MapFrom(src => src.Sum(i=>i.Price)));
+            CreateMap<IEnumerable<ItemDTO>, ShoppingCartDTO>()
+                .ForMember(dto => dto.ShoppingCartItems, opt => opt.MapFrom(src => src));
+            CreateMap<ShoppingCartItem, ItemDTO>()
+                .ForMember(dto => dto.Quantity, opt => opt.MapFrom(src => src.Quantity));
             //UserInfor
             CreateMap<User, UserInfor>()
                 .ForMember(dto => dto.UserName, opt => opt.MapFrom(u => u.UserName))
                 .ForMember(dto => dto.Password, opt => opt.MapFrom(u => u.Password))
                 .ForMember(dto => dto.IpAddress, opt => opt.MapFrom(u => Encoding.ASCII.GetString(u.IpAddress)));
             //User
-            CreateMap<UserInfor, User> ()
+            CreateMap<IdentityUser, User> ()
                 .ForMember(dto => dto.UserName, opt => opt.MapFrom(u => u.UserName))
-                .ForMember(dto => dto.Password, opt => opt.MapFrom(u => u.Password))
-                .ForMember(dto => dto.IpAddress, opt => opt.MapFrom(u => Encoding.ASCII.GetBytes(u.IpAddress)));
+                .ForMember(dto => dto.Password, opt => opt.MapFrom(u => u.PasswordHash));
             //ItemDTO to Item
             CreateMap<ItemDTO, Item>()
                 .ForMember(dto => dto.ItemId, opt => opt.Ignore())

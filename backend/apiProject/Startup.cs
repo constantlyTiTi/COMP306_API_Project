@@ -26,6 +26,10 @@ using Amazon.SimpleSystemsManagement.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using apiProject.TokenAuth;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace apiProject
 {
@@ -70,26 +74,50 @@ namespace apiProject
                 + $"User ID = {config.RDSMasterAccount}; Password = {config.RDSPassword}";
             services.AddDbContext<MSSQLDbContext>(opt => opt.UseSqlServer(connectionString));
 
+            //registers authentication services and handlers for cookie and JWT bearer authentication schemes
+            /*services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options => Configuration.Bind("JwtSettings", options))
+                    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options => Configuration.Bind("CookieSettings", options));*/
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(jwt =>
+                {
+                    var key = Encoding.ASCII.GetBytes(config.JwtSecretToken);
+                    jwt.SaveToken = true;
+                    //Define configuration of JWT 
+                    jwt.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        //Validate the third part of jwt token using the secret we have generated
+                        ValidateIssuerSigningKey = true,
+                        //define signing key
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        //will change after deployment
+                        RequireExpirationTime = false
+                    };
+                });
+            //register the Identity related services. To do that we use the AddIdentity extension method
+            services.AddDefaultIdentity<IdentityUser>(
+                options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = true;
+                }
+                ).AddEntityFrameworkStores<MSSQLDbContext>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ITokenManager, TokenManager>();
 
             services.AddMvc(config =>
             {
                 config.FormatterMappings.SetMediaTypeMappingForFormat("xml", "application/xml");
                 config.FormatterMappings.SetMediaTypeMappingForFormat("js", "application/json");
             });
-
-            //registers authentication services and handlers for cookie and JWT bearer authentication schemes
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options => Configuration.Bind("JwtSettings", options))
-                    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options => Configuration.Bind("CookieSettings", options));
-
-            //register the Identity related services. To do that we use the AddIdentity extension method
-            services.AddIdentity<IdentityUser, IdentityRole>(
-                options =>
-                {
-                    options.SignIn.RequireConfirmedAccount = false;
-                }
-                ).AddEntityFrameworkStores<MSSQLDbContext>();
 
             // Add Role services to Identity
             services.Configure<IdentityOptions>(
@@ -132,12 +160,23 @@ namespace apiProject
                     .Build();
             });
 
+            services.AddControllersWithViews();
+
+            //Config Session
+            services.AddSession(config =>
+            {
+                config.IOTimeout = TimeSpan.FromHours(6);
+            });
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //config proxy
+            app.UseForwardedHeaders();
+            app.UseSession();
+            /*app.MapWhen(ctx=>ctx.Request.Path.StartsWithSegments("/home"), builder => builder.RunProxy())*/
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -146,10 +185,6 @@ namespace apiProject
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-/*            app.Run(async context =>
-            {
-                context.Features.Get<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = 1048576000;
-            });*/
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -161,7 +196,7 @@ namespace apiProject
 
         }
 
-        private static async Task<GetParameterResponse> GetConfiguration()
+/*        private static GetParameterResponse GetConfiguration()
         {
             // NOTE: set the region here to match the region used when you created
             // the parameter
@@ -176,6 +211,6 @@ namespace apiProject
 
             var response = client.GetParameterAsync(request).GetAwaiter().GetResult();
             return response;
-        }
+        }*/
     }
 }
