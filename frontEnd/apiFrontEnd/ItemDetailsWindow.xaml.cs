@@ -92,7 +92,8 @@ namespace apiFrontEnd
             HttpClient client = new HttpClient();
             StringContent content = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json");
             
-            var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item + item.item_id.ToString()
+            var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item 
+                + item.item_id.ToString() + @"/" + MainWindow.uniqueId.ToString()
                 , content);
             if (response.IsSuccessStatusCode)
             {
@@ -101,7 +102,7 @@ namespace apiFrontEnd
             else
             {
                 JObject errorObject = JsonConvert.DeserializeObject<JObject>(response.Content.ReadAsStringAsync().Result);
-                MessageBox.Show(errorObject.GetValue("Error").ToString());
+                MessageBox.Show(errorObject.GetValue("error").ToString());
             }
 
         }

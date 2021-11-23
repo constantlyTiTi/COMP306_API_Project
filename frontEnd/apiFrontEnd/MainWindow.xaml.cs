@@ -27,6 +27,7 @@ namespace apiFrontEnd
     {
         private readonly string _userName;
         private readonly string _token;
+        public static long uniqueId = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -35,6 +36,20 @@ namespace apiFrontEnd
             LogoutNav.Visibility = Visibility.Hidden;
             _token = string.Empty;
             _userName = string.Empty;
+            GenerateUniqueId();
+        }
+
+        private void GenerateUniqueId()
+        {
+            if (uniqueId == 0)
+            {
+                HttpClient client = new HttpClient();
+                var response = client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_GenerateRandomId).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    uniqueId = JsonConvert.DeserializeObject<long>(response.Content.ReadAsStringAsync().Result);
+                }
+            }
         }
 
         public MainWindow(string userName, string token)
