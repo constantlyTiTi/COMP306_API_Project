@@ -58,9 +58,13 @@ namespace apiFrontEnd
         {
             ShoppingCartVM shoppingCart = JsonConvert.DeserializeObject<ShoppingCartVM>(response.Content.ReadAsStringAsync().Result);
             TotalCostLabel.Content = "Total cost: " + shoppingCart.TotalCost;
-            
-            foreach(var item in shoppingCart.ShoppingCartItems)
+
+            foreach (var item in shoppingCart.ShoppingCartItems)
             {
+                ShoppingCartItem cartItem = new ShoppingCartItem();
+                cartItem.ItemId = item.ItemId;
+                cartItem.Price = item.Price;
+                cartItem.UserName = _userName;
                 DockPanel dop_Items = new DockPanel();
                 dop_Items.Height = 30;
 
@@ -106,6 +110,7 @@ namespace apiFrontEnd
                 delete.FontSize = 18;
                 delete.FontWeight = FontWeights.Bold;
                 delete.Margin = new Thickness(10, 5, 10, 5);
+                delete.Click += (o, e) => reduceQuantity(quantyTB, cartItem, dop_Items);
 
                 Button add = new Button();
                 add.Height = 30;
@@ -114,31 +119,61 @@ namespace apiFrontEnd
                 add.FontSize = 18;
                 add.FontWeight = FontWeights.Bold;
                 add.Margin = new Thickness(10, 5, 10, 5);
+                add.Click += (o, e) => addQuantity(quantyTB, cartItem);
 
                 ShoppingCartListView.Items.Add(dop_Items);
             }
 
         }
 
-        private async void delete(TextBox tb, ShoppingCartItem item)
+        private async void reduceQuantity(TextBox tb, ShoppingCartItem item, DockPanel dop_Items)
         {
+            tb.Text = (int.Parse(tb.Text) - 1).ToString();
+            item.Quantity = int.Parse(tb.Text);
             string itemJsonValue = JsonConvert.SerializeObject(item);
-            if(tb.Text.CompareTo("1") > 0)
+            if (tb.Text.CompareTo("1") > 0)
             {
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item_update);
                 StringContent bodyContent = new StringContent(itemJsonValue);
                 request.Content = bodyContent;
                 HttpClient client = new HttpClient();
                 await client.SendAsync(request);
-                tb.Text = (int.Parse(tb.Text) - 1).ToString();
             }
             else
             {
-
+                HttpClient client = new HttpClient();
+                var response = await client.DeleteAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item + item.ItemId.ToString());
+                if (response.IsSuccessStatusCode)
+                {
+                    ShoppingCartListView.Items.Remove(dop_Items);
+                }
             }
-            
 
         }
 
+        private async void addQuantity(TextBox tb, ShoppingCartItem item)
+        {
+            tb.Text = (int.Parse(tb.Text) + 1).ToString();
+            item.Quantity = int.Parse(tb.Text);
+            string itemJsonValue = JsonConvert.SerializeObject(item);
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item_update);
+            StringContent bodyContent = new StringContent(itemJsonValue);
+            request.Content = bodyContent;
+            HttpClient client = new HttpClient();
+            await client.SendAsync(request);
+
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_PlaceOrder);
+            request.Headers.Add(BackEndConnection.Authentication, "Bearer " + _token);
+            request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "user_name", _userName }
+            });
+            HttpClient client = new HttpClient();
+            await client.SendAsync(request);
+        }
     }
 }

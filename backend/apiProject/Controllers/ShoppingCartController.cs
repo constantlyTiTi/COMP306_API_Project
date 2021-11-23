@@ -123,9 +123,9 @@ namespace apiProject.Controllers
 
         [Authorize]
         [HttpPost("place-order")]
-        public IActionResult PlaceOrder([FromBody] ShoppingCartDTO cartDTO)
+        public IActionResult PlaceOrder(string user_name)
         {
-            List<ShoppingCartItem> cartItems = _unitOfWork.ShoppingCartItems.GetItems(cartDTO.UserName).ToList();
+            List<ShoppingCartItem> cartItems = _unitOfWork.ShoppingCartItems.GetItems(user_name).ToList();
             var order = _mapper.Map<OrderDetails>(cartItems);
             _unitOfWork.OrderDetails.Add(order);
             foreach (var item in cartItems)
@@ -134,9 +134,7 @@ namespace apiProject.Controllers
                 _unitOfWork.OrderItem.Add(_mapper.Map(order, orderItem));
             }
 
-            _unitOfWork.ShoppingCartItems.RemoveAll(cartDTO.UserName);
-
-            return Ok(_mapper.Map(cartItems, cartDTO));
+            return Ok();
 
         }
 
