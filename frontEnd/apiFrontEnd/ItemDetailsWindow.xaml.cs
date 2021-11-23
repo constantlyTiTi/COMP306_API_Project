@@ -1,6 +1,7 @@
 ﻿using apiFrontEnd.Models;
 using apiFrontEnd.StaticValues;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +43,18 @@ namespace apiFrontEnd
                 Item itemDetail = JsonConvert.DeserializeObject<Item>(response.Content.ReadAsStringAsync().Result);
                 ItemDesLabel.Content = itemDetail.Description;
                 ItemNameLabel.Content = itemDetail.ItemName;
-                foreach(var imgPath in itemDetail.ItemImagePaths)
+
+                Button addToCart = new Button();
+                addToCart.Height = 30;
+                addToCart.Width = 100;
+                addToCart.Content = "Add to Shopping Cart";
+                addToCart.FontSize = 16;
+                addToCart.Background = Brushes.LightYellow;
+                addToCart.Click += (o, e) => AddItemToShoppingCart(itemDetail.ItemId);
+
+                DetailPanel.Children.Add(addToCart);
+
+                foreach (var imgPath in itemDetail.ItemImagePaths)
                 {
                     Image img = new Image();
                     var filePath = imgPath;
@@ -60,6 +72,28 @@ namespace apiFrontEnd
                 }
 
             }
+            else
+            {
+                ItemDesLabel.Content = "Oops, nothing is found";
+
+            }
+        }
+
+        private async void AddItemToShoppingCart(ShoppingCartItem item)
+        {
+            HttpClient client = new HttpClient();
+            StringContent content = new StringContent(JsonConvert.SerializeObject(item));
+            var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item + item.ItemId.ToString(), content);
+            if (response.IsSuccessStatusCode)
+            {
+                MessageBox.Show("The item has been added to shopping cart");
+            }
+            else
+            {
+                JObject errorObject = JsonConvert.DeserializeObject<JObject>(response.Content.ReadAsStringAsync().Result);
+                MessageBox.Show(errorObject.GetValue("Error").ToString());
+            }
+
         }
     }
 }
