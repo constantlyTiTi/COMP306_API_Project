@@ -19,9 +19,33 @@ namespace apiFrontEnd
     /// </summary>
     public partial class PostItem : Window
     {
-        public PostItem()
+        private readonly string _userName;
+        private readonly string _token;
+        public PostItem(string userName, string token)
         {
             InitializeComponent();
+            _userName = userName;
+            _token = token;
+            UserNameLable.Content = "Hello, " + userName + "! Now you can post your item!";
+        }
+
+        private void addBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void deleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void HomeNav_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow mw = new MainWindow(_userName, _token);
+            mw.Top = this.Top;
+            mw.Left = this.Left;
+            mw.Show();
+            this.Close();
         }
     }
 }
