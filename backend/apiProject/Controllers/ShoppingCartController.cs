@@ -20,24 +20,38 @@ namespace apiProject.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private static Dictionary<long,List<ShoppingCartItem>> CartItems = new Dictionary<long, List<ShoppingCartItem>>();
 
         public ShoppingCartController(IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
-        [HttpPost("{itemid}")]
-        [AllowAnonymous]
-        public IActionResult PostItemToCart([FromBody] ShoppingCartItem cartItem)
-        {
-            bool isCartCreated = HttpContext.Session.Keys.Any(i => i == "Cart");
-            List<ShoppingCartItem> cartItems = new List<ShoppingCartItem>();
 
-            if (isCartCreated)
+        [HttpGet("generate-unique_tempor_user_id")]
+        [AllowAnonymous]
+        public long GenerateUniqueKey()
+        {
+            Random rand = new Random();
+            byte[] buf = new byte[8];
+            rand.NextBytes(buf);
+            long longRand = BitConverter.ToInt64(buf, 0);
+            while (CartItems.ContainsKey(longRand))
             {
-                var cartInfor = HttpContext.Session.GetString("Cart");
-                cartItems = (List<ShoppingCartItem>)JsonConvert.DeserializeObject(cartInfor);
-                if(cartItems.Any(i=>i.ItemId == cartItem.ItemId))
+                rand.NextBytes(buf);
+                longRand = BitConverter.ToInt64(buf, 0);
+            }
+
+            return longRand;
+        }
+
+        [HttpPost("{itemid}/{unique_tempor_user_id}")]
+        [AllowAnonymous]
+        public IActionResult PostItemToCart([FromBody] ShoppingCartItem cartItem, long unique_tempor_user_id)
+        {
+            if(CartItems.ContainsKey(unique_tempor_user_id))
+            {
+                if (CartItems[unique_tempor_user_id].Any(i => i.ItemId == cartItem.ItemId))
                 {
                     return BadRequest(new ErrorMsg
                     {
@@ -46,9 +60,18 @@ namespace apiProject.Controllers
                     });
                 }
             }
+            if (CartItems.ContainsKey(unique_tempor_user_id) && CartItems[unique_tempor_user_id].Count > 0)
+            {
 
-            cartItems.Add(cartItem);
-            HttpContext.Session.SetString("Cart", JsonConvert.SerializeObject(cartItems));
+               CartItems[unique_tempor_user_id].Add(cartItem);
+
+            }
+            else
+            {
+                CartItems.Add(unique_tempor_user_id, new List<ShoppingCartItem> { cartItem });
+            }
+
+            
 
             bool isAuthenticated = User.Identity.IsAuthenticated;
             if (isAuthenticated)
@@ -56,24 +79,32 @@ namespace apiProject.Controllers
                 _unitOfWork.ShoppingCartItems.Add(cartItem);
             }
 
-            ShoppingCartDTO cartDTO = _mapper.Map<ShoppingCartDTO>(cartItems);
-            IEnumerable<Item> items = _unitOfWork.Item.GetAllByIds(cartItems.Select(i => i.ItemId)).Result;
-            IEnumerable<ItemDTO> itemDTOs = _mapper.Map<IEnumerable<ItemDTO>>(items);
-            _mapper.Map(cartItems, itemDTOs);
-            _mapper.Map(itemDTOs, cartDTO);
+            return Ok(MapCartDTO(unique_tempor_user_id));
+        }
 
-            return Ok(cartDTO);
+        private ShoppingCartDTO MapCartDTO (long unique_tempor_user_id)
+        {
+            ShoppingCartDTO cartDTO = _mapper.Map<ShoppingCartDTO>(CartItems[unique_tempor_user_id]);
+            IEnumerable<Item> items = _unitOfWork.Item.GetAllByIds(CartItems[unique_tempor_user_id].Select(i => i.ItemId)).Result;
+            IEnumerable<ItemFile> itemFiles = _unitOfWork.ItemFile.GetAllItemByIds(CartItems[unique_tempor_user_id].Select(i => i.ItemId)).Result;
+            IEnumerable<ItemDTO> itemDTOs = _mapper.Map<IEnumerable<ItemDTO>>(items);
+            foreach (var item in itemDTOs)
+            {
+                _mapper.Map(CartItems[unique_tempor_user_id].FirstOrDefault(i => i.ItemId == item.ItemId), item);
+                _mapper.Map(itemFiles.Where(i => i.ItemId == item.ItemId), item);
+            }
+
+            _mapper.Map(itemDTOs, cartDTO);
+            return cartDTO;
         }
 
         [AllowAnonymous]
-        [HttpDelete("{itemid}")]
-        public IActionResult DeleteCartItem(long item_id)
+        [HttpDelete("{itemid}/{unique_tempor_user_id}")]
+        public IActionResult DeleteCartItem(long item_id, long unique_tempor_user_id)
         {
-            var cartInfor = HttpContext.Session.GetString("Cart");
-            List<ShoppingCartItem> cartItems = (List<ShoppingCartItem>)JsonConvert.DeserializeObject(cartInfor);
-            var item = cartItems.FirstOrDefault(i => i.ItemId == item_id);
-            cartItems.Remove(item);
-            HttpContext.Session.SetString("Cart", JsonConvert.SerializeObject(cartItems));
+
+            var item = CartItems[unique_tempor_user_id].FirstOrDefault(i => i.ItemId == item_id);
+            CartItems[unique_tempor_user_id].Remove(item);
 
             bool isAuthenticated = User.Identity.IsAuthenticated;
             if (isAuthenticated)
@@ -81,44 +112,41 @@ namespace apiProject.Controllers
                 _unitOfWork.ShoppingCartItems.Remove(item);
             }
 
-            ShoppingCartDTO cartDTO = _mapper.Map<ShoppingCartDTO>(cartItems);
-            IEnumerable<Item> items = _unitOfWork.Item.GetAllByIds(cartItems.Select(i => i.ItemId)).Result;
-            IEnumerable<ItemDTO> itemDTOs = _mapper.Map<IEnumerable<ItemDTO>>(items);
-            _mapper.Map(cartItems, itemDTOs);
-            _mapper.Map(itemDTOs, cartDTO);
-
-            return Ok(cartDTO);
+            return Ok(MapCartDTO(unique_tempor_user_id));
+        }
+        [AllowAnonymous]
+        [HttpDelete("clear-temp-cart/{unique_tempor_user_id}")]
+        public IActionResult ClearCart(long unique_tempor_user_id)
+        {
+            CartItems.Remove(unique_tempor_user_id);
+            return Ok();
         }
 
+
         [AllowAnonymous]
-        [HttpGet("all-items")]
-        public IActionResult GetShoppingCartItems()
+        [HttpGet("all-items/{unique_tempor_user_id}")]
+        public IActionResult GetShoppingCartItems(long unique_tempor_user_id)
         {
-            List<ShoppingCartItem> cartItems = new List<ShoppingCartItem>();
+
             ShoppingCartDTO cartDTO = new ShoppingCartDTO();
             bool isAuthenticated = User.Identity.IsAuthenticated;
             if (isAuthenticated)
             {
-                cartItems = _unitOfWork.ShoppingCartItems.GetItems(User.Identity.Name).ToList();
+                CartItems[unique_tempor_user_id] = _unitOfWork.ShoppingCartItems.GetItems(User.Identity.Name).ToList();
 
-                _mapper.Map(cartItems, cartDTO);
-                IEnumerable<Item> items = _unitOfWork.Item.GetAllByIds(cartItems.Select(i => i.ItemId)).Result;
-                IEnumerable<ItemDTO> itemDTOs = _mapper.Map<IEnumerable<ItemDTO>>(items);
-                _mapper.Map(cartItems, itemDTOs);
-                _mapper.Map(itemDTOs, cartDTO);
-                return Ok(cartDTO);
+                _mapper.Map(CartItems[unique_tempor_user_id], cartDTO);
 
             }
 
-            bool isCartCreated = HttpContext.Session.Keys.Any(i => i == "Cart");
-            if (isCartCreated)
+            if (!CartItems.ContainsKey(unique_tempor_user_id))
             {
-                var cartInfor = HttpContext.Session.GetString("Cart");
-                cartItems = (List<ShoppingCartItem>)JsonConvert.DeserializeObject(cartInfor);
+                return Ok(cartDTO);
             }
-
-            _mapper.Map(cartItems, cartDTO);
-            return Ok(cartDTO);
+            if (CartItems[unique_tempor_user_id].Count == 0)
+            {
+                return Ok(cartDTO);
+            }
+            return Ok(MapCartDTO(unique_tempor_user_id));
         }
 
         [Authorize]
@@ -139,14 +167,12 @@ namespace apiProject.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPut("update-cart")]
-        public IActionResult UpdateCart([FromBody] ShoppingCartItem shoppingCartItem)
+        [HttpPut("update-cart/{unique_tempor_user_id}")]
+        public IActionResult UpdateCart([FromBody] ShoppingCartItem shoppingCartItem, long unique_tempor_user_id)
         {
-            var cartInfor = HttpContext.Session.GetString("Cart");
-            List<ShoppingCartItem> cartItems = (List<ShoppingCartItem>)JsonConvert.DeserializeObject(cartInfor);
-            int index = cartItems.FindIndex(i => i.ItemId == shoppingCartItem.ItemId);          
-            cartItems[index] = shoppingCartItem;
-            HttpContext.Session.SetString("Cart", JsonConvert.SerializeObject(cartItems));
+
+            int index = CartItems[unique_tempor_user_id].FindIndex(i => i.ItemId == shoppingCartItem.ItemId);
+            CartItems[unique_tempor_user_id][index] = shoppingCartItem;
 
             bool isAuthenticated = User.Identity.IsAuthenticated;
             if (isAuthenticated)
@@ -155,13 +181,7 @@ namespace apiProject.Controllers
                     .UpdateItemQuantity(shoppingCartItem.ItemId, shoppingCartItem.Quantity, shoppingCartItem.UserName);
             }
 
-            ShoppingCartDTO cartDTO = _mapper.Map<ShoppingCartDTO>(cartItems);
-            IEnumerable<Item> items = _unitOfWork.Item.GetAllByIds(cartItems.Select(i => i.ItemId)).Result;
-            IEnumerable<ItemDTO> itemDTOs = _mapper.Map<IEnumerable<ItemDTO>>(items);
-            _mapper.Map(cartItems, itemDTOs);
-            _mapper.Map(itemDTOs, cartDTO);
-
-            return Ok(cartDTO);
+            return Ok(MapCartDTO(unique_tempor_user_id));
         }
     }
 }
