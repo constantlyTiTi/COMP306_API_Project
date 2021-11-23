@@ -160,12 +160,12 @@ namespace apiProject
                     .Build();
             });
 
-            //config proxy
             services.AddControllersWithViews();
-            services.Configure<ForwardedHeadersOptions>(options =>
+
+            //Config Session
+            services.AddSession(config =>
             {
-                options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                config.IOTimeout = TimeSpan.FromHours(6);
             });
 
         }
@@ -175,6 +175,7 @@ namespace apiProject
         {
             //config proxy
             app.UseForwardedHeaders();
+            app.UseSession();
             /*app.MapWhen(ctx=>ctx.Request.Path.StartsWithSegments("/home"), builder => builder.RunProxy())*/
             if (env.IsDevelopment())
             {

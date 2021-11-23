@@ -1,17 +1,16 @@
-﻿using apiProject.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace apiProject.DTO
+namespace apiFrontEnd.Models
 {
-    public class ShoppingCartDTO
+    class ShoppingCartVM
     {
         [JsonPropertyName("shopping_cart_items")]
-/*        public IEnumerable<ShoppingCartItem> ShoppingCartItems { get; set; }*/
-        public IEnumerable<ItemDTO> ShoppingCartItems { get; set; }
+        public IEnumerable<Item> ShoppingCartItems { get; set; }
         [JsonPropertyName("total_cost")]
         public double TotalCost { get; set; }
         [JsonPropertyName("shipping_address")]

@@ -55,7 +55,7 @@ namespace apiProject.Repositories
         {
             var task = Task.Factory.StartNew(() =>
             {
-                return (IEnumerable<Item>)_db.Item.Where(i => i.LocationPostalCode.Substring(0,3) == PostCode.Substring(0,3)).ToList();
+                return (IEnumerable<Item>)_db.Item.Where(i => i.LocationPostalCode.Substring(0, 3) == PostCode.Substring(0, 3)).ToList();
             });
             return await task;
         }
@@ -104,5 +104,16 @@ namespace apiProject.Repositories
             findObj.Price = item.Price;
             _db.SaveChanges();
         }
-    }
+
+
+        public async Task<IEnumerable<Item>> GetAllByIds(IEnumerable<long> itemIds)
+        {
+            var task = Task.Factory.StartNew(() =>
+            {
+                return (IEnumerable<Item>)_db.Item.Where(i => itemIds.Contains(i.ItemId)).ToList();
+            });
+            return await task;
+        }
+
+}
 }

@@ -23,15 +23,19 @@ namespace apiFrontEnd
     /// </summary>
     public partial class ItemDetailsWindow : Window
     {
-        public ItemDetailsWindow(long itemId)
+        private readonly string _userName;
+        private readonly string _token;
+        public ItemDetailsWindow(long itemId, string userName, string token)
         {
             InitializeComponent();
+            _userName = userName;
+            _token = token;
         }
 
         private async void Generate(long itemId)
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.mainWindow_itemDetail);
+            var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.mainWindow_itemDetail + itemId.ToString());
             if (response.IsSuccessStatusCode)
             {
                 Item itemDetail = JsonConvert.DeserializeObject<Item>(response.Content.ReadAsStringAsync().Result);

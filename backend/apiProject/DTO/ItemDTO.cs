@@ -32,6 +32,7 @@ namespace apiProject.DTO
 
         [JsonPropertyName("item_imgs_paths")]
         public IEnumerable<string> ItemImagePaths { get; set; }
+        public int Quantity { get; set; }
     }
 
 }

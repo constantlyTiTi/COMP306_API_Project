@@ -11,8 +11,8 @@
             <DockPanel  LastChildFill="False" Height="35" Margin="0,5,0,0">
                 <Button Name ="HomeNav" Content="Home" Width="91" FontSize="20" Margin="10,0,0,0" Background="White" BorderBrush="White" Click="HomeNav_Click"/>
                 <Button Name ="ItemNav" Content="Item Management" Width="180"  FontSize="20" Background="White" BorderBrush="White" Click="ItemNav_Click"/>
-                <Button Name ="OrderNav" Content="Orders" Width="84" FontSize="20" Background="White" BorderBrush="White"/>
-                <Button Name ="CartNav" Content="Shopping Cart" Width="147" FontSize="20" Background="White" BorderBrush="White"/>
+                <Button Name ="OrderNav" Content="Orders" Width="84" FontSize="20" Background="White" BorderBrush="White" Click="OrderNav_Click"/>
+                <Button Name ="CartNav" Content="Shopping Cart" Width="147" FontSize="20" Background="White" BorderBrush="White" Click="CartNav_Click"/>
                 <Button Name ="AuthNav" Content="Login/Register" Width="193" FontSize="20" Background="White" BorderBrush="White" Click="AuthNav_Click"/>
                 <Button Name ="LogoutNav" Content="Logout" Width="75" FontSize="20" Margin="0,0,10,0" Background="White" BorderBrush="White" Click="LogoutNav_Click"/>
             </DockPanel>

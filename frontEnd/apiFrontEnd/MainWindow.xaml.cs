@@ -120,9 +120,19 @@ namespace apiFrontEnd
             }
         }
 
+        private void OrderNav_Click(object sender, RoutedEventArgs e)
+        {
+            Orders ow = new Orders(_userName, _token);
+            ow.Show();
+            this.Close();
+        }
+
+
+        // methods
+
         private void ItemDetailReview(object sender, RoutedEventArgs e, long itemId)
         {
-            ItemDetailsWindow iw = new ItemDetailsWindow(itemId);
+            ItemDetailsWindow iw = new ItemDetailsWindow(itemId, _userName, _token);
             iw.Show();
             this.Close();
         }
@@ -207,5 +217,11 @@ namespace apiFrontEnd
             }
         }
 
+        private void CartNav_Click(object sender, RoutedEventArgs e)
+        {
+            ShoppingCart sw = new ShoppingCart(_userName, _token);
+            sw.Show();
+            this.Close();
+        }
     }
 }
