@@ -1,5 +1,6 @@
 ﻿using apiFrontEnd.Models;
 using apiFrontEnd.StaticValues;
+using AutoMapper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -32,6 +33,7 @@ namespace apiFrontEnd
             _userName = userName;
             _token = token;
             Generate(itemId);
+
         }
 
         private async void Generate(long itemId)
@@ -50,7 +52,13 @@ namespace apiFrontEnd
                 addToCart.Content = "Add to Shopping Cart";
                 addToCart.FontSize = 16;
                 addToCart.Background = Brushes.LightYellow;
-                addToCart.Click += (o, e) => AddItemToShoppingCart(itemDetail.ItemId);
+
+                ShoppingCartItem cartItem = new ShoppingCartItem();
+                cartItem.ItemId = itemDetail.ItemId;
+                cartItem.Price = itemDetail.Price;
+                cartItem.Quantity = 1;
+                cartItem.UserName = _userName;
+                addToCart.Click += (o, e) => AddItemToShoppingCart(cartItem);
 
                 DetailPanel.Children.Add(addToCart);
 
