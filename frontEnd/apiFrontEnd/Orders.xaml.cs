@@ -51,7 +51,7 @@ namespace apiFrontEnd
         private void GenerateListViewItem(HttpResponseMessage response)
         {
             OrderListViewModel orderList = JsonConvert.DeserializeObject<OrderListViewModel>(response.Content.ReadAsStringAsync().Result);
-            PageInfo_TextBox.Text = orderList.Paginate.NextCursor;
+            PageInfo_TextBox.Text = orderList.Paginate.next_curesor;
             for (int i = 0; i < orderList.Orders.Count(); i++)
             {
                 StackPanel outer = new StackPanel();
@@ -76,12 +76,12 @@ namespace apiFrontEnd
 
                 //left stackpanel
                 Label lefts_1 = new Label();
-                lefts_1.Content = orderList.Orders.ElementAt(i).OrderId;
+                lefts_1.Content = orderList.Orders.ElementAt(i).order_id;
                 lefts_1.Height = 15;
                 lefts_1.FontSize = 18;
 
                 Label lefts_2 = new Label();
-                lefts_2.Content = orderList.Orders.ElementAt(i).OrderTime.ToShortDateString();
+                lefts_2.Content = orderList.Orders.ElementAt(i).order_time.ToShortDateString();
                 lefts_2.Height = 15;
                 lefts_2.FontSize = 18;
                 stackPanel_left.Children.Add(lefts_1);
@@ -89,7 +89,7 @@ namespace apiFrontEnd
 
                 //middle stackPanel
                 Label middle_1 = new Label();
-                middle_1.Content = "Shipping Address: " + orderList.Orders.ElementAt(i).ShippingAddress;
+                middle_1.Content = "Shipping Address: " + orderList.Orders.ElementAt(i).shipping_address;
                 middle_1.Height = 15;
                 middle_1.FontSize = 18;
 
@@ -103,7 +103,7 @@ namespace apiFrontEnd
 
                 //right stackPanel
                 Label right_1 = new Label();
-                right_1.Content = "Total: " + orderList.Orders.ElementAt(i).TotalCost;
+                right_1.Content = "Total: " + orderList.Orders.ElementAt(i).total_cost;
                 right_1.Height = 15;
                 right_1.FontSize = 18;
 
@@ -112,7 +112,7 @@ namespace apiFrontEnd
                 delete.FontSize = 12;
                 delete.Width = 50;
                 delete.Height = 15;
-                delete.Click += (o, e) => Cancel(orderList.Orders.ElementAt(i).OrderId);
+                delete.Click += (o, e) => Cancel(orderList.Orders.ElementAt(i).order_id);
 
                 stackPanel_right.Children.Add(lefts_1);
                 stackPanel_right.Children.Add(lefts_2);
@@ -132,7 +132,7 @@ namespace apiFrontEnd
 
                 viewItem.Content = dop;
 
-                outer.MouseLeftButtonUp += (o,e) => ToggleItemList(orderList.Orders.ElementAt(i).OrderId, outer);
+                outer.MouseLeftButtonUp += (o,e) => ToggleItemList(orderList.Orders.ElementAt(i).order_id, outer);
 
                 OrderListView.Items.Add(outer);
 
@@ -161,7 +161,7 @@ namespace apiFrontEnd
                         DockPanel dop_Items = new DockPanel();
                         //dop_item left
                         Image img = new Image();
-                        var filePath = orderDetails.items.ElementAt(i).CoverImagePath;
+                        var filePath = orderDetails.items.ElementAt(i).cover_Image_path;
                         BitmapImage bitmap = new BitmapImage();
                         bitmap.BeginInit();
                         bitmap.UriSource = new Uri(filePath, UriKind.Absolute);
@@ -174,7 +174,7 @@ namespace apiFrontEnd
 
                         //dop_item middle
                         Label m1l = new Label();
-                        m1l.Content =  orderDetails.items.ElementAt(i).ItemName;
+                        m1l.Content =  orderDetails.items.ElementAt(i).item_name;
                         m1l.Height = 30;
                         m1l.Width = 100;
                         m1l.FontSize = 18;

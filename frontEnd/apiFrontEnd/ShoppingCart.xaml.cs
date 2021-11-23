@@ -72,24 +72,24 @@ namespace apiFrontEnd
         private void GenerateListViewItem(HttpResponseMessage response)
         {
             ShoppingCartVM shoppingCart = JsonConvert.DeserializeObject<ShoppingCartVM>(response.Content.ReadAsStringAsync().Result);
-            TotalCostLabel.Content = "Total cost: " + shoppingCart.TotalCost;
-            if(shoppingCart.ShoppingCartItems == null)
+            TotalCostLabel.Content = "Total cost: " + shoppingCart.total_cost;
+            if(shoppingCart.shopping_cart_items == null)
             {
                 return;
             }
 
-            foreach (var item in shoppingCart.ShoppingCartItems)
+            foreach (var item in shoppingCart.shopping_cart_items)
             {
                 ShoppingCartItem cartItem = new ShoppingCartItem();
-                cartItem.ItemId = item.ItemId;
+                cartItem.item_id = item.ItemId;
                 cartItem.Price = item.Price;
-                cartItem.UserName = _userName;
+                cartItem.user_name = _userName;
                 DockPanel dop_Items = new DockPanel();
                 dop_Items.Height = 30;
 
                 //right
                 Image img = new Image();
-                var filePath = item.CoverImagePath;
+                var filePath = item.cover_Image_path;
                 BitmapImage bitmap = new BitmapImage();
                 bitmap.BeginInit();
                 bitmap.UriSource = new Uri(filePath, UriKind.Absolute);
@@ -102,7 +102,7 @@ namespace apiFrontEnd
 
                 //middle
                 Label mdLable1 = new Label();
-                mdLable1.Content = item.ItemName;
+                mdLable1.Content = item.item_name;
                 mdLable1.Width = 100;
                 mdLable1.FontSize = 14;
                 dop_Items.Children.Add(mdLable1);
@@ -161,7 +161,7 @@ namespace apiFrontEnd
             else
             {
                 HttpClient client = new HttpClient();
-                var response = await client.DeleteAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item + item.ItemId.ToString());
+                var response = await client.DeleteAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item + item.item_id.ToString());
                 if (response.IsSuccessStatusCode)
                 {
                     ShoppingCartListView.Items.Remove(dop_Items);

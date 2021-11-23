@@ -37,7 +37,13 @@ namespace apiProject.Controllers
         public IActionResult Get(int items_per_page = 10, string next_cursor = "0")
         {
             IEnumerable<Item> items_all =  _unitOfWork.Item.GetAll();
+            IEnumerable<ItemFile> itemFiles_all = _unitOfWork.ItemFile.GetAll();
             IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
+            foreach(var dto in itemDtos)
+            {
+                IEnumerable<ItemFile> itemFiles = itemFiles_all.Where(i => i.ItemId == dto.ItemId);
+                _mapper.Map(itemFiles, dto);
+            }
 
             Paginate paginate = new Paginate(items_per_page, next_cursor);
             List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
@@ -93,6 +99,15 @@ namespace apiProject.Controllers
             {
                 var items_all = _unitOfWork.Item.GetItemByItemNamePostalCode(item_name,postal_code).Result;
                 IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
+
+                IEnumerable<long> items_all_ids = items_all.Select(i => i.ItemId);
+                IEnumerable<ItemFile> itemFiles_all = _unitOfWork.ItemFile.GetAllItemByIds(items_all_ids).Result;
+
+                foreach (var dto in itemDtos)
+                {
+                    IEnumerable<ItemFile> itemFiles = itemFiles_all.Where(i => i.ItemId == dto.ItemId);
+                    _mapper.Map(itemFiles, dto);
+                }
 
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
                 List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
@@ -186,6 +201,16 @@ namespace apiProject.Controllers
             {
                 return NotFound();
             }
+
+            IEnumerable<long> items_all_ids = items_all.Select(i => i.ItemId);
+            IEnumerable<ItemFile> itemFiles_all = _unitOfWork.ItemFile.GetAllItemByIds(items_all_ids).Result;
+
+            foreach (var dto in itemDtos)
+            {
+                IEnumerable<ItemFile> itemFiles = itemFiles_all.Where(i => i.ItemId == dto.ItemId);
+                _mapper.Map(itemFiles, dto);
+            }
+
             ItemList itemList = _mapper.Map<ItemList>(itemsOfPage);
             _mapper.Map(paginate, itemList);
 
