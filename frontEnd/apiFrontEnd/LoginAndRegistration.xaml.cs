@@ -57,6 +57,8 @@ namespace apiFrontEnd
                     _token = userReturn.Token;
                     _userName = userReturn.UserName;
                     MainWindow mw = new MainWindow(_userName, _token);
+                    mw.Top = this.Top;
+                    mw.Left = this.Left;
                     mw.Show();
                     this.Close();
                 }
@@ -93,6 +95,8 @@ namespace apiFrontEnd
                     _token = userReturn.Token;
                     _userName = userReturn.UserName;
                     MainWindow mw = new MainWindow(_userName, _token);
+                    mw.Top = this.Top;
+                    mw.Left = this.Left;
                     mw.Show();
                     this.Close();
                 }
@@ -109,6 +113,8 @@ namespace apiFrontEnd
         private void HomeNav_Click(object sender, RoutedEventArgs e)
         {
             MainWindow mw = new MainWindow();
+            mw.Top = this.Top;
+            mw.Left = this.Left;
             mw.Show();
             this.Close();
         }

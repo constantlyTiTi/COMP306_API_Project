@@ -7,9 +7,13 @@
         mc:Ignorable="d"
         Title="ItemDetailsWindow" Height="450" Width="800">
     <Grid>
-        <StackPanel Name="DetailPanel" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Label Name ="ItemNameLabel" Content=""  FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <StackPanel Name="DetailPanel" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center" Height="414">
+            <DockPanel Height="40" LastChildFill="False">
+                <Button Name ="HomeNav" Content="Home" Width="91" FontSize="20" Margin="10,0,0,0" Background="White" BorderBrush="White" Click="HomeNav_Click"/>
+            </DockPanel>
+            <Label Name ="ItemNameLabel" Content=""  FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <Label Name ="ItemDesLabel" Content=""  FontSize="18" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+
         </StackPanel>
 
     </Grid>

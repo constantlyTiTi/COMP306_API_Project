@@ -37,6 +37,14 @@ namespace apiProject.Controllers
             {
                 var cartInfor = HttpContext.Session.GetString("Cart");
                 cartItems = (List<ShoppingCartItem>)JsonConvert.DeserializeObject(cartInfor);
+                if(cartItems.Any(i=>i.ItemId == cartItem.ItemId))
+                {
+                    return BadRequest(new ErrorMsg
+                    {
+                        Error = "This item has already exist in the shopping cart, " +
+                        "if you want to by more, please go to shopping cart and edit the quantity"
+                    });
+                }
             }
 
             cartItems.Add(cartItem);
@@ -115,9 +123,9 @@ namespace apiProject.Controllers
 
         [Authorize]
         [HttpPost("place-order")]
-        public IActionResult PlaceOrder([FromBody] ShoppingCartDTO cartDTO)
+        public IActionResult PlaceOrder(string user_name)
         {
-            List<ShoppingCartItem> cartItems = _unitOfWork.ShoppingCartItems.GetItems(cartDTO.UserName).ToList();
+            List<ShoppingCartItem> cartItems = _unitOfWork.ShoppingCartItems.GetItems(user_name).ToList();
             var order = _mapper.Map<OrderDetails>(cartItems);
             _unitOfWork.OrderDetails.Add(order);
             foreach (var item in cartItems)
@@ -126,9 +134,7 @@ namespace apiProject.Controllers
                 _unitOfWork.OrderItem.Add(_mapper.Map(order, orderItem));
             }
 
-            _unitOfWork.ShoppingCartItems.RemoveAll(cartDTO.UserName);
-
-            return Ok(_mapper.Map(cartItems, cartDTO));
+            return Ok();
 
         }
 

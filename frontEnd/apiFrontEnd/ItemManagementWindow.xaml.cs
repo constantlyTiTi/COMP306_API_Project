@@ -21,15 +21,21 @@ namespace apiFrontEnd
     {
         private readonly string _userName;
         private readonly string _token;
-        public ItemManagementWindow()
-        {
-            InitializeComponent();
-        }
+
         public ItemManagementWindow(string token, string userName)
         {
             InitializeComponent();
             _token = token;
             _userName = userName;
+        }
+
+        private void HomeNav_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow mw = new MainWindow(_userName, _token);
+            mw.Top = this.Top;
+            mw.Left = this.Left;
+            mw.Show();
+            this.Close();
         }
     }
 }
