@@ -12,12 +12,12 @@ namespace apiFrontEnd.Models
         [JsonPropertyName("total")]
         public int Total { get; set; }
         [JsonPropertyName("next_curesor")]
-        public string NextCursor { get; set; }
+        public string next_curesor { get; set; }
 
         public Paginate(int total, string nextCursor)
         {
             Total = total;
-            NextCursor = nextCursor;
+            next_curesor = nextCursor;
         }
     }
 }

@@ -44,25 +44,25 @@ namespace apiFrontEnd
             {
                 Item itemDetail = JsonConvert.DeserializeObject<Item>(response.Content.ReadAsStringAsync().Result);
                 ItemDesLabel.Content = itemDetail.Description;
-                ItemNameLabel.Content = itemDetail.ItemName;
+                ItemNameLabel.Content = itemDetail.item_name;
 
                 Button addToCart = new Button();
-                addToCart.Height = 30;
-                addToCart.Width = 100;
+                addToCart.Height = 40;
+                addToCart.Width = 200;
                 addToCart.Content = "Add to Shopping Cart";
                 addToCart.FontSize = 16;
                 addToCart.Background = Brushes.LightYellow;
 
                 ShoppingCartItem cartItem = new ShoppingCartItem();
-                cartItem.ItemId = itemDetail.ItemId;
+                cartItem.item_id = itemDetail.ItemId;
                 cartItem.Price = itemDetail.Price;
                 cartItem.Quantity = 1;
-                cartItem.UserName = _userName;
+                cartItem.user_name = _userName;
                 addToCart.Click += (o, e) => AddItemToShoppingCart(cartItem);
 
                 DetailPanel.Children.Add(addToCart);
 
-                foreach (var imgPath in itemDetail.ItemImagePaths)
+                foreach (var imgPath in itemDetail.item_imgs_paths)
                 {
                     Image img = new Image();
                     var filePath = imgPath;
@@ -90,8 +90,10 @@ namespace apiFrontEnd
         private async void AddItemToShoppingCart(ShoppingCartItem item)
         {
             HttpClient client = new HttpClient();
-            StringContent content = new StringContent(JsonConvert.SerializeObject(item));
-            var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item + item.ItemId.ToString(), content);
+            StringContent content = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json");
+            
+            var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item + item.item_id.ToString()
+                , content);
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("The item has been added to shopping cart");
@@ -102,6 +104,20 @@ namespace apiFrontEnd
                 MessageBox.Show(errorObject.GetValue("Error").ToString());
             }
 
+        }
+
+        private void HomeNav_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow mw = new MainWindow();
+            if (!string.IsNullOrWhiteSpace(_userName) && !string.IsNullOrWhiteSpace(_token))
+            {
+                mw = new MainWindow(_userName, _token);
+            }
+
+            mw.Top = this.Top;
+            mw.Left = this.Left;
+            mw.Show();
+            this.Close();
         }
     }
 }

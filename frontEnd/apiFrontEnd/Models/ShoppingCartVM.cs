@@ -10,12 +10,12 @@ namespace apiFrontEnd.Models
     class ShoppingCartVM
     {
         [JsonPropertyName("shopping_cart_items")]
-        public IEnumerable<Item> ShoppingCartItems { get; set; }
+        public IEnumerable<Item> shopping_cart_items { get; set; }
         [JsonPropertyName("total_cost")]
-        public double TotalCost { get; set; }
+        public double total_cost { get; set; }
         [JsonPropertyName("shipping_address")]
-        public string ShippingAddress { get; set; }
+        public string shipping_address { get; set; }
         [JsonPropertyName("user_name")]
-        public string UserName { get; set; }
+        public string user_name { get; set; }
     }
 }
