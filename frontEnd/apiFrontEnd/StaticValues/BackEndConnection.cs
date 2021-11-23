@@ -15,15 +15,15 @@ namespace apiFrontEnd.StaticValues
         public static readonly string registerUrl = @"home/Register";
         public static readonly string logoutUrl = @"home/logout";
 
-        public static readonly string mainWindow_allItem = "item/all-item";
-        public static readonly string mainWindow_items = "item/items";
-        public static readonly string mainWindow_itemDetail = "item/";
+        public static readonly string mainWindow_allItem = @"item/all-item";
+        public static readonly string mainWindow_items = @"item/items";
+        public static readonly string mainWindow_itemDetail = @"item/";
 
-        public static readonly string OrderWindow_Order_userName = "order/user-orders/";
-        public static readonly string OrderWindow_Order_orderId = "order/";
+        public static readonly string OrderWindow_Order_userName = @"order/user-orders/";
+        public static readonly string OrderWindow_Order_orderId = @"order/";
 
-        public static readonly string ShoppingCartWindow_allItem = "shopping_cart/all-items";
-        public static readonly string ShoppingCartWindow_Item = "shopping_cart/";
-        public static readonly string ShoppingCartWindow_Item_update = "shopping_cart/update-cart";
+        public static readonly string ShoppingCartWindow_allItem = @"shopping_cart/all-items";
+        public static readonly string ShoppingCartWindow_Item = @"shopping_cart/";
+        public static readonly string ShoppingCartWindow_Item_update = @"shopping_cart/update-cart";
     }
 }
