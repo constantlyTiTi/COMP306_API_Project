@@ -30,6 +30,7 @@ namespace apiFrontEnd
             InitializeComponent();
             _userName = userName;
             _token = token;
+            Generate(itemId);
         }
 
         private async void Generate(long itemId)
