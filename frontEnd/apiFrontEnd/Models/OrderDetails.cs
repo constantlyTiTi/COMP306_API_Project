@@ -10,22 +10,22 @@ namespace apiFrontEnd.Models
     class OrderDetails
     {
         [JsonPropertyName("order_id")]
-        public long OrderId { get; set; }
+        public long order_id { get; set; }
         public string Status { get; set; }
 
-        [JsonPropertyName("total_cost")]
-        public double TotalCost { get; set; }
+/*        [JsonPropertyName("total_cost")]*/
+        public double total_cost { get; set; }
 
-        [JsonPropertyName("shipping_address")]
-        public string ShippingAddress { get; set; }
+/*        [JsonPropertyName("shipping_address")]*/
+        public string shipping_address { get; set; }
 
-        [JsonPropertyName("order_time")]
-        public DateTime OrderTime { get; set; }
+/*        [JsonPropertyName("order_time")]*/
+        public DateTime order_time { get; set; }
 
-        [JsonPropertyName("user_name")]
-        public string UserName { get; set; }
+/*        [JsonPropertyName("user_name")]*/
+        public string user_name { get; set; }
 
-        [JsonPropertyName("items")]
+/*        [JsonPropertyName("items")]*/
         public IEnumerable<Item> items { get; set; }
     }
 }

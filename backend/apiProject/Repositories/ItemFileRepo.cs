@@ -45,5 +45,15 @@ namespace apiProject.Repositories
             _db.RemoveRange(entities);
             _db.SaveChanges();
         }
+
+        Task<IEnumerable<ItemFile>> IItemFileRepo.GetAllItemByIds(IEnumerable<long> ids)
+        {
+            var task = Task.Factory.StartNew(() =>
+            {
+                return (IEnumerable<ItemFile>)_db.ItemFile.Where(i => ids.Contains(i.ItemId));
+            });
+
+            return task;
+        }
     }
 }

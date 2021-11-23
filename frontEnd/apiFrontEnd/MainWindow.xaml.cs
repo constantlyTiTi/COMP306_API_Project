@@ -148,7 +148,8 @@ namespace apiFrontEnd
         private void GenerateListViewItem(HttpResponseMessage response)
         {
             ItemListViewModel itemlist = JsonConvert.DeserializeObject<ItemListViewModel>(response.Content.ReadAsStringAsync().Result);
-            PageInfo_TextBox.Text = itemlist.Paginate.NextCursor;
+
+            PageInfo_TextBox.Text = itemlist.Paginate.next_curesor;
             for (int i = 0; i < itemlist.Items.Count(); i++)
             {
                 DockPanel dop = new DockPanel();
@@ -172,14 +173,15 @@ namespace apiFrontEnd
 
                 //middle stackPanel
                 Button header = new Button();
-                header.Content = itemlist.Items.ElementAt(i).ItemName;
+                header.Content = itemlist.Items.ElementAt(i).item_name;
                 header.Width = 300;
-                header.Height = 15;
+                header.Height = 30;
                 header.Click += (o, e) => ItemDetailReview(o, e, itemlist.Items.ElementAt(i).ItemId);
                 header.FontSize = 18;
 
                 Label desc = new Label();
-                desc.Content = itemlist.Items.ElementAt(i).Description.Substring(0, 50);
+                desc.Content = itemlist.Items.ElementAt(i).Description.Length > 50 ? 
+                    itemlist.Items.ElementAt(i).Description.Substring(0, 50) : itemlist.Items.ElementAt(i).Description;
                 desc.Width = 300;
                 desc.Height = 15;
                 desc.FontSize = 18;
@@ -193,7 +195,7 @@ namespace apiFrontEnd
 
                 //left stackpanel
                 Image img = new Image();
-                var filePath = itemlist.Items.ElementAt(i).CoverImagePath;
+                var filePath = itemlist.Items.ElementAt(i).cover_Image_path;
                 BitmapImage bitmap = new BitmapImage();
                 bitmap.BeginInit();
                 bitmap.UriSource = new Uri(filePath, UriKind.Absolute);
