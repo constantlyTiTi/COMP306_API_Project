@@ -30,12 +30,27 @@ namespace apiFrontEnd
             InitializeComponent();
             _userName = userName;
             _token = token;
-            UserNameLable.Content = "Welcome to " + userName + "'s shopping cart";
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                UserNameLable.Content = "Welcome to your shopping cart";
+            }
+            else
+            {
+                UserNameLable.Content = "Welcome back " + userName + "'s shopping cart";
+            }
+            
         }
 
         private void HomeNav_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow mw = new MainWindow(_userName, _token);
+            MainWindow mw = new MainWindow();
+            if (!string.IsNullOrWhiteSpace(_userName) && !string.IsNullOrWhiteSpace(_token))
+            {
+                mw = new MainWindow(_userName, _token);
+            }
+                
+            mw.Top = this.Top;
+            mw.Left = this.Left;
             mw.Show();
             this.Close();
         }
@@ -58,6 +73,10 @@ namespace apiFrontEnd
         {
             ShoppingCartVM shoppingCart = JsonConvert.DeserializeObject<ShoppingCartVM>(response.Content.ReadAsStringAsync().Result);
             TotalCostLabel.Content = "Total cost: " + shoppingCart.TotalCost;
+            if(shoppingCart.ShoppingCartItems == null)
+            {
+                return;
+            }
 
             foreach (var item in shoppingCart.ShoppingCartItems)
             {

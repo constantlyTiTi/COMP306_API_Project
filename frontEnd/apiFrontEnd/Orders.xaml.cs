@@ -225,6 +225,8 @@ namespace apiFrontEnd
         private void HomeNav_Click(object sender, RoutedEventArgs e)
         {
             MainWindow mw = new MainWindow(_userName, _token);
+            mw.Top = this.Top;
+            mw.Left = this.Left;
             mw.Show();
             this.Close();
         }

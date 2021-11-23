@@ -49,6 +49,8 @@ namespace apiFrontEnd
         private void AuthNav_Click(object sender, RoutedEventArgs e)
         {
             LoginAndRegistration lrw = new LoginAndRegistration();
+            lrw.Top = this.Top;
+            lrw.Left = this.Left;
             lrw.Show();
             this.Close();
         }
@@ -88,8 +90,10 @@ namespace apiFrontEnd
         private void ItemNav_Click(object sender, RoutedEventArgs e)
         {
             ItemManagementWindow iw = new ItemManagementWindow(_token, _userName);
+            iw.Top = this.Top;
+            iw.Left = this.Left;
             iw.Show();
-            iw.Close();
+            this.Close();
         }
 
         private async void SearchByDate_Click(object sender, RoutedEventArgs e)
@@ -123,6 +127,8 @@ namespace apiFrontEnd
         private void OrderNav_Click(object sender, RoutedEventArgs e)
         {
             Orders ow = new Orders(_userName, _token);
+            ow.Top = this.Top;
+            ow.Left = this.Left;
             ow.Show();
             this.Close();
         }
@@ -133,6 +139,8 @@ namespace apiFrontEnd
         private void ItemDetailReview(object sender, RoutedEventArgs e, long itemId)
         {
             ItemDetailsWindow iw = new ItemDetailsWindow(itemId, _userName, _token);
+            iw.Top = this.Top;
+            iw.Left = this.Left;
             iw.Show();
             this.Close();
         }
@@ -220,6 +228,8 @@ namespace apiFrontEnd
         private void CartNav_Click(object sender, RoutedEventArgs e)
         {
             ShoppingCart sw = new ShoppingCart(_userName, _token);
+            sw.Top = this.Top;
+            sw.Left = this.Left;
             sw.Show();
             this.Close();
         }
