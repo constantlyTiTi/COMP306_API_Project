@@ -38,7 +38,7 @@ namespace apiFrontEnd
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, BackEndConnection.BaseUrl + 
                 BackEndConnection.OrderWindow_Order_userName + _userName);
             HttpClient client = new HttpClient();
-            request.Headers.Add(BackEndConnection.Authentication, "Bearer " + _token);
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
             var response = await client.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
@@ -146,8 +146,10 @@ namespace apiFrontEnd
             if (ourter.Children.Count == 1)
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, BackEndConnection.BaseUrl + BackEndConnection.OrderWindow_Order_orderId + orderId.ToString());
-                request.Headers.Add(BackEndConnection.Authentication, "Bearer " + _token);
+                
                 HttpClient client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
+
                 var response = await client.SendAsync(request);
 
                 StackPanel dop_stack = new StackPanel();
@@ -218,7 +220,7 @@ namespace apiFrontEnd
             {
                 { "order_id", orderId.ToString()}
             });
-            request.Headers.Add(BackEndConnection.Authentication, "Bearer " + _token);
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
             await client.SendAsync(request);
         }
 

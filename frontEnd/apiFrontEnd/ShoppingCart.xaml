@@ -18,15 +18,16 @@
             <StackPanel Height="100">
                 <DockPanel Height="40" LastChildFill="False">
                     <Label Name="ShippingAddressLabel" Width="150" Content="Shipping Address" FontSize="16" Margin="10,0,0,0"/>
-                    <TextBox Name="ShippingAddressTextBox" Text="TextBox" TextWrapping="Wrap" Width="420" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <Label Name="TotalCostLabel" Content="Label" FontSize="16" Margin="30,0,0,0"/>
+                    <TextBox Name="ShippingAddressTextBox" Text="TextBox" TextWrapping="Wrap" Width="382" FontSize="16"/>
+                    <Label Content="Total Cost : CAD" FontSize="16" Margin="20,0,0,0"/>
+                    <Label Name="TotalCostLabel" Content="Label" FontSize="16" Margin="10,0,0,0"/>
                 </DockPanel>
                 <StackPanel Margin="0,0,30,0" HorizontalAlignment="Right">
                     <Button Content="Purchase" Width="100" FontSize="16" Background="#FFFDFDFD" Click="Button_Click"/>
                 </StackPanel>
 
             </StackPanel>
-            
+
 
 
         </StackPanel>

@@ -37,6 +37,6 @@ namespace apiFrontEnd.Models
 
 /*        [JsonPropertyName("item_imgs_paths")]*/
         public IEnumerable<string> item_imgs_paths { get; set; }
-        public string Quantity { get; set; }
+        public int Quantity { get; set; }
     }
 }
