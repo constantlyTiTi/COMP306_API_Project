@@ -4,13 +4,15 @@ using apiProject.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace apiProject.Controllers
 {
@@ -21,11 +23,13 @@ namespace apiProject.Controllers
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private static Dictionary<long,List<ShoppingCartItem>> CartItems = new Dictionary<long, List<ShoppingCartItem>>();
+        private readonly Microsoft.AspNetCore.Identity.UserManager<IdentityUser> _userManager;
 
-        public ShoppingCartController(IMapper mapper, IUnitOfWork unitOfWork)
+        public ShoppingCartController(IMapper mapper, IUnitOfWork unitOfWork, Microsoft.AspNetCore.Identity.UserManager<IdentityUser> userManager)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _userManager = userManager;
         }
 
         [HttpGet("generate-unique_tempor_user_id")]
@@ -60,7 +64,7 @@ namespace apiProject.Controllers
                     });
                 }
             }
-            if (CartItems.ContainsKey(unique_tempor_user_id) && CartItems[unique_tempor_user_id].Count > 0)
+            if (CartItems.ContainsKey(unique_tempor_user_id))
             {
 
                CartItems[unique_tempor_user_id].Add(cartItem);
@@ -99,7 +103,7 @@ namespace apiProject.Controllers
         }
 
         [AllowAnonymous]
-        [HttpDelete("{itemid}/{unique_tempor_user_id}")]
+        [HttpDelete("{item_id}/{unique_tempor_user_id}")]
         public IActionResult DeleteCartItem(long item_id, long unique_tempor_user_id)
         {
 
@@ -132,9 +136,26 @@ namespace apiProject.Controllers
             bool isAuthenticated = User.Identity.IsAuthenticated;
             if (isAuthenticated)
             {
-                CartItems[unique_tempor_user_id] = _unitOfWork.ShoppingCartItems.GetItems(User.Identity.Name).ToList();
-
-                _mapper.Map(CartItems[unique_tempor_user_id], cartDTO);
+                string token = HttpContext.Request.Headers["Authorization"];
+                var jwtTokenHandler = new JwtSecurityTokenHandler();
+                string name = jwtTokenHandler.ReadJwtToken(token.Split(" ")[1]).Subject;
+                List<ShoppingCartItem> dbList = _unitOfWork.ShoppingCartItems.GetItems(name).ToList();
+                if (dbList.Any() && !CartItems.ContainsKey(unique_tempor_user_id))
+                {
+                    CartItems.Add(unique_tempor_user_id, dbList);
+                }
+                if (CartItems.ContainsKey(unique_tempor_user_id))
+                {
+                    List<long> tempItemIds = CartItems[unique_tempor_user_id].Select(i => i.ItemId).ToList();
+                    List<long> dbItemIds = dbList.Select(i => i.ItemId).ToList();
+                    CartItems[unique_tempor_user_id].Concat(dbList.Where(i => !tempItemIds.Contains(i.ItemId)));
+                    foreach(var i in CartItems[unique_tempor_user_id].Where(i=> !dbItemIds.Contains(i.ItemId)))
+                    {
+                        i.UserName = name;
+                        _unitOfWork.ShoppingCartItems.Add(i);
+                        _unitOfWork.Save();
+                    }
+                }
 
             }
 
@@ -151,10 +172,11 @@ namespace apiProject.Controllers
 
         [Authorize]
         [HttpPost("place-order")]
-        public IActionResult PlaceOrder(string user_name)
+        public IActionResult PlaceOrder(string user_name, [FromBody]ShoppingCartDTO cart)
         {
-            List<ShoppingCartItem> cartItems = _unitOfWork.ShoppingCartItems.GetItems(user_name).ToList();
-            var order = _mapper.Map<OrderDetails>(cartItems);
+            IEnumerable<ShoppingCartItem> cartItems = _unitOfWork.ShoppingCartItems.GetItems(user_name);
+            _mapper.Map(cartItems, cart);
+            var order = _mapper.Map<OrderDetails>(cart);
             _unitOfWork.OrderDetails.Add(order);
             foreach (var item in cartItems)
             {

@@ -67,9 +67,9 @@ namespace apiFrontEnd
         private async void ShoppingCartListView_Loaded(object sender, RoutedEventArgs e)
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, BackEndConnection.BaseUrl +
-                BackEndConnection.ShoppingCartWindow_allItem + MainWindow.uniqueId.ToString());
+                BackEndConnection.ShoppingCartWindow_allItem + MainWindow._uniqueId.ToString());
             HttpClient client = new HttpClient();
-            request.Headers.Add(BackEndConnection.Authentication, "Bearer " + _token);
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
             var response = await client.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
@@ -128,7 +128,7 @@ namespace apiFrontEnd
                 quantyTB.VerticalAlignment = VerticalAlignment.Center;
                 quantyTB.HorizontalAlignment = HorizontalAlignment.Center;
                 quantyTB.FontSize = 14;
-                quantyTB.Text = (item.Quantity== 0? 1 : item.Quantity).ToString();
+                quantyTB.Text = (item.Quantity).ToString();
                 dop_Items.Children.Add(quantyTB);
 
                 //Add and delete
@@ -159,14 +159,16 @@ namespace apiFrontEnd
 
         private async void reduceQuantity(TextBox tb, ShoppingCartItem item, DockPanel dop_Items)
         {
-            tb.Text = (int.Parse(tb.Text) - 1).ToString();
-            item.Quantity = int.Parse(tb.Text);
-            string itemJsonValue = JsonConvert.SerializeObject(item);
+            
             if (tb.Text.CompareTo("1") > 0)
             {
+                tb.Text = (int.Parse(tb.Text) - 1).ToString();
+                item.Quantity = int.Parse(tb.Text);
+                string itemJsonValue = JsonConvert.SerializeObject(item);
+
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, BackEndConnection.BaseUrl 
-                    + BackEndConnection.ShoppingCartWindow_Item_update + MainWindow.uniqueId.ToString());
-                StringContent bodyContent = new StringContent(itemJsonValue);
+                    + BackEndConnection.ShoppingCartWindow_Item_update + MainWindow._uniqueId.ToString());
+                StringContent bodyContent = new StringContent(itemJsonValue, Encoding.UTF8, "application/json");
                 request.Content = bodyContent;
                 HttpClient client = new HttpClient();
                 await client.SendAsync(request);
@@ -175,7 +177,7 @@ namespace apiFrontEnd
             {
                 HttpClient client = new HttpClient();
                 var response = await client.DeleteAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item 
-                    + item.item_id.ToString() + @"/" + MainWindow.uniqueId.ToString());
+                    + item.item_id.ToString() + @"/" + MainWindow._uniqueId.ToString());
                 if (response.IsSuccessStatusCode)
                 {
                     ShoppingCartListView.Items.Remove(dop_Items);
@@ -190,7 +192,7 @@ namespace apiFrontEnd
             item.Quantity = int.Parse(tb.Text);
             string itemJsonValue = JsonConvert.SerializeObject(item);
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, 
-                BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item_update + MainWindow.uniqueId.ToString());
+                BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item_update + MainWindow._uniqueId.ToString());
             StringContent bodyContent = new StringContent(itemJsonValue, Encoding.UTF8, "application/json");
             request.Content = bodyContent;
             HttpClient client = new HttpClient();
@@ -204,14 +206,31 @@ namespace apiFrontEnd
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_PlaceOrder);
-            request.Headers.Add(BackEndConnection.Authentication, "Bearer " + _token);
-            request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
-            {
-                { "user_name", _userName }
-            });
+
+            ShoppingCartVM cart = new ShoppingCartVM();
+            cart.shipping_address = ShippingAddressTextBox.Text;
+            cart.user_name = _userName;
+
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, BackEndConnection.BaseUrl 
+                + BackEndConnection.ShoppingCartWindow_PlaceOrder + "?user_name="+ _userName);
+            
             HttpClient client = new HttpClient();
-            await client.SendAsync(request);
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
+            request.Content = new StringContent(JsonConvert.SerializeObject(cart), Encoding.UTF8, "application/json");
+            var response = await client.SendAsync(request);
+
+
+            if (response.IsSuccessStatusCode)
+            {
+                Orders ow = new Orders(_userName, _token);
+            }
+            else
+            {
+                MessageBox.Show("Please login/register");
+                LoginAndRegistration lgw = new LoginAndRegistration();
+                lgw.Show();
+                this.Close();
+            }
         }
     }
 }

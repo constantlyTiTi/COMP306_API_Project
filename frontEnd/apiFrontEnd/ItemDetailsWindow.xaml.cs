@@ -93,7 +93,7 @@ namespace apiFrontEnd
             StringContent content = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json");
             
             var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item 
-                + item.item_id.ToString() + @"/" + MainWindow.uniqueId.ToString()
+                + item.item_id.ToString() + @"/" + MainWindow._uniqueId.ToString()
                 , content);
             if (response.IsSuccessStatusCode)
             {

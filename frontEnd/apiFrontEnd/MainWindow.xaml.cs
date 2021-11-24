@@ -27,7 +27,7 @@ namespace apiFrontEnd
     {
         private readonly string _userName;
         private readonly string _token;
-        public static long uniqueId = 0;
+        public static long _uniqueId = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -41,13 +41,13 @@ namespace apiFrontEnd
 
         private void GenerateUniqueId()
         {
-            if (uniqueId == 0)
+            if (_uniqueId == 0)
             {
                 HttpClient client = new HttpClient();
                 var response = client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_GenerateRandomId).Result;
                 if (response.IsSuccessStatusCode)
                 {
-                    uniqueId = JsonConvert.DeserializeObject<long>(response.Content.ReadAsStringAsync().Result);
+                    _uniqueId = JsonConvert.DeserializeObject<long>(response.Content.ReadAsStringAsync().Result);
                 }
             }
         }
@@ -55,10 +55,11 @@ namespace apiFrontEnd
         public MainWindow(string userName, string token)
         {
             InitializeComponent();
-            _userName = userName;
+            this._userName = userName;
             _token = token;
             AuthNav.Content = "Hello, " + _userName;
             AuthNav.IsEnabled = false;
+            GenerateUniqueId();
         }
 
         private void AuthNav_Click(object sender, RoutedEventArgs e)
@@ -91,7 +92,7 @@ namespace apiFrontEnd
             using (HttpClient client = new HttpClient())
             {
                 StringContent content = new StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
-                client.DefaultRequestHeaders.Add(BackEndConnection.Authentication, _token);
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
                 var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.logoutUrl, content);
                 if (response.IsSuccessStatusCode)
                 {
