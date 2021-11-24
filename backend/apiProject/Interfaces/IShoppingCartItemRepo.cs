@@ -10,7 +10,7 @@ namespace apiProject.Interfaces
     public interface IShoppingCartItemRepo: IMSSQLRepo<ShoppingCartItem>
     {
         void UpdateItemQuantity(long itemId, int quantity, string userName);
-        void DeleteItem(long itemId, string userName);
+        void DeleteItemWithoutSave(long itemId, string userName);
         IEnumerable<ShoppingCartItem> GetItems(string userName);
         Task RemoveAll(string userName);
     }

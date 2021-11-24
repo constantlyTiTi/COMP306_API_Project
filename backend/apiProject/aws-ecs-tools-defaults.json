@@ -20,7 +20,7 @@
     "container-port-mapping"    : "80:80",
     "container-environment-variables" : "\"ASPNETCORE_ENVIRONMENT\"=\"Production\"",
     "skip-image-push"                 : false,
-    "cluster-service"                 : "comp306-project-vs-service",
+    "cluster-service"                 : "comp306-project-vs-cluster/comp306-project-vs-service",
     "desired-count"                   : 2,
     "deployment-minimum-healthy-percent" : 50,
     "deployment-maximum-percent"         : 200,

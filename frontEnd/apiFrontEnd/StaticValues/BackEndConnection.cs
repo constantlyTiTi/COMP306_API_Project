@@ -8,7 +8,9 @@ namespace apiFrontEnd.StaticValues
 {
     public class BackEndConnection
     {
-        public static readonly string BaseUrl = @"http://comp306-project-vs-lb-913485111.us-east-1.elb.amazonaws.com/api";
+        /*        public static readonly string BaseUrl = @"http://comp306-project-vs-lb-913485111.us-east-1.elb.amazonaws.com/api/";*/
+/*        public static readonly string BaseUrl = @"https://localhost:49153/api/";*/
+        public static readonly string BaseUrl = @"https://localhost:44378/api/";
 
         public static readonly string loginUrl = @"home/login";
         public static readonly string registerUrl = @"home/Register";
