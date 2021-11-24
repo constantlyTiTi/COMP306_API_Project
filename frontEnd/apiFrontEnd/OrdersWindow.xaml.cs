@@ -21,11 +21,11 @@ namespace apiFrontEnd
     /// <summary>
     /// Interaction logic for Orders.xaml
     /// </summary>
-    public partial class Orders : Window
+    public partial class OrdersWindow : Window
     {
         private readonly string _userName;
         private readonly string _token;
-        public Orders(string userName, string token)
+        public OrdersWindow(string userName, string token)
         {
             InitializeComponent();
             _userName = userName;
@@ -36,18 +36,22 @@ namespace apiFrontEnd
         private async void OrderListView_Loaded(object sender, RoutedEventArgs e)
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, BackEndConnection.BaseUrl + 
-                BackEndConnection.OrderWindow_Order + _userName);
+                BackEndConnection.OrderWindow_Order_userName + _userName);
             HttpClient client = new HttpClient();
-            request.Headers.Add(BackEndConnection.Authentication, "Bearer " + _token);
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
             var response = await client.SendAsync(request);
-            GenerateListViewItem(response);
+            if (response.IsSuccessStatusCode)
+            {
+                GenerateListViewItem(response);
+            }
+            
         }
 
 
         private void GenerateListViewItem(HttpResponseMessage response)
         {
             OrderListViewModel orderList = JsonConvert.DeserializeObject<OrderListViewModel>(response.Content.ReadAsStringAsync().Result);
-            PageInfo_TextBox.Text = orderList.Paginate.NextCursor;
+            PageInfo_TextBox.Text = orderList.Paginate.next_curesor;
             for (int i = 0; i < orderList.Orders.Count(); i++)
             {
                 StackPanel outer = new StackPanel();
@@ -72,12 +76,12 @@ namespace apiFrontEnd
 
                 //left stackpanel
                 Label lefts_1 = new Label();
-                lefts_1.Content = orderList.Orders.ElementAt(i).OrderId;
+                lefts_1.Content = orderList.Orders.ElementAt(i).order_id;
                 lefts_1.Height = 15;
                 lefts_1.FontSize = 18;
 
                 Label lefts_2 = new Label();
-                lefts_2.Content = orderList.Orders.ElementAt(i).OrderTime.ToShortDateString();
+                lefts_2.Content = orderList.Orders.ElementAt(i).order_time.ToShortDateString();
                 lefts_2.Height = 15;
                 lefts_2.FontSize = 18;
                 stackPanel_left.Children.Add(lefts_1);
@@ -85,7 +89,7 @@ namespace apiFrontEnd
 
                 //middle stackPanel
                 Label middle_1 = new Label();
-                middle_1.Content = "Shipping Address: " + orderList.Orders.ElementAt(i).ShippingAddress;
+                middle_1.Content = "Shipping Address: " + orderList.Orders.ElementAt(i).shipping_address;
                 middle_1.Height = 15;
                 middle_1.FontSize = 18;
 
@@ -99,7 +103,7 @@ namespace apiFrontEnd
 
                 //right stackPanel
                 Label right_1 = new Label();
-                right_1.Content = "Total: " + orderList.Orders.ElementAt(i).TotalCost;
+                right_1.Content = "Total: " + orderList.Orders.ElementAt(i).total_cost;
                 right_1.Height = 15;
                 right_1.FontSize = 18;
 
@@ -108,7 +112,7 @@ namespace apiFrontEnd
                 delete.FontSize = 12;
                 delete.Width = 50;
                 delete.Height = 15;
-                delete.Click += (o, e) => Cancel(orderList.Orders.ElementAt(i).OrderId);
+                delete.Click += (o, e) => Cancel(orderList.Orders.ElementAt(i).order_id);
 
                 stackPanel_right.Children.Add(lefts_1);
                 stackPanel_right.Children.Add(lefts_2);
@@ -128,7 +132,7 @@ namespace apiFrontEnd
 
                 viewItem.Content = dop;
 
-                outer.MouseLeftButtonUp += (o,e) => ToggleItemList(orderList.Orders.ElementAt(i).OrderId, outer);
+                outer.MouseLeftButtonUp += (o,e) => ToggleItemList(orderList.Orders.ElementAt(i).order_id, outer);
 
                 OrderListView.Items.Add(outer);
 
@@ -141,9 +145,11 @@ namespace apiFrontEnd
 
             if (ourter.Children.Count == 1)
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, BackEndConnection.BaseUrl + BackEndConnection.OrderWindow_Order + orderId.ToString());
-                request.Headers.Add(BackEndConnection.Authentication, "Bearer " + _token);
+                var request = new HttpRequestMessage(HttpMethod.Get, BackEndConnection.BaseUrl + BackEndConnection.OrderWindow_Order_orderId + orderId.ToString());
+                
                 HttpClient client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
+
                 var response = await client.SendAsync(request);
 
                 StackPanel dop_stack = new StackPanel();
@@ -157,7 +163,7 @@ namespace apiFrontEnd
                         DockPanel dop_Items = new DockPanel();
                         //dop_item left
                         Image img = new Image();
-                        var filePath = orderDetails.items.ElementAt(i).CoverImagePath;
+                        var filePath = orderDetails.items.ElementAt(i).cover_Image_path;
                         BitmapImage bitmap = new BitmapImage();
                         bitmap.BeginInit();
                         bitmap.UriSource = new Uri(filePath, UriKind.Absolute);
@@ -170,7 +176,7 @@ namespace apiFrontEnd
 
                         //dop_item middle
                         Label m1l = new Label();
-                        m1l.Content =  orderDetails.items.ElementAt(i).ItemName;
+                        m1l.Content =  orderDetails.items.ElementAt(i).item_name;
                         m1l.Height = 30;
                         m1l.Width = 100;
                         m1l.FontSize = 18;
@@ -209,14 +215,22 @@ namespace apiFrontEnd
         {
             HttpClient client = new HttpClient();
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, BackEndConnection.BaseUrl + 
-                BackEndConnection.OrderWindow_Order + _userName);
+                BackEndConnection.OrderWindow_Order_userName + _userName);
             request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 { "order_id", orderId.ToString()}
             });
-            request.Headers.Add(BackEndConnection.Authentication, "Bearer " + _token);
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
             await client.SendAsync(request);
         }
 
+        private void HomeNav_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow mw = new MainWindow(_userName, _token);
+            mw.Top = this.Top;
+            mw.Left = this.Left;
+            mw.Show();
+            this.Close();
+        }
     }
 }

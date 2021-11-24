@@ -41,7 +41,7 @@ namespace apiProject.Controllers
             return Ok(addedOrder);
         }
 
-        [HttpGet("{username}")]
+        [HttpGet("user-orders/{username}")]
         public IActionResult GetOrders(string username, DateTime? start_date = null, DateTime? end_date = null, 
             int items_per_page = 10, string next_cursor = "0")
         {
@@ -68,7 +68,7 @@ namespace apiProject.Controllers
 
         }
 
-        [HttpDelete("{username}")]
+        [HttpDelete("user-orders/{username}")]
         public IActionResult DeleteOrder(string username, long order_id)
         {
             if(_unitOfWork.OrderDetails.Get(order_id).UserName != username)

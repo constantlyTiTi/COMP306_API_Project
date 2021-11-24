@@ -7,6 +7,11 @@
         mc:Ignorable="d"
         Title="ItemManagementWindow" Height="450" Width="800">
     <Grid>
-        
+        <StackPanel>
+            <DockPanel Height="40" LastChildFill="False">
+                <Button Name ="HomeNav" Content="Home" Width="91" FontSize="20" Margin="10,0,0,0" Background="White" BorderBrush="White" Click="HomeNav_Click"/>
+            </DockPanel>
+        </StackPanel>
+        <Button Name="PostBtn" Content="Post Item" HorizontalAlignment="Left" Margin="580,83,0,0" VerticalAlignment="Top" Height="50" Width="135" FontSize="14" Click="PostBtn_Click"/>
     </Grid>
 </Window>

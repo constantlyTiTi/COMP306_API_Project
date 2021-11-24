@@ -11,6 +11,6 @@ namespace apiProject.Interfaces
         Task UpdateItem(ItemFile item);
         void RemoveByItemId(long itemId);
         Task<IEnumerable<ItemFile>> GetItemByItemId(long itemId);
-
+        Task<IEnumerable<ItemFile>> GetAllItemByIds(IEnumerable<long> ids);
     }
 }

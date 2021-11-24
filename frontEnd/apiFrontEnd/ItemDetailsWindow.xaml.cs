@@ -1,6 +1,8 @@
 ﻿using apiFrontEnd.Models;
 using apiFrontEnd.StaticValues;
+using AutoMapper;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +25,15 @@ namespace apiFrontEnd
     /// </summary>
     public partial class ItemDetailsWindow : Window
     {
-        public ItemDetailsWindow(long itemId)
+        private readonly string _userName;
+        private readonly string _token;
+        public ItemDetailsWindow(long itemId, string userName, string token)
         {
             InitializeComponent();
+            _userName = userName;
+            _token = token;
+            Generate(itemId);
+
         }
 
         private async void Generate(long itemId)
@@ -36,8 +44,25 @@ namespace apiFrontEnd
             {
                 Item itemDetail = JsonConvert.DeserializeObject<Item>(response.Content.ReadAsStringAsync().Result);
                 ItemDesLabel.Content = itemDetail.Description;
-                ItemNameLabel.Content = itemDetail.ItemName;
-                foreach(var imgPath in itemDetail.ItemImagePaths)
+                ItemNameLabel.Content = itemDetail.item_name;
+
+                Button addToCart = new Button();
+                addToCart.Height = 40;
+                addToCart.Width = 200;
+                addToCart.Content = "Add to Shopping Cart";
+                addToCart.FontSize = 16;
+                addToCart.Background = Brushes.LightYellow;
+
+                ShoppingCartItem cartItem = new ShoppingCartItem();
+                cartItem.item_id = itemDetail.ItemId;
+                cartItem.Price = itemDetail.Price;
+                cartItem.Quantity = 1;
+                cartItem.user_name = _userName;
+                addToCart.Click += (o, e) => AddItemToShoppingCart(cartItem);
+
+                DetailPanel.Children.Add(addToCart);
+
+                foreach (var imgPath in itemDetail.item_imgs_paths)
                 {
                     Image img = new Image();
                     var filePath = imgPath;
@@ -55,6 +80,45 @@ namespace apiFrontEnd
                 }
 
             }
+            else
+            {
+                ItemDesLabel.Content = "Oops, nothing is found";
+
+            }
+        }
+
+        private async void AddItemToShoppingCart(ShoppingCartItem item)
+        {
+            HttpClient client = new HttpClient();
+            StringContent content = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json");
+            
+            var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item 
+                + item.item_id.ToString() + @"/" + MainWindow._uniqueId.ToString()
+                , content);
+            if (response.IsSuccessStatusCode)
+            {
+                MessageBox.Show("The item has been added to shopping cart");
+            }
+            else
+            {
+                JObject errorObject = JsonConvert.DeserializeObject<JObject>(response.Content.ReadAsStringAsync().Result);
+                MessageBox.Show(errorObject.GetValue("error").ToString());
+            }
+
+        }
+
+        private void HomeNav_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow mw = new MainWindow();
+            if (!string.IsNullOrWhiteSpace(_userName) && !string.IsNullOrWhiteSpace(_token))
+            {
+                mw = new MainWindow(_userName, _token);
+            }
+
+            mw.Top = this.Top;
+            mw.Left = this.Left;
+            mw.Show();
+            this.Close();
         }
     }
 }
