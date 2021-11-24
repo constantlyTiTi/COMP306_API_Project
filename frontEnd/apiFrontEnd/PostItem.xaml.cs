@@ -15,18 +15,28 @@ using System.Windows.Shapes;
 namespace apiFrontEnd
 {
     /// <summary>
-    /// Interaction logic for ItemManagementWindow.xaml
+    /// Interaction logic for PostItem.xaml
     /// </summary>
-    public partial class ItemManagementWindow : Window
+    public partial class PostItem : Window
     {
         private readonly string _userName;
         private readonly string _token;
-
-        public ItemManagementWindow(string token, string userName)
+        public PostItem(string userName, string token)
         {
             InitializeComponent();
-            _token = token;
             _userName = userName;
+            _token = token;
+            UserNameLable.Content = "Hello, " + userName + "! Now you can post your item!";
+        }
+
+        private void addBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void deleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void HomeNav_Click(object sender, RoutedEventArgs e)
@@ -37,17 +47,5 @@ namespace apiFrontEnd
             mw.Show();
             this.Close();
         }
-
-        private void PostBtn_Click(object sender, RoutedEventArgs e)
-        {
-            PostItem pIt = new PostItem(_userName, _token);
-
-            pIt.Top = this.Top;
-            pIt.Left = this.Left;
-            pIt.Show();
-            this.Close();
-        }
-
-     
     }
 }
