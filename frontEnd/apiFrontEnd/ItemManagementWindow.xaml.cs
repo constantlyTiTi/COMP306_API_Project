@@ -37,5 +37,17 @@ namespace apiFrontEnd
             mw.Show();
             this.Close();
         }
+
+        private void PostBtn_Click(object sender, RoutedEventArgs e)
+        {
+            PostItem pIt = new PostItem(_userName, _token);
+
+            pIt.Top = this.Top;
+            pIt.Left = this.Left;
+            pIt.Show();
+            this.Close();
+        }
+
+     
     }
 }
