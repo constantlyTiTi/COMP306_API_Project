@@ -55,7 +55,7 @@ namespace apiProject
             services.AddAutoMapper(typeof(Startup));
 
             //get data from parameter store
-/*            var result = GetConfiguration().Result;*/
+            /*            var result = GetConfiguration().Result;*/
             services.Configure<ProjectPSConfig>(Configuration.GetSection(ProjectPSConfig.SectionName));
             ProjectPSConfig config = Configuration.GetSection(ProjectPSConfig.SectionName).Get<ProjectPSConfig>();
             //set aws options
@@ -71,7 +71,7 @@ namespace apiProject
             services.AddAWSService<IAmazonDynamoDB>();
             //get connection string
             string connectionString = config.ConnectionString
-                + $"User ID = {config.RDSMasterAccount}; Password = {config.RDSPassword}";
+                + $"User ID = {config.RDSMasterAccount}; Password = {config.RDSPassword} ; MultipleActiveResultSets = True";
             services.AddDbContext<MSSQLDbContext>(opt => opt.UseSqlServer(connectionString));
 
             //registers authentication services and handlers for cookie and JWT bearer authentication schemes
@@ -143,15 +143,15 @@ namespace apiProject
 
                 });
             //Cookie Authentication middleware redirects the User, if he is not authenticated
-             services.ConfigureApplicationCookie(options =>
-            {
-                options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-                options.LoginPath = "/home/login";
-                options.LogoutPath = "/";
-/*                options.AccessDeniedPath = "/Identity/AccessDenied";*/
-                options.SlidingExpiration = true;
-            });
+            services.ConfigureApplicationCookie(options =>
+           {
+               options.Cookie.HttpOnly = true;
+               options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+               options.LoginPath = "/home/login";
+               options.LogoutPath = "/";
+                /*                options.AccessDeniedPath = "/Identity/AccessDenied";*/
+               options.SlidingExpiration = true;
+           });
             //Require authenticated users
             services.AddAuthorization(options =>
             {
@@ -167,6 +167,8 @@ namespace apiProject
             {
                 config.IOTimeout = TimeSpan.FromHours(6);
             });
+            services.AddCors();
+
 
         }
 
@@ -176,6 +178,7 @@ namespace apiProject
             //config proxy
             app.UseForwardedHeaders();
             app.UseSession();
+
             /*app.MapWhen(ctx=>ctx.Request.Path.StartsWithSegments("/home"), builder => builder.RunProxy())*/
             if (env.IsDevelopment())
             {
@@ -184,6 +187,12 @@ namespace apiProject
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "project_api v1"));
             }
             app.UseHttpsRedirection();
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true)
+                .AllowCredentials());
+
             app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthentication();
@@ -191,26 +200,27 @@ namespace apiProject
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+           /*     endpoints.MapControllers();*/
+                endpoints.MapDefaultControllerRoute();
             });
 
         }
 
-/*        private static GetParameterResponse GetConfiguration()
-        {
-            // NOTE: set the region here to match the region used when you created
-            // the parameter
-            var region = Amazon.RegionEndpoint.USEast1;
-            var request = new GetParameterRequest()
-            {
-                Name = @"name:/comp306/lab03/SecretAccessKey"
-            };
+        /*        private static GetParameterResponse GetConfiguration()
+                {
+                    // NOTE: set the region here to match the region used when you created
+                    // the parameter
+                    var region = Amazon.RegionEndpoint.USEast1;
+                    var request = new GetParameterRequest()
+                    {
+                        Name = @"name:/comp306/lab03/SecretAccessKey"
+                    };
 
-            var client = new AmazonSimpleSystemsManagementClient(region);
+                    var client = new AmazonSimpleSystemsManagementClient(region);
 
 
-            var response = client.GetParameterAsync(request).GetAwaiter().GetResult();
-            return response;
-        }*/
+                    var response = client.GetParameterAsync(request).GetAwaiter().GetResult();
+                    return response;
+                }*/
     }
 }

@@ -25,12 +25,20 @@ namespace apiFrontEnd
     {
         private readonly string _userName;
         private readonly string _token;
+        private Style style;
         public OrdersWindow(string userName, string token)
         {
             InitializeComponent();
             _userName = userName;
             _token = token;
             UserNameLable.Content = "Hello, " + userName;
+
+            style = new Style();
+
+            style.TargetType = typeof(ListViewItem);
+
+            style.Setters.Add(new Setter(ListView.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch));
+
         }
 
         private async void OrderListView_Loaded(object sender, RoutedEventArgs e)
@@ -50,77 +58,82 @@ namespace apiFrontEnd
 
         private void GenerateListViewItem(HttpResponseMessage response)
         {
+            OrderListView.Items.Clear();
             OrderListViewModel orderList = JsonConvert.DeserializeObject<OrderListViewModel>(response.Content.ReadAsStringAsync().Result);
             PageInfo_TextBox.Text = orderList.Paginate.next_curesor;
             for (int i = 0; i < orderList.Orders.Count(); i++)
             {
                 StackPanel outer = new StackPanel();
+                ListView lsView = new ListView();
+                lsView.BorderBrush = Brushes.White;
+                lsView.ItemContainerStyle = style;
                 DockPanel dop = new DockPanel();
                 dop.Height = 30;
 
-                StackPanel stackPanel_left = new StackPanel();
-                stackPanel_left.Width = 100;
-                stackPanel_left.VerticalAlignment = VerticalAlignment.Center;
-                stackPanel_left.HorizontalAlignment = HorizontalAlignment.Center;
+                DockPanel dockPanel_left = new DockPanel();
+                dockPanel_left.Width = 150;
+                dockPanel_left.VerticalAlignment = VerticalAlignment.Center;
+                dockPanel_left.HorizontalAlignment = HorizontalAlignment.Center;
 
-                StackPanel stackPanel_middle = new StackPanel();
-                stackPanel_middle.Width = 300;
-                stackPanel_middle.VerticalAlignment = VerticalAlignment.Center;
-                stackPanel_middle.HorizontalAlignment = HorizontalAlignment.Center;
+                DockPanel dockPanel_middel = new DockPanel();
+                dockPanel_middel.Width = 300;
+                dockPanel_middel.VerticalAlignment = VerticalAlignment.Center;
+                dockPanel_middel.HorizontalAlignment = HorizontalAlignment.Center;
 
                 // for order managmenet
-                StackPanel stackPanel_right = new StackPanel();
-                stackPanel_right.Width = 200;
-                stackPanel_right.VerticalAlignment = VerticalAlignment.Center;
-                stackPanel_right.HorizontalAlignment = HorizontalAlignment.Center;
+                DockPanel dockPanel_right = new DockPanel();
+                dockPanel_right.Width = 200;
+                dockPanel_right.VerticalAlignment = VerticalAlignment.Center;
+                dockPanel_right.HorizontalAlignment = HorizontalAlignment.Center;
 
                 //left stackpanel
                 Label lefts_1 = new Label();
                 lefts_1.Content = orderList.Orders.ElementAt(i).order_id;
-                lefts_1.Height = 15;
-                lefts_1.FontSize = 18;
+                lefts_1.Height = 30;
+                lefts_1.FontSize = 16;
 
                 Label lefts_2 = new Label();
                 lefts_2.Content = orderList.Orders.ElementAt(i).order_time.ToShortDateString();
-                lefts_2.Height = 15;
-                lefts_2.FontSize = 18;
-                stackPanel_left.Children.Add(lefts_1);
-                stackPanel_left.Children.Add(lefts_2);
+                lefts_2.Height = 30;
+                lefts_2.FontSize = 16;
+                dockPanel_left.Children.Add(lefts_1);
+                dockPanel_left.Children.Add(lefts_2);
 
                 //middle stackPanel
                 Label middle_1 = new Label();
                 middle_1.Content = "Shipping Address: " + orderList.Orders.ElementAt(i).shipping_address;
-                middle_1.Height = 15;
-                middle_1.FontSize = 18;
+                middle_1.Height = 30;
+                middle_1.FontSize = 14;
 
                 Label middle_2 = new Label();
                 middle_2.Content = "Satus: " + orderList.Orders.ElementAt(i).Status;
-                middle_2.Height = 15;
-                middle_2.FontSize = 18;
+                middle_2.Height = 30;
+                middle_2.FontSize = 14;
 
-                stackPanel_middle.Children.Add(lefts_1);
-                stackPanel_middle.Children.Add(lefts_2);
+                dockPanel_middel.Children.Add(middle_1);
+                dockPanel_middel.Children.Add(middle_2);
 
                 //right stackPanel
                 Label right_1 = new Label();
                 right_1.Content = "Total: " + orderList.Orders.ElementAt(i).total_cost;
-                right_1.Height = 15;
-                right_1.FontSize = 18;
+                right_1.Height = 30;
+                right_1.FontSize = 14;
 
                 Button delete = new Button();
                 delete.Content = "Cancel";
                 delete.FontSize = 12;
                 delete.Width = 50;
-                delete.Height = 15;
-                delete.Click += (o, e) => Cancel(orderList.Orders.ElementAt(i).order_id);
+                delete.Height = 30;
+                long orderId = orderList.Orders.ElementAt(i).order_id;
+                delete.Click += (o, e) => Cancel(orderId);
 
-                stackPanel_right.Children.Add(lefts_1);
-                stackPanel_right.Children.Add(lefts_2);
+                dockPanel_right.Children.Add(right_1);
+                dockPanel_right.Children.Add(delete);
 
                 /*stackPanel_right.Children.Add(delete);*/
-                dop.Children.Add(stackPanel_left);
-                dop.Children.Add(stackPanel_middle);
-                dop.Children.Add(stackPanel_right);
+                dop.Children.Add(dockPanel_left);
+                dop.Children.Add(dockPanel_middel);
+                dop.Children.Add(dockPanel_right);
                 outer.Children.Add(dop);
 
                 ListViewItem viewItem = new ListViewItem();
@@ -132,18 +145,20 @@ namespace apiFrontEnd
 
                 viewItem.Content = dop;
 
-                outer.MouseLeftButtonUp += (o,e) => ToggleItemList(orderList.Orders.ElementAt(i).order_id, outer);
+                outer.MouseLeftButtonUp += (o,e) => ToggleItemList(orderId, lsView);
 
-                OrderListView.Items.Add(outer);
+                OrderListView.Items.Add(outer); 
+                OrderListView.Items.Add(lsView);
 
-                
+
+
             }
         }
 
-        private async void ToggleItemList(long orderId, StackPanel ourter)
+        private async void ToggleItemList(long orderId, ListView lsView)
         {
 
-            if (ourter.Children.Count == 1)
+            if (lsView.Items.Count == 0)
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, BackEndConnection.BaseUrl + BackEndConnection.OrderWindow_Order_orderId + orderId.ToString());
                 
@@ -153,6 +168,7 @@ namespace apiFrontEnd
                 var response = await client.SendAsync(request);
 
                 StackPanel dop_stack = new StackPanel();
+                dop_stack.VerticalAlignment = VerticalAlignment.Stretch;
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -176,37 +192,40 @@ namespace apiFrontEnd
 
                         //dop_item middle
                         Label m1l = new Label();
+                        m1l.HorizontalAlignment = HorizontalAlignment.Center;
                         m1l.Content =  orderDetails.items.ElementAt(i).item_name;
                         m1l.Height = 30;
-                        m1l.Width = 100;
-                        m1l.FontSize = 18;
+                        m1l.Width = 150;
+                        m1l.FontSize = 14;
                         dop_Items.Children.Add(m1l);
 
                         //dop_item middle
                         Label m2l = new Label();
-                        m2l.Content = orderDetails.items.ElementAt(i).Price;
+                        m2l.HorizontalAlignment = HorizontalAlignment.Center;
+                        m2l.Content = "Price:" + orderDetails.items.ElementAt(i).Price;
                         m2l.Height = 30;
-                        m2l.Width = 80;
-                        m2l.FontSize = 18;
-                        dop_Items.Children.Add(m1l);
+                        m2l.Width = 150;
+                        m2l.FontSize = 14;
+                        dop_Items.Children.Add(m2l);
 
                         //dop_item right
                         Label mr = new Label();
+                        mr.HorizontalAlignment = HorizontalAlignment.Center;
                         mr.Content = "Quantity: " + orderDetails.items.ElementAt(i).Quantity;
                         mr.Height = 30;
-                        mr.Width = 80;
-                        mr.FontSize = 18;
-                        dop_Items.Children.Add(m1l);
+                        mr.Width = 250;
+                        mr.FontSize = 14;
+                        dop_Items.Children.Add(mr);
 
                         dop_stack.Children.Add(dop_Items);
-
                     }
-                    ourter.Children.Add(dop_stack);
+
+                    lsView.Items.Add(dop_stack);
                 }
 
-                if (ourter.Children.Count > 1)
+                if (lsView.Items.Count > 1)
                 {
-                    ourter.Children.RemoveAt(1);
+                    lsView.Items.RemoveAt(1);
                 }
             }
         }
@@ -215,13 +234,22 @@ namespace apiFrontEnd
         {
             HttpClient client = new HttpClient();
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, BackEndConnection.BaseUrl + 
-                BackEndConnection.OrderWindow_Order_userName + _userName);
-            request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
-            {
-                { "order_id", orderId.ToString()}
-            });
+                BackEndConnection.OrderWindow_Order_userName + _userName + "/" + orderId.ToString());
+
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
-            await client.SendAsync(request);
+            var response = await client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                HttpRequestMessage request2 = new HttpRequestMessage(HttpMethod.Get, BackEndConnection.BaseUrl +
+                BackEndConnection.OrderWindow_Order_userName + _userName);
+                HttpClient client2 = new HttpClient();
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
+                var response2 = await client.SendAsync(request2);
+                if (response.IsSuccessStatusCode)
+                {
+                    GenerateListViewItem(response2);
+                }
+            }
         }
 
         private void HomeNav_Click(object sender, RoutedEventArgs e)

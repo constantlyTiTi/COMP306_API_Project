@@ -178,12 +178,23 @@ namespace apiProject.Controllers
             _mapper.Map(cartItems, cart);
             var order = _mapper.Map<OrderDetails>(cart);
             _unitOfWork.OrderDetails.Add(order);
+            _unitOfWork.Save(); 
+
+            order.OrderId = _unitOfWork.OrderDetails.GetFirstOrDefault(i=>i.OrderTime == order.OrderTime && i.UserName == user_name).OrderId;
+
             foreach (var item in cartItems)
             {
                 var orderItem = _mapper.Map<OrderItem>(item);
                 _unitOfWork.OrderItem.Add(_mapper.Map(order, orderItem));
             }
+            _unitOfWork.Save();
 
+            foreach (var item in cartItems)
+            {
+                _unitOfWork.ShoppingCartItems.DeleteItemWithoutSave(item.ItemId, user_name);
+
+            }
+            _unitOfWork.Save();
             return Ok();
 
         }

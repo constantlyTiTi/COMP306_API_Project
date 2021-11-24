@@ -16,11 +16,10 @@ namespace apiProject.Repositories
             _db = db;
         }
 
-        public void DeleteItem(long itemId, string userName)
+        public void DeleteItemWithoutSave(long itemId, string userName)
         {
             var findObj = _db.ShoppingCartItem.FirstOrDefault(s => s.ItemId == itemId && s.UserName == userName);
             _db.Remove(findObj);
-            _db.SaveChanges();
         }
 
         public IEnumerable<ShoppingCartItem> GetItems(string userName)
