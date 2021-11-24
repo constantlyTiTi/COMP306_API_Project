@@ -21,11 +21,11 @@ namespace apiFrontEnd
     /// <summary>
     /// Interaction logic for Orders.xaml
     /// </summary>
-    public partial class Orders : Window
+    public partial class OrdersWindow : Window
     {
         private readonly string _userName;
         private readonly string _token;
-        public Orders(string userName, string token)
+        public OrdersWindow(string userName, string token)
         {
             InitializeComponent();
             _userName = userName;

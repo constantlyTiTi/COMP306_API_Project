@@ -140,7 +140,7 @@ namespace apiFrontEnd
 
         private void OrderNav_Click(object sender, RoutedEventArgs e)
         {
-            Orders ow = new Orders(_userName, _token);
+            OrdersWindow ow = new OrdersWindow(_userName, _token);
             ow.Top = this.Top;
             ow.Left = this.Left;
             ow.Show();

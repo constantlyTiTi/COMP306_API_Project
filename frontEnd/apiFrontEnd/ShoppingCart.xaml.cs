@@ -222,7 +222,9 @@ namespace apiFrontEnd
 
             if (response.IsSuccessStatusCode)
             {
-                Orders ow = new Orders(_userName, _token);
+                OrdersWindow ow = new OrdersWindow(_userName, _token);
+                ow.Show();
+                this.Close();
             }
             else
             {
