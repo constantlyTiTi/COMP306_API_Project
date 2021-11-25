@@ -91,7 +91,7 @@ namespace apiFrontEnd
         {
             HttpClient client = new HttpClient();
             StringContent content = new StringContent(JsonConvert.SerializeObject(item));
-            var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item + item.item_id.ToString(), content);
+            var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.PostItemWindow_Item + item.item_id.ToString(), content);
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("The item has been added to shopping cart");

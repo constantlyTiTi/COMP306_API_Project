@@ -161,7 +161,7 @@ namespace apiFrontEnd
             else
             {
                 HttpClient client = new HttpClient();
-                var response = await client.DeleteAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_Item + item.item_id.ToString());
+                var response = await client.DeleteAsync(BackEndConnection.BaseUrl + BackEndConnection.PostItemWindow_Item + item.item_id.ToString());
                 if (response.IsSuccessStatusCode)
                 {
                     ShoppingCartListView.Items.Remove(dop_Items);
