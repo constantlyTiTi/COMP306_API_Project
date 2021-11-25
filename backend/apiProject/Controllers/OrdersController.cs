@@ -61,10 +61,10 @@ namespace apiProject.Controllers
             IEnumerable<Item> items = (IEnumerable<Item>)_unitOfWork.Item.GetAllByIds(orderItem_itemIds).Result;
             IEnumerable<ItemDTO> itemDTOs = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items);
 
-            IEnumerable<ItemFile> itemFiles = _unitOfWork.ItemFile.GetAllItemByIds(itemDTOs.Select(i => i.ItemId)).Result;
+            /*IEnumerable<ItemFile> itemFiles = _unitOfWork.ItemFile.GetAllItemByIds(itemDTOs.Select(i => i.ItemId)).Result;*/
             foreach (var item in itemDTOs)
             {
-                _mapper.Map(itemFiles.Where(i => i.ItemId == item.ItemId), item);
+               /* _mapper.Map(itemFiles.Where(i => i.ItemId == item.ItemId), item);*/
                 _mapper.Map(orderItems.First(i => i.OrderId == order_id && i.ItemId == item.ItemId), item);
             }
             OrderDetailDTO orderDetailDTO = _mapper.Map<OrderDetailDTO>(itemDTOs);

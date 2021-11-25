@@ -22,7 +22,7 @@ namespace apiProject.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private static Dictionary<long,List<ShoppingCartItem>> CartItems = new Dictionary<long, List<ShoppingCartItem>>();
+        public static Dictionary<long,List<ShoppingCartItem>> CartItems = new Dictionary<long, List<ShoppingCartItem>>();
         private readonly Microsoft.AspNetCore.Identity.UserManager<IdentityUser> _userManager;
 
         public ShoppingCartController(IMapper mapper, IUnitOfWork unitOfWork, Microsoft.AspNetCore.Identity.UserManager<IdentityUser> userManager)
@@ -90,12 +90,12 @@ namespace apiProject.Controllers
         {
             ShoppingCartDTO cartDTO = _mapper.Map<ShoppingCartDTO>(CartItems[unique_tempor_user_id]);
             IEnumerable<Item> items = _unitOfWork.Item.GetAllByIds(CartItems[unique_tempor_user_id].Select(i => i.ItemId)).Result;
-            IEnumerable<ItemFile> itemFiles = _unitOfWork.ItemFile.GetAllItemByIds(CartItems[unique_tempor_user_id].Select(i => i.ItemId)).Result;
+           /* IEnumerable<ItemFile> itemFiles = _unitOfWork.ItemFile.GetAllItemByIds(CartItems[unique_tempor_user_id].Select(i => i.ItemId)).Result;*/
             IEnumerable<ItemDTO> itemDTOs = _mapper.Map<IEnumerable<ItemDTO>>(items);
             foreach (var item in itemDTOs)
             {
                 _mapper.Map(CartItems[unique_tempor_user_id].FirstOrDefault(i => i.ItemId == item.ItemId), item);
-                _mapper.Map(itemFiles.Where(i => i.ItemId == item.ItemId), item);
+                /*_mapper.Map(itemFiles.Where(i => i.ItemId == item.ItemId), item);*/
             }
 
             _mapper.Map(itemDTOs, cartDTO);

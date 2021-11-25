@@ -27,16 +27,16 @@ namespace apiFrontEnd.Models
         public double Price { get; set; }
 
 /*        [JsonPropertyName("cover_Image_path")]*/
-        public string cover_Image_path { get; set; }
+/*        public string cover_Image_path { get; set; }*/
 
         [Required]
 /*        [JsonPropertyName("location_postal_code")]*/
         public string location_postal_code { get; set; }
 /*        [JsonPropertyName("item_imgs")]*/
-        public ICollection<FileStream> item_imgs { get; set; }
+/*        public ICollection<FileStream> item_imgs { get; set; }
 
-/*        [JsonPropertyName("item_imgs_paths")]*/
-        public IEnumerable<string> item_imgs_paths { get; set; }
+*//*        [JsonPropertyName("item_imgs_paths")]*//*
+        public IEnumerable<string> item_imgs_paths { get; set; }*/
         public int Quantity { get; set; }
     }
 }

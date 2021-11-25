@@ -91,9 +91,8 @@ namespace apiFrontEnd
         {
             using (HttpClient client = new HttpClient())
             {
-                StringContent content = new StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
-                var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.logoutUrl, content);
+                var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.logoutUrl + _uniqueId.ToString());
                 if (response.IsSuccessStatusCode)
                 {
                     MainWindow mw = new MainWindow();
@@ -168,11 +167,10 @@ namespace apiFrontEnd
             for (int i = 0; i < itemlist.Items.Count(); i++)
             {
                 DockPanel dop = new DockPanel();
-                dop.Height = 60;
+                dop.Height = 30;
 
                 StackPanel stackPanel_left = new StackPanel();
                 stackPanel_left.Width = 100;
-                stackPanel_left.Height = 60;
                 stackPanel_left.VerticalAlignment = VerticalAlignment.Center;
                 stackPanel_left.HorizontalAlignment = HorizontalAlignment.Center;
 
@@ -199,36 +197,42 @@ namespace apiFrontEnd
                 header.Height = 30;
                 long itemId = itemlist.Items.ElementAt(i).ItemId;
                 header.Click += (o, e) => ItemDetailReview(o, e, itemId);
-                header.FontSize = 18;
+                header.FontSize = 14;
 
                 Label desc = new Label();
                 desc.Content = itemlist.Items.ElementAt(i).Description.Length > 50 ? 
                     itemlist.Items.ElementAt(i).Description.Substring(0, 50) : itemlist.Items.ElementAt(i).Description;
                 desc.Width = 250;
                 desc.Height = 30;
-                desc.FontSize = 18;
+                desc.FontSize = 14;
 
-/*                //right stackpanel only in item management
-                Button delete = new Button();
-                delete.Content = "Delete";
-                delete.FontSize = 18;
-                delete.Width = 80;
-                delete.Height = 40;*/
+                /*                //right stackpanel only in item management
+                                Button delete = new Button();
+                                delete.Content = "Delete";
+                                delete.FontSize = 18;
+                                delete.Width = 80;
+                                delete.Height = 40;*/
 
                 //left stackpanel
-                Image img = new Image();
-                var filePath = itemlist.Items.ElementAt(i).cover_Image_path;
-                BitmapImage bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri(filePath, UriKind.Absolute);
-                bitmap.EndInit();
-                img.Source = bitmap;
-                img.Stretch = Stretch.Fill;
-                img.Width = 60;
-                img.Height = 60;
+                /*                Image img = new Image();
+                                var filePath = itemlist.Items.ElementAt(i).cover_Image_path;
+                                BitmapImage bitmap = new BitmapImage();
+                                bitmap.BeginInit();
+                                bitmap.UriSource = new Uri(filePath, UriKind.Absolute);
+                                bitmap.EndInit();
+                                img.Source = bitmap;
+                                img.Stretch = Stretch.Fill;
+                                img.Width = 60;
+                                img.Height = 60;*/
+                Label uploadedTime = new Label();
+                uploadedTime.Width = 100;
+                uploadedTime.FontSize = 14;
+                uploadedTime.VerticalAlignment = VerticalAlignment.Center;
+                uploadedTime.HorizontalAlignment = HorizontalAlignment.Center;
+                uploadedTime.Content = itemlist.Items.ElementAt(i).upload_item_date_time.ToShortDateString();
 
                 //combine
-                stackPanel_left.Children.Add(img);
+                stackPanel_left.Children.Add(uploadedTime);
                 stackPanel_middle.Children.Add(header);
                 stackPanel_middle2.Children.Add(desc);
                 dop.Children.Add(stackPanel_left);

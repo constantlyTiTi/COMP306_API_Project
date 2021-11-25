@@ -19,8 +19,8 @@
             <DockPanel LastChildFill="False" Height="30" Width="796" Margin="0,5,0,0">
                 <DatePicker Name="EndDatePicker" Width="110" Margin="10,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <Button Name="SearchByDate" Content="Search By Date" Width="124" FontSize="14" Background="White" BorderBrush="White" Click="SearchByDate_Click"/>
-                <Button Name="SearchByItemName" Content="Search By Item Name" Width="163" FontSize="14" Background="White" BorderBrush="White"/>
-                <Button  Name="SearchByPostalCode" Content="Search By PostalCode" Width="175" FontSize="14" Background="White" BorderBrush="White"/>
+                <!--<Button Name="SearchByItemName" Content="Search By Item Name" Width="163" FontSize="14" Background="White" BorderBrush="White"/>
+                <Button  Name="SearchByPostalCode" Content="Search By PostalCode" Width="175" FontSize="14" Background="White" BorderBrush="White"/> -->
             </DockPanel>
             <StackPanel Height="341" Width="796" Margin="0,5,0,0">
                 <DockPanel LastChildFill="False" Height="25">

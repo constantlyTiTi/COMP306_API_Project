@@ -62,7 +62,7 @@ namespace apiFrontEnd
 
                 DetailPanel.Children.Add(addToCart);
 
-                foreach (var imgPath in itemDetail.item_imgs_paths)
+/*                foreach (var imgPath in itemDetail.item_imgs_paths)
                 {
                     Image img = new Image();
                     var filePath = imgPath;
@@ -77,7 +77,7 @@ namespace apiFrontEnd
                     img.Margin = new Thickness(0, 2, 0, 0);
 
                     DetailPanel.Children.Add(img);
-                }
+                }*/
 
             }
             else

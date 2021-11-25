@@ -179,13 +179,13 @@ namespace apiFrontEnd
                         DockPanel dop_Items = new DockPanel();
                         //dop_item left
                         Image img = new Image();
-                        var filePath = orderDetails.items.ElementAt(i).cover_Image_path;
+/*                        var filePath = orderDetails.items.ElementAt(i).cover_Image_path;
                         BitmapImage bitmap = new BitmapImage();
                         bitmap.BeginInit();
                         bitmap.UriSource = new Uri(filePath, UriKind.Absolute);
                         bitmap.EndInit();
                         img.Source = bitmap;
-                        img.Stretch = Stretch.Fill;
+                        img.Stretch = Stretch.Fill;*/
                         img.Width = 30;
                         img.Height = 30;
                         dop_Items.Children.Add(img);

@@ -73,8 +73,13 @@ namespace apiFrontEnd
             var response = await client.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
+                OuterStackPanel.Children.Remove(LoadingLabel);
                 GenerateListViewItem(response);
 
+            }
+            else
+            {
+                LoadingLabel.Content = "Oops, something is wrong.";
             }
         }
 
@@ -99,13 +104,13 @@ namespace apiFrontEnd
 
                 //right
                 Image img = new Image();
-                var filePath = item.cover_Image_path;
+/*                var filePath = item.cover_Image_path;
                 BitmapImage bitmap = new BitmapImage();
                 bitmap.BeginInit();
                 bitmap.UriSource = new Uri(filePath, UriKind.Absolute);
                 bitmap.EndInit();
                 img.Source = bitmap;
-                img.Stretch = Stretch.Fill;
+                img.Stretch = Stretch.Fill;*/
                 img.Width = 30;
                 img.Height = 30;
                 dop_Items.Children.Add(img);
