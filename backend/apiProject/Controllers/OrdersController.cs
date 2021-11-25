@@ -60,7 +60,13 @@ namespace apiProject.Controllers
             IEnumerable<long> orderItem_itemIds = orderItems.Select(i => i.ItemId);
             IEnumerable<Item> items = (IEnumerable<Item>)_unitOfWork.Item.GetAllByIds(orderItem_itemIds).Result;
             IEnumerable<ItemDTO> itemDTOs = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items);
-            _mapper.Map<IEnumerable<OrderItem>, IEnumerable<ItemDTO>>(orderItems, itemDTOs);
+
+            /*IEnumerable<ItemFile> itemFiles = _unitOfWork.ItemFile.GetAllItemByIds(itemDTOs.Select(i => i.ItemId)).Result;*/
+            foreach (var item in itemDTOs)
+            {
+               /* _mapper.Map(itemFiles.Where(i => i.ItemId == item.ItemId), item);*/
+                _mapper.Map(orderItems.First(i => i.OrderId == order_id && i.ItemId == item.ItemId), item);
+            }
             OrderDetailDTO orderDetailDTO = _mapper.Map<OrderDetailDTO>(itemDTOs);
             orderDetailDTO.OrderId = order_id;
 
@@ -68,7 +74,7 @@ namespace apiProject.Controllers
 
         }
 
-        [HttpDelete("user-orders/{username}")]
+        [HttpDelete("user-orders/{username}/{order_id}")]
         public IActionResult DeleteOrder(string username, long order_id)
         {
             if(_unitOfWork.OrderDetails.Get(order_id).UserName != username)
@@ -77,6 +83,8 @@ namespace apiProject.Controllers
                 return BadRequest(model);
             }
             _unitOfWork.OrderDetails.Remove(order_id);
+            _unitOfWork.OrderItem.RemoveRange(_unitOfWork.OrderItem.GetItemsByOrderId(order_id).Result);
+            _unitOfWork.Save();
             return Ok();
         }
 

@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="ShoppingCart" Height="450" Width="800">
     <Grid>
-        <StackPanel>
+        <StackPanel x:Name="OuterStackPanel">
             <DockPanel Height="40" LastChildFill="False">
                 <Button Name ="HomeNav" Content="Home" Width="91" FontSize="20" Margin="10,0,0,0" Background="White" BorderBrush="White" Click="HomeNav_Click"/>
                 <Label Name="UserNameLable" FontSize="20" Width="626" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
@@ -15,18 +15,20 @@
             <ListView  Name ="ShoppingCartListView" Margin="10,6,10,0" Loaded="ShoppingCartListView_Loaded" >
 
             </ListView>
-            <StackPanel Height="100">
-                <DockPanel Height="40" LastChildFill="False">
+            <StackPanel Height="118">
+                <DockPanel Height="40" LastChildFill="False" Margin="0,20,0,0">
                     <Label Name="ShippingAddressLabel" Width="150" Content="Shipping Address" FontSize="16" Margin="10,0,0,0"/>
-                    <TextBox Name="ShippingAddressTextBox" Text="TextBox" TextWrapping="Wrap" Width="420" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <Label Name="TotalCostLabel" Content="Label" FontSize="16" Margin="30,0,0,0"/>
+                    <TextBox Name="ShippingAddressTextBox" Text="" TextWrapping="Wrap" Width="382" FontSize="16"/>
+                    <Label Content="Total Cost : CAD" FontSize="16" Margin="20,0,0,0"/>
+                    <Label Name="TotalCostLabel" Content="Label" FontSize="16" Margin="10,0,0,0"/>
                 </DockPanel>
                 <StackPanel Margin="0,0,30,0" HorizontalAlignment="Right">
-                    <Button Content="Purchase" Width="100" FontSize="16" Background="#FFFDFDFD" Click="Button_Click"/>
+                    <Button Content="Purchase" Width="100" FontSize="16" Background="#FFFDFDFD" Click="Button_Click" Margin="0,20,0,0"/>
                 </StackPanel>
 
             </StackPanel>
-            
+            <Label Name="LoadingLabel"  Content="Loading..." Width="248" Height="55" FontSize="20" FontWeight="Bold"/>
+
 
 
         </StackPanel>

@@ -27,6 +27,7 @@ namespace apiFrontEnd
     {
         private readonly string _userName;
         private readonly string _token;
+        public static long _uniqueId = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -35,15 +36,30 @@ namespace apiFrontEnd
             LogoutNav.Visibility = Visibility.Hidden;
             _token = string.Empty;
             _userName = string.Empty;
+            GenerateUniqueId();
+        }
+
+        private void GenerateUniqueId()
+        {
+            if (_uniqueId == 0)
+            {
+                HttpClient client = new HttpClient();
+                var response = client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.ShoppingCartWindow_GenerateRandomId).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    _uniqueId = JsonConvert.DeserializeObject<long>(response.Content.ReadAsStringAsync().Result);
+                }
+            }
         }
 
         public MainWindow(string userName, string token)
         {
             InitializeComponent();
-            _userName = userName;
+            this._userName = userName;
             _token = token;
             AuthNav.Content = "Hello, " + _userName;
             AuthNav.IsEnabled = false;
+            GenerateUniqueId();
         }
 
         private void AuthNav_Click(object sender, RoutedEventArgs e)
@@ -75,9 +91,9 @@ namespace apiFrontEnd
         {
             using (HttpClient client = new HttpClient())
             {
-                StringContent content = new StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
-                client.DefaultRequestHeaders.Add(BackEndConnection.Authentication, _token);
-                var response = await client.PostAsync(BackEndConnection.BaseUrl + BackEndConnection.logoutUrl, content);
+
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
+                var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.logoutUrl + _uniqueId.ToString());
                 if (response.IsSuccessStatusCode)
                 {
                     MainWindow mw = new MainWindow();
@@ -99,15 +115,21 @@ namespace apiFrontEnd
         private async void SearchByDate_Click(object sender, RoutedEventArgs e)
         {
             DateTime? date = EndDatePicker.SelectedDate;
-            var request = new HttpRequestMessage(HttpMethod.Get, BackEndConnection.BaseUrl + BackEndConnection.mainWindow_items);
-            request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
-            {
-                { "upload_date_time", date == null ? string.Empty: date.Value.ToString("yyyy-MM-dd") }
-            });
+
+            ItemListView.Items.Clear();
+            Label LoadingLabel = new Label();
+            LoadingLabel.Margin = new Thickness(20, 0, 0, 0);
+            LoadingLabel.FontSize = 18;
+            LoadingLabel.FontWeight = FontWeights.Bold;
+            ItemListView.Items.Add(LoadingLabel);
+
+            string dateString = date == null ? string.Empty : date.Value.ToString("yyyy-MM-dd");
             HttpClient client = new HttpClient();
-            var response = await client.SendAsync(request);
+            var response =  await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.mainWindow_items + "?upload_date_time=" + date.Value.ToString("yyyy-MM-dd"));
+/*            var response = await client.SendAsync(request);*/
             if (response.IsSuccessStatusCode)
             {
+                ItemListView.Items.Remove(LoadingLabel);
                 GenerateListViewItem(response);
 
             }
@@ -119,6 +141,7 @@ namespace apiFrontEnd
             var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.mainWindow_allItem);
             if (response.IsSuccessStatusCode)
             {
+                ItemListView.Items.Remove(LoadingLabel);
                 GenerateListViewItem(response);
 
             }
@@ -126,7 +149,7 @@ namespace apiFrontEnd
 
         private void OrderNav_Click(object sender, RoutedEventArgs e)
         {
-            Orders ow = new Orders(_userName, _token);
+            OrdersWindow ow = new OrdersWindow(_userName, _token);
             ow.Top = this.Top;
             ow.Left = this.Left;
             ow.Show();
@@ -147,6 +170,7 @@ namespace apiFrontEnd
 
         private void GenerateListViewItem(HttpResponseMessage response)
         {
+            ItemListView.Items.Clear();
             ItemListViewModel itemlist = JsonConvert.DeserializeObject<ItemListViewModel>(response.Content.ReadAsStringAsync().Result);
 
             PageInfo_TextBox.Text = itemlist.Paginate.next_curesor;
@@ -156,62 +180,74 @@ namespace apiFrontEnd
                 dop.Height = 30;
 
                 StackPanel stackPanel_left = new StackPanel();
-                stackPanel_left.Width = 30;
+                stackPanel_left.Width = 100;
                 stackPanel_left.VerticalAlignment = VerticalAlignment.Center;
                 stackPanel_left.HorizontalAlignment = HorizontalAlignment.Center;
 
                 StackPanel stackPanel_middle = new StackPanel();
-                stackPanel_middle.Width = 300;
+                stackPanel_middle.Width = 150;
                 stackPanel_middle.VerticalAlignment = VerticalAlignment.Center;
                 stackPanel_middle.HorizontalAlignment = HorizontalAlignment.Center;
 
+                StackPanel stackPanel_middle2 = new StackPanel();
+                stackPanel_middle2.Width = 300;
+                stackPanel_middle2.VerticalAlignment = VerticalAlignment.Center;
+                stackPanel_middle2.HorizontalAlignment = HorizontalAlignment.Center;
+
                 // for item managmenet
-/*                StackPanel stackPanel_right = new StackPanel();
-                stackPanel_right.Width = 300;
-                stackPanel_right.VerticalAlignment = VerticalAlignment.Center;
-                stackPanel_right.HorizontalAlignment = HorizontalAlignment.Center;*/
+                /*                StackPanel stackPanel_right = new StackPanel();
+                                stackPanel_right.Width = 300;
+                                stackPanel_right.VerticalAlignment = VerticalAlignment.Center;
+                                stackPanel_right.HorizontalAlignment = HorizontalAlignment.Center;*/
 
                 //middle stackPanel
                 Button header = new Button();
                 header.Content = itemlist.Items.ElementAt(i).item_name;
-                header.Width = 300;
+                header.Width = 100;
                 header.Height = 30;
-                header.Click += (o, e) => ItemDetailReview(o, e, itemlist.Items.ElementAt(i).ItemId);
-                header.FontSize = 18;
+                long itemId = itemlist.Items.ElementAt(i).ItemId;
+                header.Click += (o, e) => ItemDetailReview(o, e, itemId);
+                header.FontSize = 14;
 
                 Label desc = new Label();
                 desc.Content = itemlist.Items.ElementAt(i).Description.Length > 50 ? 
                     itemlist.Items.ElementAt(i).Description.Substring(0, 50) : itemlist.Items.ElementAt(i).Description;
-                desc.Width = 300;
-                desc.Height = 15;
-                desc.FontSize = 18;
+                desc.Width = 250;
+                desc.Height = 30;
+                desc.FontSize = 14;
 
-/*                //right stackpanel only in item management
-                Button delete = new Button();
-                delete.Content = "Delete";
-                delete.FontSize = 18;
-                delete.Width = 80;
-                delete.Height = 40;*/
+                /*                //right stackpanel only in item management
+                                Button delete = new Button();
+                                delete.Content = "Delete";
+                                delete.FontSize = 18;
+                                delete.Width = 80;
+                                delete.Height = 40;*/
 
                 //left stackpanel
-                Image img = new Image();
-                var filePath = itemlist.Items.ElementAt(i).cover_Image_path;
-                BitmapImage bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri(filePath, UriKind.Absolute);
-                bitmap.EndInit();
-                img.Source = bitmap;
-                img.Stretch = Stretch.Fill;
-                img.Width = 30;
-                img.Height = 30;
+                /*                Image img = new Image();
+                                var filePath = itemlist.Items.ElementAt(i).cover_Image_path;
+                                BitmapImage bitmap = new BitmapImage();
+                                bitmap.BeginInit();
+                                bitmap.UriSource = new Uri(filePath, UriKind.Absolute);
+                                bitmap.EndInit();
+                                img.Source = bitmap;
+                                img.Stretch = Stretch.Fill;
+                                img.Width = 60;
+                                img.Height = 60;*/
+                Label uploadedTime = new Label();
+                uploadedTime.Width = 100;
+                uploadedTime.FontSize = 14;
+                uploadedTime.VerticalAlignment = VerticalAlignment.Center;
+                uploadedTime.HorizontalAlignment = HorizontalAlignment.Center;
+                uploadedTime.Content = itemlist.Items.ElementAt(i).upload_item_date_time.ToShortDateString();
 
                 //combine
-                stackPanel_left.Children.Add(img);
+                stackPanel_left.Children.Add(uploadedTime);
                 stackPanel_middle.Children.Add(header);
-                stackPanel_middle.Children.Add(desc);
-                /*stackPanel_right.Children.Add(delete);*/
+                stackPanel_middle2.Children.Add(desc);
                 dop.Children.Add(stackPanel_left);
                 dop.Children.Add(stackPanel_middle);
+                dop.Children.Add(stackPanel_middle2);
                 /*dop.Children.Add(stackPanel_right);*/
 
                 ListViewItem viewItem = new ListViewItem();
@@ -234,6 +270,26 @@ namespace apiFrontEnd
             sw.Left = this.Left;
             sw.Show();
             this.Close();
+        }
+
+        private async void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if(Application.Current.Windows.OfType<OrdersWindow>().Any()||
+               Application.Current.Windows.OfType<ShoppingCart>().Any()||
+               Application.Current.Windows.OfType<LoginAndRegistration>().Any() ||
+               Application.Current.Windows.OfType<ItemManagementWindow>().Any()||
+               Application.Current.Windows.OfType<MainWindow>().Any())
+            {
+                return;
+            }
+            else
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
+                    var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.logoutUrl + _uniqueId.ToString());
+                }
+            }
         }
     }
 }
