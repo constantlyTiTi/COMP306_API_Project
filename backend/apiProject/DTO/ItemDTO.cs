@@ -27,12 +27,12 @@ namespace apiProject.DTO
         [Required]
         [JsonPropertyName("location_postal_code")]
         public string LocationPostalCode { get; set; }
-        [JsonPropertyName("item_imgs")]
+/*        [JsonPropertyName("item_imgs")]
         public ICollection<IFormFile> ItemImages { get; set; }
 
         [JsonPropertyName("item_imgs_paths")]
-        public IEnumerable<string> ItemImagePaths { get; set; }
-        public int Quantity { get; set; }
+        public IEnumerable<string> ItemImagePaths { get; set; }*/
+        public int Quantity { get; set; } = 1;
     }
 
 }

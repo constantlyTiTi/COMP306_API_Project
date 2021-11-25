@@ -131,10 +131,10 @@ namespace apiProject.Controllers
 
         }
         [Authorize]
-        [HttpGet("logout")]
-        public IActionResult Logout()
+        [HttpGet("logout/{unique_tempor_user_id}")]
+        public IActionResult Logout(long unique_tempor_user_id)
         {
-            HttpContext.Session.Clear();
+            ShoppingCartController.CartItems.Remove(unique_tempor_user_id);
             return Ok();
         }
 

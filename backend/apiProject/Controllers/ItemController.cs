@@ -37,13 +37,13 @@ namespace apiProject.Controllers
         public IActionResult Get(int items_per_page = 10, string next_cursor = "0")
         {
             IEnumerable<Item> items_all =  _unitOfWork.Item.GetAll();
-            IEnumerable<ItemFile> itemFiles_all = _unitOfWork.ItemFile.GetAll();
+            /*IEnumerable<ItemFile> itemFiles_all = _unitOfWork.ItemFile.GetAll();*/
             IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
-            foreach(var dto in itemDtos)
+/*            foreach(var dto in itemDtos)
             {
                 IEnumerable<ItemFile> itemFiles = itemFiles_all.Where(i => i.ItemId == dto.ItemId);
                 _mapper.Map(itemFiles, dto);
-            }
+            }*/
 
             Paginate paginate = new Paginate(items_per_page, next_cursor);
             List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
@@ -74,7 +74,7 @@ namespace apiProject.Controllers
             _unitOfWork.Save();
 
             //save itemFile To db
-            for (int i = 1; i< item_form.ItemImages.Count; i++)
+            /*for (int i = 1; i< item_form.ItemImages.Count; i++)
             {
                 byte[] fileBytes = new Byte[item_form.ItemImages.ElementAt(i-1).Length];
                 item_form.ItemImages.ElementAt(i - 1).OpenReadStream().Read(fileBytes, 0, Int32.Parse(item_form.ItemImages.ElementAt(i - 1).Length.ToString()));
@@ -86,7 +86,7 @@ namespace apiProject.Controllers
                 ItemFile itemFile = new ItemFile(item_form.ItemId, @"https://comp306-lab03.s3.amazonaws.com/img/"+fileKey);
                 _unitOfWork.ItemFile.Add(itemFile);
                 _unitOfWork.Save();
-            }
+            }*/
             return Ok(item_form);
         }
 
@@ -101,13 +101,13 @@ namespace apiProject.Controllers
                 IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
 
                 IEnumerable<long> items_all_ids = items_all.Select(i => i.ItemId);
-                IEnumerable<ItemFile> itemFiles_all = _unitOfWork.ItemFile.GetAllItemByIds(items_all_ids).Result;
+                /*IEnumerable<ItemFile> itemFiles_all = _unitOfWork.ItemFile.GetAllItemByIds(items_all_ids).Result;*/
 
-                foreach (var dto in itemDtos)
+/*                foreach (var dto in itemDtos)
                 {
                     IEnumerable<ItemFile> itemFiles = itemFiles_all.Where(i => i.ItemId == dto.ItemId);
                     _mapper.Map(itemFiles, dto);
-                }
+                }*/
 
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
                 List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
@@ -173,6 +173,16 @@ namespace apiProject.Controllers
             {
                 var items_all = _unitOfWork.Item.GetItemByUploadedDateTime(upload_date_time.Value, upload_date_time.Value.AddDays(1)).Result;
                 IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
+
+/*                IEnumerable<long> items_all_ids = items_all.Select(i => i.ItemId);
+                IEnumerable<ItemFile> itemFiles_all = _unitOfWork.ItemFile.GetAllItemByIds(items_all_ids).Result;
+
+                foreach (var dto in itemDtos)
+                {
+                    IEnumerable<ItemFile> itemFiles = itemFiles_all.Where(i => i.ItemId == dto.ItemId);
+                    _mapper.Map(itemFiles, dto);
+                }*/
+
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
                 List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
                 if (itemsOfPage == null)
@@ -202,14 +212,14 @@ namespace apiProject.Controllers
                 return NotFound();
             }
 
-            IEnumerable<long> items_all_ids = items_all.Select(i => i.ItemId);
+/*            IEnumerable<long> items_all_ids = items_all.Select(i => i.ItemId);
             IEnumerable<ItemFile> itemFiles_all = _unitOfWork.ItemFile.GetAllItemByIds(items_all_ids).Result;
 
             foreach (var dto in itemDtos)
             {
                 IEnumerable<ItemFile> itemFiles = itemFiles_all.Where(i => i.ItemId == dto.ItemId);
                 _mapper.Map(itemFiles, dto);
-            }
+            }*/
 
             ItemList itemList = _mapper.Map<ItemList>(itemsOfPage);
             _mapper.Map(paginate, itemList);
@@ -226,9 +236,9 @@ namespace apiProject.Controllers
             {
                 return NotFound();
             }
-            var itemFiles = _unitOfWork.ItemFile.GetItemByItemId(itemid).Result;
-            ItemDTO itemDTO = _mapper.Map<ItemDTO>(itemFiles);
-            _mapper.Map(item, itemDTO);
+/*            var itemFiles = _unitOfWork.ItemFile.GetItemByItemId(itemid).Result;*/
+            ItemDTO itemDTO = _mapper.Map<ItemDTO>(item);
+/*            _mapper.Map(item, itemDTO);*/
 
             return Ok(itemDTO);
         }
@@ -253,15 +263,15 @@ namespace apiProject.Controllers
 
             _unitOfWork.Item.UpdateItem(item);
 
-            int newFileStartIndex = 0;
+/*            int newFileStartIndex = 0;*/
 
-            if (_unitOfWork.ItemFile.GetItemByItemId(itemid).Result.Count() > 0)
+/*            if (_unitOfWork.ItemFile.GetItemByItemId(itemid).Result.Count() > 0)
             {
                 newFileStartIndex = int.Parse(_unitOfWork.ItemFile.GetItemByItemId(itemid)
                 .Result.Last().ImgFileKey.Split(".").First().Split("-").Last());
-            }
+            }*/
             
-            int realIndex = 0;
+            /*int realIndex = 0;
             foreach(var img in itemDTO.ItemImages)
             {
                 newFileStartIndex++;
@@ -276,7 +286,7 @@ namespace apiProject.Controllers
                 _unitOfWork.ItemFile.Add(itemFile);
                 _unitOfWork.Save();
                 realIndex++;
-            }
+            }*/
 
 
 
@@ -298,7 +308,7 @@ namespace apiProject.Controllers
             _unitOfWork.Item.Remove(itemid);
             _unitOfWork.Save();
 
-            var itemFilesById = _unitOfWork.ItemFile.GetItemByItemId(itemid).Result;
+           /* var itemFilesById = _unitOfWork.ItemFile.GetItemByItemId(itemid).Result;
 
             if (itemFilesById.Count() > 0)
             {
@@ -313,7 +323,7 @@ namespace apiProject.Controllers
                     return BadRequest(model);
                 }
                 _unitOfWork.ItemFile.RemoveByItemId(itemid);
-            }
+            }*/
 
             return Ok();
         }

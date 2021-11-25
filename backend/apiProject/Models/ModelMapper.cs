@@ -53,7 +53,8 @@ namespace apiProject.Models
             CreateMap<Item, ItemDetails>().ForMember(dto => dto.Item, opt => opt.MapFrom(src => src));
             //ShoppingCart
             CreateMap<IEnumerable<ShoppingCartItem>, ShoppingCartDTO>()
-                .ForMember(dto => dto.TotalCost, opt => opt.MapFrom(src => src.Sum(i=>i.Price)));
+                .ForMember(dto => dto.ShoppingCartItems, opt => opt.MapFrom(src => src))
+                .ForMember(dto => dto.TotalCost, opt => opt.MapFrom(src => src.Sum(i=>i.Price * i.Quantity)));
             CreateMap<IEnumerable<ItemDTO>, ShoppingCartDTO>()
                 .ForMember(dto => dto.ShoppingCartItems, opt => opt.MapFrom(src => src));
             CreateMap<ShoppingCartItem, ItemDTO>()
@@ -86,9 +87,9 @@ namespace apiProject.Models
                 .ForMember(dto => dto.UserName, opt => opt.MapFrom(i => i.UserName))
                 .ForMember(dto => dto.Description, opt => opt.MapFrom(i => i.Description))
                 .ForMember(dto => dto.Category, opt => opt.MapFrom(i => i.Category));
-            CreateMap<IEnumerable<ItemFile>, ItemDTO>()
+            /*CreateMap<IEnumerable<ItemFile>, ItemDTO>()
                 .ForMember(dto => dto.ItemImagePaths, opt => opt.MapFrom(i => i.Select(f => f.ImgFileKey)))
-                .ForMember(dto => dto.CoverImagePath, opt => opt.MapFrom(i => i.Select(f => ResourceUrl.ImgBucket.ToUrl() + f.ImgFileKey).FirstOrDefault()));
+                .ForMember(dto => dto.CoverImagePath, opt => opt.MapFrom(i => i.Select(f => ResourceUrl.ImgBucket.ToUrl() + f.ImgFileKey).FirstOrDefault()));*/
         }
     }
 }
