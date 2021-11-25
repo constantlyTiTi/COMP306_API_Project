@@ -121,7 +121,7 @@ namespace apiFrontEnd
 
         private async void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if Application.Current.Windows.OfType<OrdersWindow>().Any() ||
+            if (Application.Current.Windows.OfType<OrdersWindow>().Any() ||
                Application.Current.Windows.OfType<ShoppingCart>().Any() ||
                Application.Current.Windows.OfType<LoginAndRegistration>().Any() ||
                Application.Current.Windows.OfType<ItemManagementWindow>().Any() ||
