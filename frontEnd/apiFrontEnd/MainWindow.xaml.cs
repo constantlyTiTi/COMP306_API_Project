@@ -91,6 +91,7 @@ namespace apiFrontEnd
         {
             using (HttpClient client = new HttpClient())
             {
+
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
                 var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.logoutUrl + _uniqueId.ToString());
                 if (response.IsSuccessStatusCode)
@@ -115,12 +116,20 @@ namespace apiFrontEnd
         {
             DateTime? date = EndDatePicker.SelectedDate;
 
+            ItemListView.Items.Clear();
+            Label LoadingLabel = new Label();
+            LoadingLabel.Margin = new Thickness(20, 0, 0, 0);
+            LoadingLabel.FontSize = 18;
+            LoadingLabel.FontWeight = FontWeights.Bold;
+            ItemListView.Items.Add(LoadingLabel);
+
             string dateString = date == null ? string.Empty : date.Value.ToString("yyyy-MM-dd");
             HttpClient client = new HttpClient();
             var response =  await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.mainWindow_items + "?upload_date_time=" + date.Value.ToString("yyyy-MM-dd"));
 /*            var response = await client.SendAsync(request);*/
             if (response.IsSuccessStatusCode)
             {
+                ItemListView.Items.Remove(LoadingLabel);
                 GenerateListViewItem(response);
 
             }
@@ -132,6 +141,7 @@ namespace apiFrontEnd
             var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.mainWindow_allItem);
             if (response.IsSuccessStatusCode)
             {
+                ItemListView.Items.Remove(LoadingLabel);
                 GenerateListViewItem(response);
 
             }
@@ -260,6 +270,26 @@ namespace apiFrontEnd
             sw.Left = this.Left;
             sw.Show();
             this.Close();
+        }
+
+        private async void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if(Application.Current.Windows.OfType<OrdersWindow>().Any()||
+               Application.Current.Windows.OfType<ShoppingCart>().Any()||
+               Application.Current.Windows.OfType<LoginAndRegistration>().Any() ||
+               Application.Current.Windows.OfType<ItemManagementWindow>().Any()||
+               Application.Current.Windows.OfType<MainWindow>().Any())
+            {
+                return;
+            }
+            else
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
+                    var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.logoutUrl + _uniqueId.ToString());
+                }
+            }
         }
     }
 }
