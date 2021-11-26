@@ -19,12 +19,25 @@
                 <TextBox Name ="PageInfo_TextBox" Width="53" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                 <Button Name ="NextPage" Content=">" Width="91" FontSize="16" Margin="10,0,0,0" Background="White" BorderBrush="White" Click="HomeNav_Click"/>
             </DockPanel>-->
-        <Label Content="Image" HorizontalAlignment="Left" Margin="82,83,0,0" VerticalAlignment="Top" Width="93" Height="35" FontSize="14"/>
-        <TextBox x:Name="Image" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="200,83,0,0" VerticalAlignment="Top" Width="200" Height="50"/>
-        <Label Content="Description" HorizontalAlignment="Left" Margin="82,103,0,0" Width="93" Height="35" FontSize="14"/>
-        <TextBox x:Name="Description" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="200,244,0,0" VerticalAlignment="Top" Width="200" Height="50"/>
+        <Label Content="Item name" HorizontalAlignment="Left" Margin="44,63,0,0" VerticalAlignment="Top" Width="93" Height="35" FontSize="14"/>
+        <TextBox x:Name="ItemName" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="200,63,0,0" VerticalAlignment="Top" Width="200" Height="50"/>
+        <Label Content="Description" HorizontalAlignment="Left" Margin="44,140,0,251" Width="93" Height="35" FontSize="14"/>
+        <TextBox x:Name="itemDescription" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="200,140,0,0" VerticalAlignment="Top" Width="200" Height="50"/>
         <Button Name="addBtn" Content="Add Item" HorizontalAlignment="Left" Margin="580,83,0,0" VerticalAlignment="Top" Height="50" Width="135" FontSize="14" Click="addBtn_Click"/>
-        <Button Name="deleteBtn" Content="Delete Item " HorizontalAlignment="Left" Margin="580,244,0,0" VerticalAlignment="Top" Height="50" Width="135" FontSize="14" Click="deleteBtn_Click"/>
+        <Label Content="Category" HorizontalAlignment="Left" Margin="44,226,0,0" VerticalAlignment="Top" Height="35" Width="93" FontSize="14"/>
+        <ComboBox Name="itemCategory" HorizontalAlignment="Left" Margin="200,226,0,0" VerticalAlignment="Top" Width="200" Height="45">
+            <ComboBoxItem Content="Appliances"></ComboBoxItem>
+            <ComboBoxItem Content="Books"></ComboBoxItem>
+            <ComboBoxItem Content="Computers"></ComboBoxItem>
+            <ComboBoxItem Content="Clothes"></ComboBoxItem>
+            <ComboBoxItem Content="Miscelanious"></ComboBoxItem>
+            <ComboBoxItem Content="Plants"></ComboBoxItem>
+        </ComboBox>
+        <Label Content="Price" HorizontalAlignment="Left" Margin="44,296,0,0" VerticalAlignment="Top" Width="93" Height="35" FontSize="14"/>
+        <TextBox  Name="itemPrice" HorizontalAlignment="Left" Margin="200,296,0,0" Text=" " TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="50"/>
+        <Label Content="Postal Code" HorizontalAlignment="Left" Margin="44,369,0,0" VerticalAlignment="Top" Width="93" Height="35" FontSize="14"/>
+        <TextBox Name="PostalCode" HorizontalAlignment="Left" Margin="200,369,0,0" Text=" " TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="50"/>
+
 
 
 
