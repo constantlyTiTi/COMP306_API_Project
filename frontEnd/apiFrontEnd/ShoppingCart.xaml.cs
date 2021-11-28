@@ -73,8 +73,8 @@ namespace apiFrontEnd
             var response = await client.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
-                OuterStackPanel.Children.Remove(LoadingLabel);
                 GenerateListViewItem(response);
+                OuterStackPanel.Children.Remove(LoadingLabel);
 
             }
             else

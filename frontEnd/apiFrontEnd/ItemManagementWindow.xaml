@@ -10,24 +10,24 @@
         <StackPanel>
             <DockPanel Height="40" LastChildFill="False">
                 <Button Name ="HomeNav" Content="Home" Width="91" FontSize="20" Margin="10,0,0,0" Background="White" BorderBrush="White" Click="HomeNav_Click"/>
+                <Label Name="PostItemLabel"></Label>
             </DockPanel>
-        </StackPanel>
-        <StackPanel Name="DetailPanel" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center" Height="414">
-            <DockPanel Height="40" LastChildFill="False">
+  <!--          <DockPanel LastChildFill="False" Height="30" Width="796" Margin="0,5,0,0">
+                <DatePicker Name="EndDatePicker" Width="110" Margin="10,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Button Name="SearchByDate" Content="Search By Date" Width="124" FontSize="14" Background="White" BorderBrush="White" Click="SearchByDate_Click"/>
+            </DockPanel> -->
+            <DockPanel LastChildFill="False" Height="25">
+                <Button Name ="PrePage" Content="&lt;" Width="91" FontSize="16" Margin="10,0,0,0" Background="White" BorderBrush="White" Click="HomeNav_Click"/>
+                <TextBox Name ="PageInfo_TextBox" Width="53" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                <Button Name ="NextPage" Content=">" Width="91" FontSize="16" Margin="10,0,0,0" Background="White" BorderBrush="White" Click="HomeNav_Click"/>
             </DockPanel>
-            <Label Name ="ItemNameLabel" Content=""  FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            <Label Name ="ItemDesLabel" Content=""  FontSize="18" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <DockPanel Height="40" LastChildFill="False">
-            </DockPanel>
-            <Label Name ="ItemCategoryLabel" Content=""  FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            <Label Name ="ItemPriceLabel" Content=""  FontSize="18" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <DockPanel Height="40" LastChildFill="False">
-            </DockPanel>
-            <Label Name ="PostalCodeLabel" Content=""  FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <ListView Name="ItemListView" BorderBrush="{x:Null}" Foreground="Black" Loaded="ItemListView_Loaded">
+                <Label Name="LoadingLabel" Margin="20,0,0,0" FontSize="18" FontWeight="Bold">Loading</Label>
+            </ListView>
+            <StackPanel Margin="0,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-
+                <Button Name="PostBtn" Content="Post Item" HorizontalAlignment="Left"  VerticalAlignment="Top" Height="50" Width="135" FontSize="14" Click="PostBtn_Click" Margin="20,0,0,0"/>
+            </StackPanel>
         </StackPanel>
-        <Button Name="DeleteBtn" Content="Delete Item" HorizontalAlignment="Left" Margin="185,359,0,0" VerticalAlignment="Top" Height="50" Width="135" FontSize="14" Click="DeleteBtn_Click"/>
-        <Button Name="PostBtn" Content="Post Item" HorizontalAlignment="Left" Margin="590,359,0,0" VerticalAlignment="Top" Height="50" Width="135" FontSize="14" Click="PostBtn_Click"/>
     </Grid>
 </Window>

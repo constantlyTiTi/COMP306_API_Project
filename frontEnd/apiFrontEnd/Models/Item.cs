@@ -13,7 +13,7 @@ namespace apiFrontEnd.Models
     {
         public long ItemId { get; set; }
         [JsonPropertyName("uploader")]
-        public string UserName { get; set; }
+        public string uploader { get; set; }
 /*        [JsonPropertyName("upload_item_date_time")]*/
         public DateTime upload_item_date_time { get; set; }
         [Required]
