@@ -20,6 +20,9 @@ namespace apiFrontEnd.StaticValues
         public static readonly string mainWindow_items = @"item/items";
         public static readonly string mainWindow_itemDetail = @"item/";
 
+        public static readonly string postItemWindow_itemPost = @"item/post-item";
+        public static readonly string postItemWindow_itemGet = @"item/items/{uploaderusername}";
+
         public static readonly string OrderWindow_Order_userName = @"order/user-orders/";
         public static readonly string OrderWindow_Order_orderId = @"order/";
 
