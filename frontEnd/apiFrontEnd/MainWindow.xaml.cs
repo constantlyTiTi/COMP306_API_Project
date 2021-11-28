@@ -118,6 +118,7 @@ namespace apiFrontEnd
 
             ItemListView.Items.Clear();
             Label LoadingLabel = new Label();
+            LoadingLabel.Name = "LoadingLabel";
             LoadingLabel.Margin = new Thickness(20, 0, 0, 0);
             LoadingLabel.FontSize = 18;
             LoadingLabel.FontWeight = FontWeights.Bold;

@@ -64,10 +64,20 @@ namespace apiFrontEnd
                 }
                 else
                 {
+                    try
+                    {
+
+                
+                    string result = response.Content.ReadAsStringAsync().Result;
                     JObject errorDic = JsonConvert.DeserializeObject<JObject>(response.Content.ReadAsStringAsync().Result);
                     List<string> errorList = errorDic["errors"].ToObject<List<string>>();
                     string error = string.Join(@"\n", errorList);
                     ErrorMsgLable_Login.Content = error;
+                    }
+                    catch(Exception)
+                    {
+                        ErrorMsgLable_Login.Content = "something wrong with the server please try again";
+                    }
                 }
             }
         }

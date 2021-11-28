@@ -27,12 +27,14 @@ namespace apiFrontEnd
     {
         private readonly string _userName;
         private readonly string _token;
+        private readonly long _itemId;
         public ItemDetailsWindow(long itemId, string userName, string token)
         {
             InitializeComponent();
             _userName = userName;
             _token = token;
             Generate(itemId);
+            _itemId = itemId;
 
         }
 
@@ -45,6 +47,7 @@ namespace apiFrontEnd
                 Item itemDetail = JsonConvert.DeserializeObject<Item>(response.Content.ReadAsStringAsync().Result);
                 ItemDesLabel.Content = itemDetail.Description;
                 ItemNameLabel.Content = itemDetail.item_name;
+                ItemPriceLabel.Content = itemDetail.Price;
 
                 Button addToCart = new Button();
                 addToCart.Height = 40;
@@ -140,5 +143,7 @@ namespace apiFrontEnd
                 }
             }
         }
+
+       
     }
 }

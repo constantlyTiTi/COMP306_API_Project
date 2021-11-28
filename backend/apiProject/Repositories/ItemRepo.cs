@@ -100,8 +100,10 @@ namespace apiProject.Repositories
         {
             var findObj = await _db.Item.FindAsync(item.ItemId);
             findObj.ItemName = item.ItemName;
-            findObj.LocationPostalCode = item.LocationPostalCode;
+            findObj.Description = item.Description;
             findObj.Price = item.Price;
+            findObj.LocationPostalCode = item.LocationPostalCode;
+            findObj.Category = item.Category;
             _db.SaveChanges();
         }
 
