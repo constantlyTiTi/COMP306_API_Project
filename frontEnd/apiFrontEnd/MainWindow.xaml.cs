@@ -73,17 +73,17 @@ namespace apiFrontEnd
 
         private void HomeNav_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(_token))
+            if (string.IsNullOrEmpty(_token))
             {
-                ItemNav.Visibility = Visibility.Hidden;
-                OrderNav.Visibility = Visibility.Hidden;
+                MainWindow mw = new MainWindow();
+                mw.Show();
+                this.Close();
             }
             else
             {
-                ItemNav.Visibility = Visibility.Visible;
-                OrderNav.Visibility = Visibility.Visible;
-                AuthNav.Content = "Hello, " + _userName;
-                AuthNav.IsEnabled = false;
+                MainWindow mw = new MainWindow(_userName, _token);
+                mw.Show();
+                this.Close();
             }
         }
 
@@ -100,7 +100,7 @@ namespace apiFrontEnd
                     mw.Show();
                     this.Close();
                 }
-            }   
+            }
         }
 
         private void ItemNav_Click(object sender, RoutedEventArgs e)
@@ -115,7 +115,26 @@ namespace apiFrontEnd
         private async void SearchByDate_Click(object sender, RoutedEventArgs e)
         {
             DateTime? date = EndDatePicker.SelectedDate;
+            if (!date.HasValue)
+            {
+                MessageBox.Show("Please provide a date");
+            }
+            RegenerateLoading();
+            PostalCodeTB.Text = string.Empty;
+            string dateString = date == null ? string.Empty : date.Value.ToString("yyyy-MM-dd");
+            HttpClient client = new HttpClient();
+            var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.mainWindow_items + "?upload_date_time=" + dateString);
+            /*            var response = await client.SendAsync(request);*/
+            if (response.IsSuccessStatusCode)
+            {
+                ItemListView.Items.Remove(LoadingLabel);
+                GenerateListViewItem(response);
 
+            }
+        }
+
+        private void RegenerateLoading()
+        {
             ItemListView.Items.Clear();
             Label LoadingLabel = new Label();
             LoadingLabel.Name = "LoadingLabel";
@@ -123,17 +142,6 @@ namespace apiFrontEnd
             LoadingLabel.FontSize = 18;
             LoadingLabel.FontWeight = FontWeights.Bold;
             ItemListView.Items.Add(LoadingLabel);
-
-            string dateString = date == null ? string.Empty : date.Value.ToString("yyyy-MM-dd");
-            HttpClient client = new HttpClient();
-            var response =  await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.mainWindow_items + "?upload_date_time=" + date.Value.ToString("yyyy-MM-dd"));
-/*            var response = await client.SendAsync(request);*/
-            if (response.IsSuccessStatusCode)
-            {
-                ItemListView.Items.Remove(LoadingLabel);
-                GenerateListViewItem(response);
-
-            }
         }
 
         private async void ItemListView_Loaded(object sender, RoutedEventArgs e)
@@ -174,7 +182,17 @@ namespace apiFrontEnd
             ItemListView.Items.Clear();
             ItemListViewModel itemlist = JsonConvert.DeserializeObject<ItemListViewModel>(response.Content.ReadAsStringAsync().Result);
 
-            PageInfo_TextBox.Text = itemlist.Paginate.next_curesor;
+           
+            if (itemlist.Paginate.next_curesor == "0")
+            {
+                NextPage.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                NextPage.Visibility = Visibility.Visible;
+                PageInfo_TextBox.Text = itemlist.Paginate.next_curesor;
+            }
+
             for (int i = 0; i < itemlist.Items.Count(); i++)
             {
                 DockPanel dop = new DockPanel();
@@ -211,7 +229,7 @@ namespace apiFrontEnd
                 header.FontSize = 14;
 
                 Label desc = new Label();
-                desc.Content = itemlist.Items.ElementAt(i).Description.Length > 50 ? 
+                desc.Content = itemlist.Items.ElementAt(i).Description.Length > 50 ?
                     itemlist.Items.ElementAt(i).Description.Substring(0, 50) : itemlist.Items.ElementAt(i).Description;
                 desc.Width = 250;
                 desc.Height = 30;
@@ -275,10 +293,10 @@ namespace apiFrontEnd
 
         private async void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if(Application.Current.Windows.OfType<OrdersWindow>().Any()||
-               Application.Current.Windows.OfType<ShoppingCart>().Any()||
+            if (Application.Current.Windows.OfType<OrdersWindow>().Any() ||
+               Application.Current.Windows.OfType<ShoppingCart>().Any() ||
                Application.Current.Windows.OfType<LoginAndRegistration>().Any() ||
-               Application.Current.Windows.OfType<ItemManagementWindow>().Any()||
+               Application.Current.Windows.OfType<ItemManagementWindow>().Any() ||
                Application.Current.Windows.OfType<MainWindow>().Any())
             {
                 return;
@@ -291,6 +309,107 @@ namespace apiFrontEnd
                     var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.logoutUrl + _uniqueId.ToString());
                 }
             }
+        }
+
+        private async void PrePage_Click(object sender, RoutedEventArgs e)
+        {
+
+            int cursor = int.Parse(PageInfo_TextBox.Text) - 1;
+            if (cursor < 1)
+            {
+                return;
+            }
+            else
+            {
+                cursor--;
+            }
+
+            DateTime? date = EndDatePicker.SelectedDate;
+            string postalcode = PostalCodeTB.Text.ToUpper();
+            string dateString = date.HasValue ? date.Value.ToString("yyy-MM-dd") : string.Empty;
+            if (date.HasValue && !string.IsNullOrWhiteSpace(postalcode))
+            {
+                MessageBox.Show("Please only provide data or postal code");
+                return;
+            }
+            using (HttpClient client = new HttpClient())
+            {
+                RegenerateLoading();
+                string url = BackEndConnection.BaseUrl + BackEndConnection.mainWindow_items +
+    "?upload_date_time=" + dateString + "&" + "next_cursor=" + cursor + "&postal_code = " + postalcode;
+                if (!date.HasValue && string.IsNullOrWhiteSpace(postalcode))
+                {
+                    url = BackEndConnection.BaseUrl + BackEndConnection.mainWindow_allItem + "?next_cursor=" + cursor;
+                }
+                var response = await client.GetAsync(url);
+
+                /*            var response = await client.SendAsync(request);*/
+                if (response.IsSuccessStatusCode)
+                {
+                    ItemListView.Items.Remove(LoadingLabel);
+                    GenerateListViewItem(response);
+
+                }
+            }
+
+        }
+
+        private async void NextPage_Click(object sender, RoutedEventArgs e)
+        {
+            int cursor = int.Parse(PageInfo_TextBox.Text);
+            PageInfo_TextBox.Text = (cursor + 1).ToString();
+            DateTime? date = EndDatePicker.SelectedDate;
+            string dateString = date.HasValue ? date.Value.ToString("yyy-MM-dd") : string.Empty;
+            string postalcode = PostalCodeTB.Text.ToUpper();
+            if (date.HasValue && !string.IsNullOrWhiteSpace(postalcode))
+            {
+                MessageBox.Show("Please only provide data or postal code");
+                return;
+            }
+            using (HttpClient client = new HttpClient())
+            {
+                RegenerateLoading();
+
+                string url = BackEndConnection.BaseUrl + BackEndConnection.mainWindow_items +
+                    "?upload_date_time=" + dateString + "&" + "next_cursor=" + cursor + "&postal_code = " + postalcode;
+                if (!date.HasValue && string.IsNullOrWhiteSpace(postalcode))
+                {
+                    url = BackEndConnection.BaseUrl + BackEndConnection.mainWindow_allItem + "?next_cursor=" + cursor;
+                }
+                var response = await client.GetAsync(url);
+                /*            var response = await client.SendAsync(request);*/
+                if (response.IsSuccessStatusCode)
+                {
+                    ItemListView.Items.Remove(LoadingLabel);
+                    GenerateListViewItem(response);
+
+                }
+            }
+        }
+
+        private async void SearchByPostalCode_Click(object sender, RoutedEventArgs e)
+        {
+            EndDatePicker.SelectedDate = null;
+            string postalcode = PostalCodeTB.Text.ToUpper();
+            if (string.IsNullOrWhiteSpace(postalcode))
+            {
+                MessageBox.Show("Please provide postal code");
+                return;
+            }
+            RegenerateLoading();
+            using (HttpClient client = new HttpClient())
+            {
+                var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.mainWindow_items +
+                    "?postal_code=" + postalcode);
+                /*            var response = await client.SendAsync(request);*/
+                if (response.IsSuccessStatusCode)
+                {
+                    ItemListView.Items.Remove(LoadingLabel);
+                    GenerateListViewItem(response);
+
+                }
+            }
+
         }
     }
 }

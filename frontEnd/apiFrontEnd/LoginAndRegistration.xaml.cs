@@ -76,7 +76,7 @@ namespace apiFrontEnd
                     }
                     catch(Exception)
                     {
-                        ErrorMsgLable_Login.Content = "something wrong with the server please try again";
+                        ErrorMsgLable_Login.Content = "Oops, server is not at home";
                     }
                 }
             }

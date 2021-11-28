@@ -88,12 +88,73 @@ namespace apiFrontEnd
             }
         }
 
+        private async void PrePage_Click(object sender, RoutedEventArgs e)
+        {
+
+            int cursor = int.Parse(PageInfo_TextBox.Text) - 1;
+            if (cursor < 1)
+            {
+                return;
+            }
+            else
+            {
+                cursor--;
+            }
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
+                RegenerateLoading();
+                string url = BackEndConnection.BaseUrl + BackEndConnection.postItemWindow_items_userName + _userName + "?next_cursor=" + cursor;
+                var response = await client.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    ItemListView.Items.Remove(LoadingLabel);
+                    GenerateListViewItem(response);
+
+                }
+            }
+
+        }
+
+        private async void NextPage_Click(object sender, RoutedEventArgs e)
+        {
+            int cursor = int.Parse(PageInfo_TextBox.Text);
+            PageInfo_TextBox.Text = (cursor + 1).ToString();
+
+            using (HttpClient client = new HttpClient())
+            {
+                RegenerateLoading();
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
+                string url = BackEndConnection.BaseUrl + BackEndConnection.postItemWindow_items_userName +_userName + "?next_cursor=" + cursor;
+                
+                var response = await client.GetAsync(url);
+                /*            var response = await client.SendAsync(request);*/
+                if (response.IsSuccessStatusCode)
+                {
+                    ItemListView.Items.Remove(LoadingLabel);
+                    GenerateListViewItem(response);
+
+                }
+            }
+        }
+
+
         private void GenerateListViewItem(HttpResponseMessage response)
         {
             ItemListView.Items.Clear();
             ItemListViewModel itemlist = JsonConvert.DeserializeObject<ItemListViewModel>(response.Content.ReadAsStringAsync().Result);
 
-            PageInfo_TextBox.Text = itemlist.Paginate.next_curesor;
+            if (itemlist.Paginate.next_curesor == "0")
+            {
+                NextPage.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                NextPage.Visibility = Visibility.Visible;
+                PageInfo_TextBox.Text = itemlist.Paginate.next_curesor;
+            }
+
             for (int i = 0; i < itemlist.Items.Count(); i++)
             {
                 DockPanel dop = new DockPanel();
@@ -206,26 +267,15 @@ namespace apiFrontEnd
             this.Close();
         }
 
-       /* private async void Cancel(long itemId)
+        private void RegenerateLoading()
         {
-            HttpClient client = new HttpClient();
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, BackEndConnection.BaseUrl +
-                BackEndConnection.OrderWindow_Order_userName + _userName + "/" + orderId.ToString());
-
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
-            var response = await client.SendAsync(request);
-            if (response.IsSuccessStatusCode)
-            {
-                HttpRequestMessage request2 = new HttpRequestMessage(HttpMethod.Get, BackEndConnection.BaseUrl +
-                BackEndConnection.OrderWindow_Order_userName + _userName);
-                HttpClient client2 = new HttpClient();
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
-                var response2 = await client.SendAsync(request2);
-                if (response.IsSuccessStatusCode)
-                {
-                    GenerateListViewItem(response2);
-                }
-            }
-        }*/
+            ItemListView.Items.Clear();
+            Label LoadingLabel = new Label();
+            LoadingLabel.Name = "LoadingLabel";
+            LoadingLabel.Margin = new Thickness(20, 0, 0, 0);
+            LoadingLabel.FontSize = 18;
+            LoadingLabel.FontWeight = FontWeights.Bold;
+            ItemListView.Items.Add(LoadingLabel);
+        }
     }
 }

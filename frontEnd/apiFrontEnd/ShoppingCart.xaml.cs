@@ -217,7 +217,7 @@ namespace apiFrontEnd
             cart.user_name = _userName;
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, BackEndConnection.BaseUrl 
-                + BackEndConnection.ShoppingCartWindow_PlaceOrder + "?user_name="+ _userName);
+                + BackEndConnection.ShoppingCartWindow_PlaceOrder + "?user_name="+ _userName + "&unique_tempor_user_id=" + MainWindow._uniqueId);
             
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);

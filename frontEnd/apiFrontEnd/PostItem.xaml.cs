@@ -87,7 +87,7 @@ namespace apiFrontEnd
             item.Description = itemDescription.Text;
             item.Category = ((ComboBoxItem)ItemCategory.SelectedItem).Content.ToString();
             item.Price = double.Parse(itemPrice.Text);
-            item.location_postal_code = postalCode;
+            item.location_postal_code = postalCode.ToUpper();
             item.uploader = _userName;
 
 

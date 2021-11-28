@@ -153,8 +153,8 @@ namespace apiProject.Controllers
                     {
                         i.UserName = name;
                         _unitOfWork.ShoppingCartItems.Add(i);
-                        _unitOfWork.Save();
                     }
+                    _unitOfWork.Save();
                 }
 
             }
@@ -172,7 +172,7 @@ namespace apiProject.Controllers
 
         [Authorize]
         [HttpPost("place-order")]
-        public IActionResult PlaceOrder(string user_name, [FromBody]ShoppingCartDTO cart)
+        public IActionResult PlaceOrder(string user_name, [FromBody]ShoppingCartDTO cart, long unique_tempor_user_id)
         {
             IEnumerable<ShoppingCartItem> cartItems = _unitOfWork.ShoppingCartItems.GetItems(user_name);
             _mapper.Map(cartItems, cart);
@@ -195,6 +195,7 @@ namespace apiProject.Controllers
 
             }
             _unitOfWork.Save();
+            CartItems.Remove(unique_tempor_user_id);
             return Ok();
 
         }

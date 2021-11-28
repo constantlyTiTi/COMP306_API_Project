@@ -46,7 +46,7 @@ namespace apiProject.Controllers
             }*/
 
             Paginate paginate = new Paginate(items_per_page, next_cursor);
-            List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
+            List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor, paginate);
             if (itemsOfPage == null)
             {
                 return NotFound();
@@ -110,7 +110,7 @@ namespace apiProject.Controllers
                 }*/
 
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
-                List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
+                List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor, paginate);
                 if (itemsOfPage == null)
                 {
                     return NotFound();
@@ -126,7 +126,7 @@ namespace apiProject.Controllers
                 var items_all = _unitOfWork.Item.GetItemByItemName(item_name).Result;
                 IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
-                List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
+                List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor, paginate);
                 if (itemsOfPage == null)
                 {
                     return NotFound();
@@ -142,7 +142,7 @@ namespace apiProject.Controllers
                 var items_all = _unitOfWork.Item.GetItemByCategory(category).Result;
                 IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
-                List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
+                List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor, paginate);
                 if (itemsOfPage == null)
                 {
                     return NotFound();
@@ -158,7 +158,7 @@ namespace apiProject.Controllers
                 var items_all = _unitOfWork.Item.GetItemByLocation(postal_code).Result;
                 IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
-                List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
+                List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor, paginate);
                 if (itemsOfPage == null)
                 {
                     return NotFound();
@@ -184,7 +184,7 @@ namespace apiProject.Controllers
                 }*/
 
                 Paginate paginate = new Paginate(items_per_page, next_cursor);
-                List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
+                List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor, paginate);
                 if (itemsOfPage == null)
                 {
                     return NotFound();
@@ -206,7 +206,7 @@ namespace apiProject.Controllers
             var items_all = _unitOfWork.Item.GetItemByUserName(uploaderusername).Result;
             IEnumerable<ItemDTO> itemDtos = _mapper.Map<IEnumerable<Item>, IEnumerable<ItemDTO>>(items_all);
             Paginate paginate = new Paginate(items_per_page, next_cursor);
-            List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor);
+            List<ItemDTO> itemsOfPage = GetItemsPerPage(itemDtos, items_per_page, next_cursor, paginate);
             if(itemsOfPage == null)
             {
                 return NotFound();
@@ -328,18 +328,21 @@ namespace apiProject.Controllers
             return Ok();
         }
 
-        private List<ItemDTO> GetItemsPerPage(IEnumerable<ItemDTO> items_all, int items_per_page, string next_cursor)
+        private List<ItemDTO> GetItemsPerPage(IEnumerable<ItemDTO> items_all, int items_per_page, string next_cursor, Paginate paginate)
         {
             List<ItemDTO> items = null;
             int totalItems = items_all.Count();
             int startIndex = int.Parse(next_cursor) * 10;
+
             if (startIndex + items_per_page < totalItems)
             {
                 items = items_all.ToList().GetRange(startIndex, items_per_page);
+                paginate.NextCursor = (startIndex + 1).ToString();
             }
             else
             {
                 items = items_all.ToList().GetRange(startIndex, totalItems - startIndex);
+                paginate.NextCursor = "0";
             }
             return items;
         }
