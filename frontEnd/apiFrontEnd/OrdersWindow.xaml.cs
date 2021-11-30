@@ -156,7 +156,7 @@ namespace apiFrontEnd
             }
         }
 
-        private async void SearchByDate_Click(object sender, RoutedEventArgs e)
+        /*private async void SearchByDate_Click(object sender, RoutedEventArgs e)
         {
             DateTime? endDate = EndDatePicker.SelectedDate;
             DateTime? startDate = StartDatePicker.SelectedDate;
@@ -180,14 +180,14 @@ namespace apiFrontEnd
             HttpClient client = new HttpClient();
             var response = await client.GetAsync(BackEndConnection.BaseUrl + BackEndConnection.mainWindow_items + 
                 "? start_date ="+ startDate.Value.ToString("yyyy-MM-dd")+  "&&end_date =" + endDate.Value.ToString("yyyy-MM-dd"));
-            /*            var response = await client.SendAsync(request);*/
+            *//*            var response = await client.SendAsync(request);*//*
             if (response.IsSuccessStatusCode)
             {
                 OrderListView.Items.Remove(LoadingLabel);
                 GenerateListViewItem(response);
 
             }
-        }
+        }*/
 
         private async void ToggleItemList(long orderId, ListView lsView)
         {
